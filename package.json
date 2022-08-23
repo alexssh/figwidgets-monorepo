@@ -1,0 +1,23 @@
+{
+  "name": "advanced-changelog",
+  "description": "Figma + FigJam widget to track any changes in your stuff",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "esbuild src/Widget.tsx --bundle --outfile=dist/index.js",
+    "watch": "npm run build -- --watch"
+  },
+  "author": "alexssh",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alexssh/figwidget-changelog.git"
+  },
+  "homepage": "https://github.com/alexssh/figwidget-changelog#readme",
+  "devDependencies": {
+    "@figma/plugin-typings": "*",
+    "@figma/widget-typings": "*",
+    "esbuild": "^0.13.5",
+    "prettier": "^2.4.1",
+    "typescript": "*"
+  }
+}
