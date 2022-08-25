@@ -1,6 +1,6 @@
 Figma + FigJam widget to track any changes in your stuff.
 
-[Try it now!](https://example.com)
+[Try it now!](https://www.figma.com/community/widget/1142539867133322876)
 
 ---
 
