@@ -2,6 +2,11 @@ export interface ITagProps {
   colorTheme: string
   variant: string
   contentTitle: string
+  onClick: (e: ITagClickEvent) => void
+}
+
+export interface ITagClickEvent {
+  variant: string
 }
 
 export interface IEntryItemProps {
@@ -11,6 +16,7 @@ export interface IEntryItemProps {
   contentTagTitle: string
   onEditEnd: (e: TextEditEvent) => void
   onPositionChange: (e: IEntryItemPositionChangeEvent) => void
+  onTypeChange: (e: ITagClickEvent) => void
   onDelete: () => void
   actions: {
     up: boolean

@@ -32,12 +32,13 @@ import Icon, { glyphs } from './components/Icon'
 import guid from './utils/uuid'
 
 import type { Entry } from 'types.d'
-import { IEntryItemPositionChangeEvent } from './components/interfaces.d'
+import { IEntryItemPositionChangeEvent, ITagClickEvent } from './components/interfaces.d'
 
 function Widget() {
   const [data, setData] = useSyncedState('data', {
     title: '1.0.0',
     date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+    isDescriptionVisible: true,
     description: '',
     colorTheme: 'light'
   })
@@ -58,6 +59,20 @@ function Widget() {
     [
       {
         itemType: 'toggle',
+        tooltip: 'Show/hide description',
+        propertyName: 'isDescriptionVisible',
+        isToggled: data.isDescriptionVisible,
+        icon: glyphs.description(
+          data.isDescriptionVisible
+            ? tokens.colors.light.txt.primary.inverted.fill
+            : tokens.colors.light.txt.minor.default.fill
+        )
+      },
+      {
+        itemType: 'separator'
+      },
+      {
+        itemType: 'toggle',
         tooltip: 'Switch color theme',
         propertyName: 'colorTheme',
         isToggled: data.colorTheme === 'dark',
@@ -72,7 +87,7 @@ function Widget() {
       },
       {
         itemType: 'dropdown',
-        tooltip: 'Select entry type',
+        tooltip: 'Type of new entry',
         propertyName: 'entryType',
         options: Object.keys(tokens.colors.light.status).map((s) => ({
           option: s,
@@ -82,12 +97,20 @@ function Widget() {
       },
       {
         itemType: 'action',
-        tooltip: 'Add a new entry',
+        tooltip: 'Add entry',
         propertyName: 'addEntry',
         icon: glyphs.plus(tokens.colors.light.txt.minor.default.fill)
       }
     ],
     ({ propertyName, propertyValue }) => {
+      if (propertyName === 'colorTheme') {
+        switchTheme()
+      }
+
+      if (propertyName === 'isDescriptionVisible') {
+        switchDescriptionVisibility()
+      }
+
       if (propertyName === 'entryType') {
         setEntryType(propertyValue as string)
       }
@@ -95,12 +118,18 @@ function Widget() {
       if (propertyName === 'addEntry') {
         addEntry(entryType)
       }
-
-      if (propertyName === 'colorTheme') {
-        switchTheme()
-      }
     }
   )
+
+  useEffect(() => {
+    // Compatibility with previous versions
+    if (data.isDescriptionVisible === undefined) {
+      setData({
+        ...data,
+        isDescriptionVisible: true
+      })
+    }
+  })
 
   /* General */
 
@@ -108,6 +137,13 @@ function Widget() {
     setData({
       ...data,
       colorTheme: data.colorTheme === 'dark' ? 'light' : 'dark'
+    })
+  }
+
+  const switchDescriptionVisibility = () => {
+    setData({
+      ...data,
+      isDescriptionVisible: !data.isDescriptionVisible
     })
   }
 
@@ -125,7 +161,7 @@ function Widget() {
   const addEntry = (type: string) => {
     const uuid = guid()
 
-   if (!entries.filter(entry => entry.uuid === uuid).length){
+    if (!entries.filter((entry) => entry.uuid === uuid).length) {
       setEntries([
         ...entries,
         {
@@ -166,6 +202,23 @@ function Widget() {
     ])
   }
 
+  const editEntryType = (entry: Entry, variant: string) => {
+    const keys = Object.keys(tokens.colors[data.colorTheme as string].status)
+    let newKey = keys.indexOf(variant) + 1
+
+    if (newKey === keys.length) {
+      newKey = 0
+    }
+
+    setEntries([
+      ...entries.filter((e) => e.uuid !== entry.uuid),
+      {
+        ...entry,
+        type: keys[newKey]
+      }
+    ])
+  }
+
   /* Render */
 
   return (
@@ -177,6 +230,12 @@ function Widget() {
       padding={{ vertical: 16 }}
       cornerRadius={8}
       width={800}
+      effect={{
+        type: 'drop-shadow',
+        color: { r: 0, g: 0, b: 0, a: 0.24 },
+        offset: { x: 0, y: 2 },
+        blur: 12
+      }}
       {...tokens.colors[data.colorTheme as string].background.default}
     >
       <AutoLayout
@@ -229,22 +288,24 @@ function Widget() {
             {...tokens.typo.p4}
           />
         </AutoLayout>
-        <Input
-          name="Widget__description"
-          value={data.description}
-          placeholder="Add any description..."
-          inputBehavior="multiline"
-          placeholderProps={{
-            ...tokens.typo.p4,
-            fill: tokens.colors[data.colorTheme as string].txt.minor.default.fill,
-            opacity: 1
-          }}
-          width="fill-parent"
-          onTextEditEnd={(e) => editData('description', e.characters)}
-          hoverStyle={tokens.colors[data.colorTheme as string].state.hover.input}
-          {...tokens.colors[data.colorTheme as string].txt.secondary.default}
-          {...tokens.typo.p4}
-        />
+        {data.isDescriptionVisible && (
+          <Input
+            name="Widget__description"
+            value={data.description}
+            placeholder="Add any description..."
+            inputBehavior="multiline"
+            placeholderProps={{
+              ...tokens.typo.p4,
+              fill: tokens.colors[data.colorTheme as string].txt.minor.default.fill,
+              opacity: 1
+            }}
+            width="fill-parent"
+            onTextEditEnd={(e) => editData('description', e.characters)}
+            hoverStyle={tokens.colors[data.colorTheme as string].state.hover.input}
+            {...tokens.colors[data.colorTheme as string].txt.secondary.default}
+            {...tokens.typo.p4}
+          />
+        )}
       </AutoLayout>
       <Rectangle width="fill-parent" height={1} {...tokens.colors[data.colorTheme as string].border.default} />
       <AutoLayout
@@ -265,6 +326,7 @@ function Widget() {
               contentParagraph={entry.content}
               contentTagTitle={tokens.colors[data.colorTheme as string].status[entry.type].label}
               onEditEnd={(e: TextEditEvent) => editEntry(entry, e.characters)}
+              onTypeChange={(e: ITagClickEvent) => editEntryType(entry, e.variant)}
               onPositionChange={(e: IEntryItemPositionChangeEvent) => sortEntry(entry, e.direction)}
               onDelete={() => removeEntry(entry)}
               actions={{

@@ -1,7 +1,7 @@
 {
   "name": "advanced-changelog",
   "description": "Figma + FigJam widget to track any changes in your stuff",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "scripts": {
     "build": "esbuild src/Widget.tsx --bundle --outfile=dist/index.js",
     "watch": "npm run build -- --watch"

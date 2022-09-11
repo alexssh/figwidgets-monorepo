@@ -18,6 +18,7 @@ function Tag(props: ITagProps) {
       width="fill-parent"
       horizontalAlignItems="center"
       verticalAlignItems="center"
+      onClick={() => props.onClick({ variant: props.variant })}
       {...tokens.colors[props.colorTheme].status[props.variant as never].tag}
     >
       <Text

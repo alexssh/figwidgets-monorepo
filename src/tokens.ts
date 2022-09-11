@@ -82,7 +82,7 @@ const tokens: Tokens = {
           tag: { fill: COLOR_PURPLE_600 }
         },
         depricated: {
-          label: 'Depricated',
+          label: 'Deprecated',
           title: { fill: COLOR_WHITE },
           tag: { fill: COLOR_ORANGE_600 }
         },

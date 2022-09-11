@@ -37,7 +37,12 @@ function EntryItem(props: IEntryItemProps) {
             right: 24
           }}
         >
-          <Tag colorTheme={props.colorTheme} variant={props.type} contentTitle={props.contentTagTitle} />
+          <Tag
+            colorTheme={props.colorTheme}
+            variant={props.type}
+            contentTitle={props.contentTagTitle}
+            onClick={props.onTypeChange}
+          />
         </AutoLayout>
         <Input
           name="Entry__input"
@@ -71,9 +76,7 @@ function EntryItem(props: IEntryItemProps) {
           glyph="chevronUp"
           disabled={!props.actions.up}
           onClick={() =>
-            props.actions.up
-              ? props.onPositionChange({ direction: 'up' } as IEntryItemPositionChangeEvent)
-              : undefined
+            props.actions.up ? props.onPositionChange({ direction: 'up' } as IEntryItemPositionChangeEvent) : undefined
           }
         />
         <ButtonIcon
@@ -86,7 +89,12 @@ function EntryItem(props: IEntryItemProps) {
               : undefined
           }
         />
-        <ButtonIcon colorTheme={props.colorTheme} glyph="minus" disabled={props.actions.delete} onClick={props.onDelete} />
+        <ButtonIcon
+          colorTheme={props.colorTheme}
+          glyph="minus"
+          disabled={props.actions.delete}
+          onClick={props.onDelete}
+        />
       </AutoLayout>
     </AutoLayout>
   )
