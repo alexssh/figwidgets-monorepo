@@ -5,13 +5,17 @@
     "jsxFragmentFactory": "figma.widget.Fragment",
     "target": "es6",
     "lib": [
-      "es6"
+      "es6", "es2017"
     ],
     "strict": true,
     "typeRoots": [
       "./node_modules/@types",
-      "./node_modules/@figma"
+      "./node_modules/@figma",
+      "src/@types/*",
+      "src/@types/**/*"
     ],
-    "outDir": "dist"
-  }
+    "outDir": "dist",
+    "moduleResolution": "node",
+    "baseUrl": "./"
+  },
 }

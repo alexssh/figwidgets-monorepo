@@ -1,18 +1,18 @@
 {
-  "name": "advanced-changelog",
-  "description": "Figma + FigJam widget to track any changes in your stuff",
-  "version": "1.1.0",
+  "name": "figwidgets-monorepo",
+  "description": "Figma + FigJam widget development environment",
+  "version": "2.0.0",
   "scripts": {
-    "build": "esbuild src/Widget.tsx --bundle --outfile=dist/index.js",
+    "build": "esbuild src/widgets/$npm_config_widget/$npm_config_widget.tsx --bundle --minify --outfile=dist/$npm_config_widget/index.js",
     "watch": "npm run build -- --watch"
   },
   "author": "alexssh",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/alexssh/figwidget-changelog.git"
+    "url": "git+https://github.com/alexssh/figwidgets-monorepo.git"
   },
-  "homepage": "https://github.com/alexssh/figwidget-changelog#readme",
+  "homepage": "https://github.com/alexssh/figwidgets-monorepo#readme",
   "devDependencies": {
     "@figma/plugin-typings": "*",
     "@figma/widget-typings": "*",

@@ -2,7 +2,7 @@
   "name": "Advanced Changelog",
   "id": "1142539867133322876",
   "api": "1.0.0",
-  "main": "dist/index.js",
+  "main": "index.js",
   "editorType": ["figma", "figjam"],
   "containsWidget": true,
   "widgetApi": "1.0.0"
