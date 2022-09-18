@@ -1,12 +1,12 @@
 declare global {
-  export type Entry = {
+  export type ChangelogEntry = {
     uuid: string
     position: number
     type: string
     content: string
   }
 
-  export type EntryTypesMapping = {
+  export type ChangelogEntryMapping = {
     [t: string]: {
       label: string
       status: string

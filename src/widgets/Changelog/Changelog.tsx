@@ -56,7 +56,7 @@ function Widget() {
 
   const [entries, setEntries] = useSyncedState(
     'entries',
-    new Array<Entry>({
+    new Array<ChangelogEntry>({
       uuid: uuid(),
       position: 0,
       type: Object.keys(EntryTypes)[0],
@@ -120,7 +120,7 @@ function Widget() {
         propertyName: 'entryType',
         options: Object.keys(EntryTypes).map((s) => ({
           option: s,
-          label: EntryTypes[s as keyof EntryTypesMapping].label
+          label: EntryTypes[s as keyof ChangelogEntryMapping].label
         })),
         selectedOption: entryType
       },
@@ -206,7 +206,7 @@ function Widget() {
     })
   }
 
-  const sortEntry = (entry: Entry, direction: string) => {
+  const sortEntry = (entry: ChangelogEntry, direction: string) => {
     const currIndex = entries.findIndex((e) => e.uuid === entry.uuid)
     const toPosition = direction === 'up' ? currIndex - 1 : currIndex + 1
 
@@ -218,11 +218,11 @@ function Widget() {
     setEntries(array.map((entry, i) => ({ ...entry, position: i })))
   }
 
-  const removeEntry = (entry: Entry) => {
+  const removeEntry = (entry: ChangelogEntry) => {
     setEntries([...entries.filter((e) => e.uuid !== entry.uuid)].map((entry, i) => ({ ...entry, position: i })))
   }
 
-  const editEntry = (entry: Entry, content: string) => {
+  const editEntry = (entry: ChangelogEntry, content: string) => {
     setEntries([
       ...entries.filter((e) => e.uuid !== entry.uuid),
       {
@@ -232,7 +232,7 @@ function Widget() {
     ])
   }
 
-  const editEntryType = (entry: Entry, type: string) => {
+  const editEntryType = (entry: ChangelogEntry, type: string) => {
     const keys = Object.keys(EntryTypes)
     let newKey = keys.indexOf(type) + 1
 

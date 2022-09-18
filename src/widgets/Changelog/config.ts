@@ -1,4 +1,4 @@
-export const EntryTypes: EntryTypesMapping = {
+export const EntryTypes: ChangelogEntryMapping = {
   added: {
     label: 'Added',
     status: 'success'
