@@ -30,6 +30,7 @@ const {
 import { EntryTypes } from './config'
 
 /* Components */
+import Header from 'src/patterns/Header'
 import ItemTag from 'src/patterns/ItemTag'
 import Item from 'src/components/Item'
 import { glyphs } from 'src/components/Icon'
@@ -263,31 +264,15 @@ function Widget() {
       width={800}
       effect={tokens.themes[data.colorTheme].shadow.container}
     >
-      <AutoLayout
-        name="Widget__header"
-        verticalAlignItems="center"
-        direction="vertical"
-        spacing={8}
-        padding={tokens.themes[data.colorTheme].layout.container}
-        width="fill-parent"
-      >
-        <AutoLayout
-          name="Widget__row"
-          verticalAlignItems="center"
-          direction="horizontal"
-          spacing={24}
-          padding={0}
-          width="fill-parent"
-        >
-          <InputGhost
-            theme={data.colorTheme}
-            variant={{ typo: 'h4', txt: 'primary' }}
-            content={data.title}
-            placeholder="Title"
-            disabled={!data.isEditingVisible}
-            onEditEnd={(e: TextEditEvent) => editData('title', e.characters)}
-          />
-
+      <Header
+        theme={data.colorTheme}
+        title={data.title}
+        isDescriptionVisible={data.isDescriptionVisible}
+        description={data.description}
+        disabled={!data.isEditingVisible}
+        onTitleEditEnd={(e: TextEditEvent) => editData('title', e.characters)}
+        onDescriptionEditEnd={(e: TextEditEvent) => editData('description', e.characters)}
+        suffix={
           <InputGhost
             theme={data.colorTheme}
             variant={{ typo: 'p5', txt: 'secondary' }}
@@ -297,19 +282,8 @@ function Widget() {
             onEditEnd={(e: TextEditEvent) => editData('date', e.characters)}
             style={{ width: 200, textAlign: 'right' }}
           />
-        </AutoLayout>
-        {data.isDescriptionVisible && (
-          <InputGhost
-            theme={data.colorTheme}
-            variant={{ typo: 'p5', txt: 'secondary' }}
-            type={'multiline'}
-            content={data.description}
-            placeholder="Add any description..."
-            disabled={!data.isEditingVisible}
-            onEditEnd={(e: TextEditEvent) => editData('description', e.characters)}
-          />
-        )}
-      </AutoLayout>
+        }
+      />
       <Divider theme={data.colorTheme} />
       <AutoLayout
         name="Widget__list"
