@@ -15,10 +15,7 @@ function ItemTag(props: IItemTagProps) {
       direction="horizontal"
       height="hug-contents"
       width="fill-parent"
-      padding={{
-        top: 2,
-        bottom: 4
-      }}
+      padding={0}
     >
       <AutoLayout
         name="ItemTag__tag"

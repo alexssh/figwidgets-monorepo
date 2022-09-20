@@ -14,10 +14,7 @@ function ItemTitle(props: IItemTitleProps) {
       direction="horizontal"
       height="hug-contents"
       width="fill-parent"
-      padding={{
-        top: 4,
-        bottom: 2
-      }}
+      padding={0}
     >
       <InputGhost
         theme={props.theme}

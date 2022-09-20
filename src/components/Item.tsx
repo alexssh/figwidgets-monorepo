@@ -1,6 +1,6 @@
 /* Core */
 const { widget } = figma
-const { AutoLayout } = widget
+const { AutoLayout, Frame } = widget
 
 /* Components */
 import ButtonGhost from 'src/components/ButtonGhost'
@@ -23,9 +23,16 @@ function Item(props: IItemProps) {
       padding={props.padding ? props.padding : tokens.themes[props.theme].layout.item}
       width="fill-parent"
     >
-      <AutoLayout name="Item__content" direction="horizontal" height="hug-contents" width="fill-parent">
+      <AutoLayout
+        name="Item__content"
+        direction="horizontal"
+        verticalAlignItems="center"
+        height="fill-parent"
+        width="fill-parent"
+      >
         {props.children}
       </AutoLayout>
+      <Frame height={32} width={1} />
       {isActionsVisible && (
         <AutoLayout
           name="Item__actions"
@@ -34,7 +41,7 @@ function Item(props: IItemProps) {
           width="hug-contents"
           spacing={0}
           padding={{
-            left: 24
+            left: 23
           }}
         >
           {props.positionUp !== undefined && (

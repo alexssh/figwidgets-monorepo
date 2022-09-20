@@ -15,10 +15,7 @@ function ItemCheckbox(props: IItemCheckboxProps) {
       direction="horizontal"
       height="hug-contents"
       width="fill-parent"
-      padding={{
-        top: 4,
-        bottom: 4
-      }}
+      padding={0}
     >
       <AutoLayout
         name="ItemCheckbox__tag"
