@@ -20,7 +20,7 @@ function Item(props: IItemProps) {
       name="Item"
       direction="horizontal"
       spacing={0}
-      padding={tokens.themes[props.theme].layout.item}
+      padding={props.padding ? props.padding : tokens.themes[props.theme].layout.item}
       width="fill-parent"
     >
       <AutoLayout name="Item__content" direction="horizontal" height="hug-contents" width="fill-parent">

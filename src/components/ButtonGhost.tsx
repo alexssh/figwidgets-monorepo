@@ -15,16 +15,16 @@ function ButtonGhost(props: IButtonGhostProps) {
     <AutoLayout
       name="ButtonGhost"
       direction="horizontal"
-      height={tokens.themes[props.theme].button.ghost.regular.size.h}
-      width={!props.content ? tokens.themes[props.theme].button.ghost.regular.size.w : 'hug-contents'}
+      height={32}
+      width={!props.content ? 32 : 'hug-contents'}
       spacing={8}
       padding={{
         left: props.content && props.glyph ? 12 : props.content ? 16 : 0,
         right: props.content && props.glyph ? 16 : props.content ? 16 : 0
       }}
       onClick={props.onClick}
-      cornerRadius={tokens.themes[props.theme].button.ghost.regular.cornerRadius}
-      hoverStyle={!props.disabled ? tokens.themes[props.theme].button.ghost.hover : undefined}
+      cornerRadius={tokens.themes[props.theme].controls.ghost.default.cornerRadius as WidgetJSX.CornerRadius}
+      hoverStyle={!props.disabled ? tokens.themes[props.theme].controls.ghost.hover : undefined}
       horizontalAlignItems={'center'}
       verticalAlignItems={'center'}
     >

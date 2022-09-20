@@ -77,7 +77,8 @@ const tokens: Tokens = {
       txt: {
         primary: {
           default: { color: COLOR_BLACK },
-          inverted: { color: COLOR_WHITE }
+          inverted: { color: COLOR_WHITE },
+          except: { color: COLOR_WHITE }
         },
         secondary: {
           default: { color: COLOR_GREY_500 }
@@ -113,15 +114,43 @@ const tokens: Tokens = {
         container: { cornerRadius: 8 },
         tag: { cornerRadius: 4 }
       },
-      button: {
+      controls: {
         ghost: {
-          regular: { size: { h: 32, w: 32 }, fill: { r: 0, g: 0, b: 0, a: 0 }, cornerRadius: 4 },
-          hover: { size: { h: 32, w: 32 }, fill: COLOR_GREY_100, cornerRadius: 4 },
-          disabled: { size: { h: 32, w: 32 }, fill: { r: 0, g: 0, b: 0, a: 0 }, cornerRadius: 4 }
+          default: { fill: { r: 0, g: 0, b: 0, a: 0 }, cornerRadius: 4 },
+          hover: { fill: COLOR_GREY_100, cornerRadius: 4 },
+          disabled: { fill: { r: 0, g: 0, b: 0, a: 0 }, cornerRadius: 4 }
+        },
+        checkbox: {
+          default: {
+            fill: COLOR_WHITE,
+            border: { stroke: COLOR_GREY_500, strokeWidth: 1, strokeAlign: 'inside' },
+            cornerRadius: 4
+          },
+          active: {
+            fill: COLOR_BLUE_600,
+            border: { stroke: COLOR_BLUE_600, strokeWidth: 1, strokeAlign: 'inside' },
+            cornerRadius: 4
+          },
+          defaultDisabled: {
+            fill: COLOR_WHITE,
+            border: { stroke: COLOR_GREY_300, strokeWidth: 1, strokeAlign: 'inside' },
+            cornerRadius: 4
+          },
+          activeDisabled: {
+            fill: COLOR_GREY_300,
+            border: { stroke: COLOR_GREY_300, strokeWidth: 1, strokeAlign: 'inside' },
+            cornerRadius: 4
+          },
+          hover: {
+            border: { stroke: COLOR_BLACK, strokeWidth: 1, strokeAlign: 'inside' },
+            cornerRadius: 4
+          }
         }
       },
       layer: {
-        default: { fill: COLOR_WHITE }
+        default: { fill: COLOR_WHITE },
+        active: { fill: COLOR_BLUE_600 },
+        disabled: { fill: COLOR_GREY_300 }
       },
       layout: {
         container: {
@@ -184,7 +213,8 @@ const tokens: Tokens = {
       txt: {
         primary: {
           default: { color: COLOR_WHITE },
-          inverted: { color: COLOR_BLACK }
+          inverted: { color: COLOR_BLACK },
+          except: { color: COLOR_WHITE }
         },
         secondary: {
           default: { color: COLOR_GREY_400 }
@@ -220,15 +250,43 @@ const tokens: Tokens = {
         container: { cornerRadius: 8 },
         tag: { cornerRadius: 4 }
       },
-      button: {
+      controls: {
         ghost: {
-          regular: { size: { h: 32, w: 32 }, fill: { r: 0, g: 0, b: 0, a: 0 }, cornerRadius: 4 },
-          hover: { size: { h: 32, w: 32 }, fill: COLOR_GREY_800, cornerRadius: 4 },
-          disabled: { size: { h: 32, w: 32 }, fill: { r: 0, g: 0, b: 0, a: 0 }, cornerRadius: 4 }
+          default: { fill: { r: 0, g: 0, b: 0, a: 0 }, cornerRadius: 4 },
+          hover: { fill: COLOR_GREY_800, cornerRadius: 4 },
+          disabled: { fill: { r: 0, g: 0, b: 0, a: 0 }, cornerRadius: 4 }
+        },
+        checkbox: {
+          default: {
+            fill: COLOR_GREY_900,
+            border: { stroke: COLOR_GREY_400, strokeWidth: 1, strokeAlign: 'inside' },
+            cornerRadius: 4
+          },
+          active: {
+            fill: COLOR_BLUE_600,
+            border: { stroke: COLOR_BLUE_600, strokeWidth: 1, strokeAlign: 'inside' },
+            cornerRadius: 4
+          },
+          defaultDisabled: {
+            fill: COLOR_GREY_900,
+            border: { stroke: COLOR_GREY_700, strokeWidth: 1, strokeAlign: 'inside' },
+            cornerRadius: 4
+          },
+          activeDisabled: {
+            fill: COLOR_GREY_700,
+            border: { stroke: COLOR_GREY_700, strokeWidth: 1, strokeAlign: 'inside' },
+            cornerRadius: 4
+          },
+          hover: {
+            border: { stroke: COLOR_WHITE, strokeWidth: 1, strokeAlign: 'inside' },
+            cornerRadius: 4
+          }
         }
       },
       layer: {
-        default: { fill: COLOR_GREY_900 }
+        default: { fill: COLOR_GREY_900 },
+        active: { fill: COLOR_BLUE_600 },
+        disabled: { fill: COLOR_GREY_700 }
       },
       layout: {
         container: {

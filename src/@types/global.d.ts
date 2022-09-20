@@ -22,9 +22,12 @@ declare global {
         radius: {
           [t: string]: TokenRadius
         }
-        button: {
-          [t: string]: {
-            [t: string]: TokenSize & TokenBackground & TokenRadius
+        controls: {
+          ghost: {
+            [t: string]: TokenBackground & TokenRadius & Partial<TokenBorder>
+          }
+          checkbox: {
+            [t: string]: Partial<TokenBackground> & TokenRadius & Partial<TokenBorder>
           }
         }
         layer: {
@@ -41,13 +44,6 @@ declare global {
           }
         }
       }
-    }
-  }
-
-  type TokenSize = {
-    size: {
-      h: number
-      w: number
     }
   }
 
