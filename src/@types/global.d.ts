@@ -23,6 +23,9 @@ declare global {
           [t: string]: TokenRadius
         }
         controls: {
+          size: {
+            [t: number]: TokenSize
+          }
           ghost: {
             [t: string]: TokenBackground & TokenRadius & Partial<TokenBorder>
           }
@@ -46,6 +49,8 @@ declare global {
       }
     }
   }
+
+  type TokenSize = number
 
   type TokenTxt = {
     color: HexCode | RGBA

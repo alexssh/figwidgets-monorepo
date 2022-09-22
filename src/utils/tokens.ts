@@ -115,6 +115,11 @@ const tokens: Tokens = {
         tag: { cornerRadius: 4 }
       },
       controls: {
+        size: {
+          200: 24,
+          400: 32,
+          600: 40
+        },
         ghost: {
           default: { fill: { r: 0, g: 0, b: 0, a: 0 }, cornerRadius: 4 },
           hover: { fill: COLOR_GREY_100, cornerRadius: 4 },
@@ -251,6 +256,11 @@ const tokens: Tokens = {
         tag: { cornerRadius: 4 }
       },
       controls: {
+        size: {
+          200: 24,
+          400: 32,
+          600: 40
+        },
         ghost: {
           default: { fill: { r: 0, g: 0, b: 0, a: 0 }, cornerRadius: 4 },
           hover: { fill: COLOR_GREY_800, cornerRadius: 4 },
