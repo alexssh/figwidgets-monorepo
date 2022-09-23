@@ -15,8 +15,8 @@ function Checkbox(props: ICheckboxProps) {
     <AutoLayout
       name="Checkbox"
       direction="horizontal"
-      height={24}
-      width={24}
+      height={tokens.themes[props.theme].controls.size[props.size ?? 200]}
+      width={tokens.themes[props.theme].controls.size[props.size ?? 200]}
       spacing={0}
       padding={0}
       onClick={props.onClick}

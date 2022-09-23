@@ -15,14 +15,14 @@ function ButtonGhost(props: IButtonGhostProps) {
     <AutoLayout
       name="ButtonGhost"
       direction="horizontal"
-      height={32}
-      width={!props.content ? 32 : 'hug-contents'}
+      height={tokens.themes[props.theme].controls.size[props.size ?? 400]}
+      width={!props.content ? tokens.themes[props.theme].controls.size[props.size ?? 400] : 'hug-contents'}
       spacing={8}
       padding={{
         left: props.content && props.glyph ? 12 : props.content ? 16 : 0,
         right: props.content && props.glyph ? 16 : props.content ? 16 : 0
       }}
-      onClick={props.onClick}
+      onClick={!props.disabled ? props.onClick : () => {}}
       cornerRadius={tokens.themes[props.theme].controls.ghost.default.cornerRadius as WidgetJSX.CornerRadius}
       hoverStyle={!props.disabled ? tokens.themes[props.theme].controls.ghost.hover : undefined}
       horizontalAlignItems={'center'}
@@ -33,9 +33,9 @@ function ButtonGhost(props: IButtonGhostProps) {
           <Icon
             glyph={props.glyph as string}
             color={
-              !props.disabled
-                ? tokens.themes[props.theme].txt.primary.default.color
-                : tokens.themes[props.theme].txt.minor.default.color
+              props.disabled
+                ? tokens.themes[props.theme].txt.minor.default.color
+                : tokens.themes[props.theme].txt[props.variant ? props.variant : 'primary'].default.color
             }
           />
         </Frame>
@@ -44,9 +44,9 @@ function ButtonGhost(props: IButtonGhostProps) {
         <Text
           {...tokens.themes[props.theme].typo.p6}
           fill={
-            !props.disabled
-              ? tokens.themes[props.theme].txt.primary.default.color
-              : tokens.themes[props.theme].txt.minor.default.color
+            props.disabled
+              ? tokens.themes[props.theme].txt.minor.default.color
+              : tokens.themes[props.theme].txt[props.variant ? props.variant : 'primary'].default.color
           }
         >
           {props.content}

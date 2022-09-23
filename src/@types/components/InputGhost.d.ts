@@ -11,8 +11,7 @@ declare global {
     disabled?: boolean
     onEditEnd: (e: TextEditEvent) => void
     style?: {
-      width?: number
-      textAlign?: 'left' | 'right' | 'center' | 'justified'
+      [p: string]: any
     }
   }
 }
