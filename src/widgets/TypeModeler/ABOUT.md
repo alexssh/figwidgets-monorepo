@@ -19,7 +19,7 @@ Like it? Found bugs? Feature request? Please leave a comment below!
 
 ## Tags
 
-diagram, entity, modeler, type, interface, class, database, erd, content, development, components, documentation, tools, design system
+diagram, entity, modeler, type, class, database, erd, content, development, components, documentation, tools
 
 ## Changelog
 
