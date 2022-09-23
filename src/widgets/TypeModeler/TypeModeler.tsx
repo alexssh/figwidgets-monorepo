@@ -144,6 +144,8 @@ function Widget() {
     // Compatibility with previous versions
   })
 
+  console.log(data.isEditingVisible)
+
   usePropertyMenu(
     [
       {
@@ -179,28 +181,33 @@ function Widget() {
             : tokens.themes.light.txt.minor.default.color) as string
         )
       },
-      {
-        itemType: 'separator'
-      },
-      {
-        itemType: 'dropdown',
-        tooltip: 'Type of new entry',
-        propertyName: 'entryType',
-        options: Object.keys(EntryPresets).map(
-          (s) =>
-            ({
-              option: s,
-              label: EntryPresets[s as keyof ChangelogEntryMapping].label
-            } as WidgetPropertyMenuDropdownOption)
-        ),
-        selectedOption: entryType
-      },
-      {
-        itemType: 'action',
-        tooltip: 'Add entry',
-        propertyName: 'addEntry',
-        icon: glyphs.plus(tokens.themes.light.txt.minor.default.color as string)
-      }
+
+      ...(data.isEditingVisible
+        ? ([
+            {
+              itemType: 'separator'
+            },
+            {
+              itemType: 'dropdown',
+              tooltip: 'Type of new entry',
+              propertyName: 'entryType',
+              options: Object.keys(EntryPresets).map(
+                (s) =>
+                  ({
+                    option: s,
+                    label: EntryPresets[s as keyof ChangelogEntryMapping].label
+                  } as WidgetPropertyMenuDropdownOption)
+              ),
+              selectedOption: entryType
+            },
+            {
+              itemType: 'action',
+              tooltip: 'Add entry',
+              propertyName: 'addEntry',
+              icon: glyphs.plus(tokens.themes.light.txt.minor.default.color as string)
+            }
+          ] as WidgetPropertyMenuItem[])
+        : [])
     ],
     ({ propertyName, propertyValue }) => {
       if (propertyName === 'isDescriptionVisible') {
