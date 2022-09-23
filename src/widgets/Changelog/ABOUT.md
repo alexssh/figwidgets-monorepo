@@ -23,6 +23,9 @@ changelog, components, cover, development, library, management, design system, n
 
 ## Changelog
 
+- 1.2.1
+    - Bug fixes
+
 - 1.2.0
     - Ability to enable/disable editing (new property menu item)
 

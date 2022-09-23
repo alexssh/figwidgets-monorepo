@@ -112,25 +112,29 @@ function Widget() {
             : tokens.themes.light.txt.minor.default.color) as string
         )
       },
-      {
-        itemType: 'separator'
-      },
-      {
-        itemType: 'dropdown',
-        tooltip: 'Type of new entry',
-        propertyName: 'entryType',
-        options: Object.keys(EntryTypes).map((s) => ({
-          option: s,
-          label: EntryTypes[s as keyof ChangelogEntryMapping].label
-        })),
-        selectedOption: entryType
-      },
-      {
-        itemType: 'action',
-        tooltip: 'Add entry',
-        propertyName: 'addEntry',
-        icon: glyphs.plus(tokens.themes.light.txt.minor.default.color as string)
-      }
+      ...(data.isEditingVisible
+        ? ([
+            {
+              itemType: 'separator'
+            },
+            {
+              itemType: 'dropdown',
+              tooltip: 'Type of new entry',
+              propertyName: 'entryType',
+              options: Object.keys(EntryTypes).map((s) => ({
+                option: s,
+                label: EntryTypes[s as keyof ChangelogEntryMapping].label
+              })),
+              selectedOption: entryType
+            },
+            {
+              itemType: 'action',
+              tooltip: 'Add entry',
+              propertyName: 'addEntry',
+              icon: glyphs.plus(tokens.themes.light.txt.minor.default.color as string)
+            }
+          ] as WidgetPropertyMenuItem[])
+        : [])
     ],
     ({ propertyName, propertyValue }) => {
       if (propertyName === 'isDescriptionVisible') {
