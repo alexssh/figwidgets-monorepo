@@ -7,9 +7,19 @@ Figma + FigJam widget to track any changes in your stuff.
 - Accidental editing protection
 - Darkmode support
 
+## What this widget is good for: 
+
+- Design and components system updates
+- Project and progress tracking
+- Development changelogs
+
 ## Feedback
 
 Like it? Found bugs? Feature request? Please leave a comment below!
+
+## Tags
+
+changelog, components, cover, development, library, management, design system, notes, tools, updates
 
 ## Changelog
 
