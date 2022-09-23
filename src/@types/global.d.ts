@@ -80,6 +80,18 @@ declare global {
     offset: Vector
     blur: number
   }
+
+  /* --- */
+
+  export type TableCell = {
+    title?: string
+    content?: string
+    width?: 'fill-parent' | number
+    visibility?: boolean
+    style?: {
+      [p: string]: any
+    }
+  }
 }
 
 export {}
