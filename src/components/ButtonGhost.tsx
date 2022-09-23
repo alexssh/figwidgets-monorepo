@@ -22,7 +22,7 @@ function ButtonGhost(props: IButtonGhostProps) {
         left: props.content && props.glyph ? 12 : props.content ? 16 : 0,
         right: props.content && props.glyph ? 16 : props.content ? 16 : 0
       }}
-      onClick={props.onClick}
+      onClick={!props.disabled ? props.onClick : () => {}}
       cornerRadius={tokens.themes[props.theme].controls.ghost.default.cornerRadius as WidgetJSX.CornerRadius}
       hoverStyle={!props.disabled ? tokens.themes[props.theme].controls.ghost.hover : undefined}
       horizontalAlignItems={'center'}

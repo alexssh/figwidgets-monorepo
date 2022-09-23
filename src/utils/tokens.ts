@@ -88,6 +88,10 @@ const tokens: Tokens = {
         },
         link: {
           default: { color: COLOR_BLUE_600 }
+        },
+        status: {
+          success: { color: COLOR_GREEN_600 },
+          error: { color: COLOR_RED_600 }
         }
       },
       border: {
@@ -229,6 +233,10 @@ const tokens: Tokens = {
         },
         link: {
           default: { color: COLOR_BLUE_600 }
+        },
+        status: {
+          success: { color: COLOR_GREEN_600 },
+          error: { color: COLOR_RED_600 }
         }
       },
       border: {

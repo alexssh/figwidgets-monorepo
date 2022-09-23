@@ -28,6 +28,7 @@ function InputGhost(props: IInputGhostProps) {
             fill: tokens.themes[props.theme].txt.link.default.color
           }}
           {...tokens.themes[props.theme].typo[props.variant.typo]}
+          {...props?.style}
         />
       )}
       {props.disabled && (
@@ -36,6 +37,7 @@ function InputGhost(props: IInputGhostProps) {
           fill={tokens.themes[props.theme].txt[props.variant.txt].default.color}
           width={props?.style?.width ?? 'fill-parent'}
           horizontalAlignText={props?.style?.textAlign ?? 'left'}
+          {...props?.style}
         >
           {props.content}
         </Text>
