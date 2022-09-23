@@ -10,7 +10,7 @@ Figma + FigJam widget to create checklist for any occasion.
 ## What this widget is good for: 
 
 - Todo lists
-- Checkslist and plans
+- Checklists and plans
 - Progress and project trackers 
 
 ## Feedback
@@ -22,6 +22,9 @@ Like it? Found bugs? Feature request? Please leave a comment below!
 checkbox, checklist, design, handoff, notes, plan, progress tracker, projects, tasks, todo, tools, documentation
 
 ## Changelog
+
+- 1.0.1
+    - Bug fixes
 
 - 1.0.0 
     - Initial release
