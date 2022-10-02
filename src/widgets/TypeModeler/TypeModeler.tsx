@@ -27,21 +27,21 @@ const {
   waitForTask
 } = widget
 
-import { EntryPresets } from './config'
+import { meta, EntryPresets } from './config'
 
 /* Components */
 import Header from 'src/patterns/Header'
+import Footer from 'src/patterns/Footer'
 import ItemTableHeader from 'src/patterns/ItemTableHeader'
 import ItemTableRow from 'src/patterns/ItemTableRow'
 import Item from 'src/components/Item'
 import { glyphs } from 'src/components/Icon'
-import InputGhost from 'src/components/InputGhost'
+import ButtonGhost from 'src/components/ButtonGhost'
 import Divider from 'src/components/Divider'
 
 /* Utils */
 import tokens from 'src/utils/tokens'
 import uuid from 'src/utils/uuid'
-import { EntryTypes } from 'src/widgets/Changelog/config'
 
 /* --- */
 
@@ -144,20 +144,17 @@ function Widget() {
     // Compatibility with previous versions
   })
 
-  console.log(data.isEditingVisible)
-
   usePropertyMenu(
     [
       {
-        itemType: 'toggle',
-        tooltip: 'Show/hide description',
-        propertyName: 'isDescriptionVisible',
-        isToggled: !data.isDescriptionVisible,
-        icon: glyphs.descriptionNo(
-          (data.isDescriptionVisible
-            ? tokens.themes.light.txt.minor.default.color
-            : tokens.themes.light.txt.primary.inverted.color) as string
-        )
+        itemType: 'link',
+        tooltip: 'Help & documentation',
+        propertyName: 'help',
+        href: `${meta.website}?utm_superlink=widget_${meta.name}_propertyMenu_${meta.version}`,
+        icon: glyphs.info(tokens.themes.light.txt.minor.default.color as string)
+      },
+      {
+        itemType: 'separator'
       },
       {
         itemType: 'toggle',
@@ -170,20 +167,22 @@ function Widget() {
             : tokens.themes.light.txt.primary.inverted.color) as string
         )
       },
-      {
-        itemType: 'toggle',
-        tooltip: 'Switch color theme',
-        propertyName: 'colorTheme',
-        isToggled: data.colorTheme === 'dark',
-        icon: glyphs.darkmode(
-          (data.colorTheme === 'dark'
-            ? tokens.themes.light.txt.primary.inverted.color
-            : tokens.themes.light.txt.minor.default.color) as string
-        )
-      },
-
       ...(data.isEditingVisible
         ? ([
+            {
+              itemType: 'separator'
+            },
+            {
+              itemType: 'toggle',
+              tooltip: 'Switch color theme',
+              propertyName: 'colorTheme',
+              isToggled: data.colorTheme === 'dark',
+              icon: glyphs.darkmode(
+                (data.colorTheme === 'dark'
+                  ? tokens.themes.light.txt.primary.inverted.color
+                  : tokens.themes.light.txt.minor.default.color) as string
+              )
+            },
             {
               itemType: 'separator'
             },
@@ -356,7 +355,11 @@ function Widget() {
       <Header
         theme={data.colorTheme}
         title={data.title}
-        isDescriptionVisible={data.isDescriptionVisible}
+        isDescriptionVisible={
+          data.isEditingVisible
+            ? data.isDescriptionVisible
+            : data.isDescriptionVisible && Boolean(data.description.length)
+        }
         description={data.description}
         disabled={!data.isEditingVisible}
         onTitleEditEnd={(e: TextEditEvent) => editData('title', e.characters)}
@@ -414,6 +417,45 @@ function Widget() {
             </Item>
           ))}
       </AutoLayout>
+
+      {data.isEditingVisible && (
+        <Fragment>
+          <Divider theme={data.colorTheme} />
+          <Footer theme={data.colorTheme}>
+            {entries.length > 0 && (
+              <Text
+                key={'Footer__content'}
+                {...tokens.themes[data.colorTheme].typo.p6}
+                fill={tokens.themes[data.colorTheme].txt.secondary.default.color}
+                width="fill-parent"
+                horizontalAlignText="left"
+                height={32}
+                verticalAlignText="center"
+              >
+                {entries.length > 1 ? `${entries.length} properties` : `${entries.length} property`}
+              </Text>
+            )}
+            <Fragment key={'Footer__actions'}>
+              <ButtonGhost
+                key="Footer__action_showDescription"
+                theme={data.colorTheme}
+                variant="secondary"
+                glyph={data.isDescriptionVisible ? 'visible' : 'hidden'}
+                content="Description"
+                onClick={() => switchDescriptionVisibility()}
+              />
+              <ButtonGhost
+                key="Footer__action_addProperty"
+                theme={data.colorTheme}
+                variant="primary"
+                glyph="plus"
+                content="Add property"
+                onClick={() => addEntry('custom')}
+              />
+            </Fragment>
+          </Footer>
+        </Fragment>
+      )}
     </AutoLayout>
   )
 }
