@@ -1,7 +1,7 @@
 export const meta = {
   name: 'checklist',
   version: '1.1.0',
-  website: 'http://offframes.com/help/figma-widget/checklist'
+  website: 'https://offframes.com/help/figma-widget/checklist'
 }
 
 export const EntryTypes: ChecklistEntryMapping = {
