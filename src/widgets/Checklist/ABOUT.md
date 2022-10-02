@@ -5,7 +5,7 @@ Figma + FigJam widget to create a checklist for any occasion.
 - Manual sorting of tasks and sections
 - Customise the appearance: hide or show description, meta information or completed tasks
 - Separate edit locking of the task list or checkboxes
-- Darkmode support
+- Dark mode support
 
 ## What this widget is good for: 
 
