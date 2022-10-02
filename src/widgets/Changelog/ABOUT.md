@@ -4,8 +4,8 @@ Figma + FigJam widget to track any changes in your stuff.
 
 - 8 types of entries
 - Manual sorting
-- Accidental editing protection
-- Darkmode support
+- Editing protection
+- Dark mode support
 
 ## What this widget is good for: 
 
@@ -15,13 +15,19 @@ Figma + FigJam widget to track any changes in your stuff.
 
 ## Feedback
 
-Like it? Found bugs? Feature request? Please leave a comment below!
+Like it? Found bugs? Feature request? Please leave a comment below or check out the support link!
 
 ## Tags
 
 changelog, components, cover, development, library, management, design system, notes, tools, updates
 
 ## Changelog
+
+- 1.2.3
+    - Hiding description and date in Header when editing is disabled + the fields are empty 
+    - Reordering PropertyMenu items
+    - Help item in PropertyMenu + meta config
+    - New views actions: show/hide description, add new entry
 
 - 1.2.1
     - Bug fixes

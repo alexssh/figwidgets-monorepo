@@ -1,3 +1,9 @@
+export const meta = {
+  name: 'advancedChangelog',
+  version: '1.2.3',
+  website: 'https://offframes.com/help/figma-widget/advanced-changelog'
+}
+
 export const EntryTypes: ChangelogEntryMapping = {
   added: {
     label: 'Added',
