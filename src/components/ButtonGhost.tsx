@@ -17,7 +17,7 @@ function ButtonGhost(props: IButtonGhostProps) {
       direction="horizontal"
       height={tokens.themes[props.theme].controls.size[props.size ?? 400]}
       width={!props.content ? tokens.themes[props.theme].controls.size[props.size ?? 400] : 'hug-contents'}
-      spacing={8}
+      spacing={4}
       padding={{
         left: props.content && props.glyph ? 12 : props.content ? 16 : 0,
         right: props.content && props.glyph ? 16 : props.content ? 16 : 0

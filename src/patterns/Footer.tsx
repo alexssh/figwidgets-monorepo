@@ -11,10 +11,16 @@ function Footer(props: IFooterProps) {
   return (
     <AutoLayout
       name="Footer"
-      direction="vertical"
+      direction="horizontal"
+      horizontalAlignItems="end"
       width={'fill-parent'}
       spacing={0}
-      padding={tokens.themes[props.theme].layout.container}
+      padding={{
+        vertical: 16,
+        left: tokens.themes[props.theme].layout.container.horizontal,
+        right: tokens.themes[props.theme].layout.container.horizontal - 16
+      }}
+      verticalAlignItems="center"
     >
       {props.children}
     </AutoLayout>
