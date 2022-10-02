@@ -1,6 +1,6 @@
 # Checklist
 
-Figma + FigJam widget to create checklist for any occasion.
+Figma + FigJam widget to create a checklist for any occasion.
 
 - Manual sorting of tasks and sections
 - Customise the appearance: hide or show description, meta information or completed tasks
