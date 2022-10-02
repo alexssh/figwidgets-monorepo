@@ -4,6 +4,7 @@ declare global {
     theme: string
     value: boolean
     contentBody: string
+    contentMeta?: string
     placeholderBody: string
     disabled?: boolean
     disabledCheckbox?: boolean

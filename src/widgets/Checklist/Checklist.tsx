@@ -27,15 +27,15 @@ const {
   waitForTask
 } = widget
 
-import { EntryTypes } from './config'
+import { meta, EntryTypes, EntryActions } from './config'
 
 /* Components */
 import Header from 'src/patterns/Header'
 import ItemCheckbox from 'src/patterns/ItemCheckbox'
 import ItemTitle from 'src/patterns/ItemTitle'
+import ButtonGhost from 'src/components/ButtonGhost'
 import Item from 'src/components/Item'
 import { glyphs } from 'src/components/Icon'
-import InputGhost from 'src/components/InputGhost'
 import Divider from 'src/components/Divider'
 import Footer from 'src/patterns/Footer'
 
@@ -48,11 +48,13 @@ import uuid from 'src/utils/uuid'
 function Widget() {
   const [data, setData] = useSyncedState('data', {
     title: 'My checklist',
+    description: '',
+    colorTheme: 'light',
     isDescriptionVisible: true,
     isEditingVisible: true,
     isChecksAllowed: true,
-    description: '',
-    colorTheme: 'light'
+    isCompletedVisible: true,
+    isActorsVisible: false
   })
 
   const [entryType, setEntryType] = useSyncedState('entryType', Object.keys(EntryTypes)[0])
@@ -71,27 +73,36 @@ function Widget() {
         position: 1,
         type: Object.keys(EntryTypes)[0],
         value: false,
-        content: ''
+        content: '',
+        actor: 'Anonymous',
+        timestamp: new Date().toLocaleString('en-US'),
+        action: 'created'
       }
     )
   )
 
   useEffect(() => {
     // Compatibility with previous versions
+    if (data.isCompletedVisible === undefined || data.isActorsVisible === undefined) {
+      setData({
+        ...data,
+        ...(data.isCompletedVisible === undefined ? { isCompletedVisible: true } : {}),
+        ...(data.isActorsVisible === undefined ? { isActorsVisible: false } : {})
+      })
+    }
   })
 
   usePropertyMenu(
     [
       {
-        itemType: 'toggle',
-        tooltip: 'Show/hide description',
-        propertyName: 'isDescriptionVisible',
-        isToggled: !data.isDescriptionVisible,
-        icon: glyphs.descriptionNo(
-          (data.isDescriptionVisible
-            ? tokens.themes.light.txt.minor.default.color
-            : tokens.themes.light.txt.primary.inverted.color) as string
-        )
+        itemType: 'link',
+        tooltip: 'Help & Documentation',
+        propertyName: 'help',
+        href: `${meta.website}?utm_superlink=widget_${meta.name}_propertyMenu_${meta.version}`,
+        icon: glyphs.info(tokens.themes.light.txt.minor.default.color as string)
+      },
+      {
+        itemType: 'separator'
       },
       {
         itemType: 'toggle',
@@ -115,19 +126,22 @@ function Widget() {
             : tokens.themes.light.txt.primary.inverted.color) as string
         )
       },
-      {
-        itemType: 'toggle',
-        tooltip: 'Switch color theme',
-        propertyName: 'colorTheme',
-        isToggled: data.colorTheme === 'dark',
-        icon: glyphs.darkmode(
-          (data.colorTheme === 'dark'
-            ? tokens.themes.light.txt.primary.inverted.color
-            : tokens.themes.light.txt.minor.default.color) as string
-        )
-      },
       ...(data.isEditingVisible
         ? ([
+            {
+              itemType: 'separator'
+            },
+            {
+              itemType: 'toggle',
+              tooltip: 'Switch color theme',
+              propertyName: 'colorTheme',
+              isToggled: data.colorTheme === 'dark',
+              icon: glyphs.darkmode(
+                (data.colorTheme === 'dark'
+                  ? tokens.themes.light.txt.primary.inverted.color
+                  : tokens.themes.light.txt.minor.default.color) as string
+              )
+            },
             {
               itemType: 'separator'
             },
@@ -207,6 +221,20 @@ function Widget() {
     })
   }
 
+  const switchCompletedVisibility = () => {
+    setData({
+      ...data,
+      isCompletedVisible: !data.isCompletedVisible
+    })
+  }
+
+  const switchActorsVisibility = () => {
+    setData({
+      ...data,
+      isActorsVisible: !data.isActorsVisible
+    })
+  }
+
   /* Entries */
 
   const addEntry = (type: string) => {
@@ -217,23 +245,17 @@ function Widget() {
         ...entries,
         {
           uuid: id,
-          position: entries[entries.length - 1].position + 1,
+          position: entries.length === 0 ? 0 : entries[entries.length - 1].position + 1,
           type,
-          content: ''
+          content: '',
+          actor: figma.currentUser?.name ?? 'Anonymous',
+          timestamp: new Date().toLocaleString('en-US'),
+          action: 'created'
         }
       ])
     } else {
       addEntry(type)
     }
-  }
-
-  /* Data */
-
-  const editData = (key: string, content: string) => {
-    setData({
-      ...data,
-      [key]: content
-    })
   }
 
   const sortEntry = (entry: ChecklistCheckboxEntry | ChecklistTitleEntry, direction: string) => {
@@ -257,7 +279,10 @@ function Widget() {
       ...entries.filter((e) => e.uuid !== entry.uuid),
       {
         ...entry,
-        content: content
+        content: content,
+        actor: figma.currentUser?.name ?? 'Anonymous',
+        timestamp: new Date().toLocaleString('en-US'),
+        action: 'modified'
       }
     ])
   }
@@ -267,12 +292,33 @@ function Widget() {
       ...entries.filter((e) => e.uuid !== entry.uuid),
       {
         ...entry,
-        value: !entry.value
+        value: !entry.value,
+        actor: figma.currentUser?.name ?? 'Anonymous',
+        timestamp: new Date().toLocaleString('en-US'),
+        action: entry.value ? 'modified' : 'completed'
       }
     ])
   }
 
+  /* Data */
+
+  const editData = (key: string, content: string) => {
+    setData({
+      ...data,
+      [key]: content
+    })
+  }
+
   /* Render */
+
+  const getEntryCheckMeta = (entry: ChecklistCheckboxEntry | ChecklistTitleEntry) => {
+    if (Boolean(entry.action) && Boolean(entry.actor) && Boolean(entry.timestamp)) {
+      return `${EntryActions[entry.action as never].label} · ${entry.actor} · ${entry.timestamp}`
+    } else {
+      // Compatibility with previous versions
+      return `Modify this task to update this meta info`
+    }
+  }
 
   return (
     <AutoLayout
@@ -289,7 +335,11 @@ function Widget() {
       <Header
         theme={data.colorTheme}
         title={data.title}
-        isDescriptionVisible={data.isDescriptionVisible}
+        isDescriptionVisible={
+          data.isEditingVisible
+            ? data.isDescriptionVisible
+            : data.isDescriptionVisible && Boolean(data.description.length)
+        }
         description={data.description}
         disabled={!data.isEditingVisible}
         onTitleEditEnd={(e: TextEditEvent) => editData('title', e.characters)}
@@ -304,84 +354,154 @@ function Widget() {
         padding={{ left: 0, right: 0, top: 16, bottom: 16 }}
         width="fill-parent"
       >
-        {entries
-          .sort((a, b) => a.position - b.position)
-          .map((entry) => {
-            // Checkbox
-            if (entry.type === Object.keys(EntryTypes)[0]) {
-              return (
-                <Item
-                  key={entry.uuid}
-                  theme={data.colorTheme}
-                  positionUp={data.isEditingVisible ? entry.position !== 0 : undefined}
-                  positionDown={data.isEditingVisible ? entry.position !== entries.length - 1 : undefined}
-                  deleting={data.isEditingVisible ? entry.position === 0 && entries.length === 1 : undefined}
-                  padding={{
-                    vertical: 8,
-                    horizontal: tokens.themes[data.colorTheme].layout.item.horizontal
-                  }}
-                  onPositionChange={(e: IItemPositionChangeEvent) => sortEntry(entry, e.direction)}
-                  onDelete={() => removeEntry(entry)}
-                >
-                  <ItemCheckbox
+        {Boolean(entries.length) ? (
+          entries
+            .filter((entry) => (data.isCompletedVisible ? true : !entry.value))
+            .sort((a, b) => a.position - b.position)
+            .map((entry, i) => {
+              // Checkbox
+              if (entry.type === Object.keys(EntryTypes)[0]) {
+                return (
+                  <Item
                     key={entry.uuid}
                     theme={data.colorTheme}
-                    value={Boolean(entry.value)}
-                    contentBody={entry.content}
-                    placeholderBody={'Type something...'}
-                    disabled={!data.isEditingVisible}
-                    disabledCheckbox={!data.isChecksAllowed}
-                    onEditEnd={(e: TextEditEvent) => editEntry(entry, e.characters)}
-                    onCheckboxChange={() =>
-                      data.isChecksAllowed ? toggleCheckbox(entry as ChecklistCheckboxEntry) : null
-                    }
-                  />
-                </Item>
-              )
-            }
+                    positionUp={data.isEditingVisible ? entry.position !== 0 : undefined}
+                    positionDown={data.isEditingVisible ? entry.position !== entries.length - 1 : undefined}
+                    deleting={!data.isEditingVisible}
+                    padding={{
+                      vertical: 8,
+                      horizontal: tokens.themes[data.colorTheme].layout.item.horizontal
+                    }}
+                    onPositionChange={(e: IItemPositionChangeEvent) => sortEntry(entry, e.direction)}
+                    onDelete={() => removeEntry(entry)}
+                  >
+                    <ItemCheckbox
+                      key={entry.uuid}
+                      theme={data.colorTheme}
+                      value={Boolean(entry.value)}
+                      contentBody={entry.content}
+                      contentMeta={data.isActorsVisible ? getEntryCheckMeta(entry) : undefined}
+                      placeholderBody={'Type something...'}
+                      disabled={!data.isEditingVisible}
+                      disabledCheckbox={!data.isChecksAllowed}
+                      onEditEnd={(e: TextEditEvent) => editEntry(entry, e.characters)}
+                      onCheckboxChange={() =>
+                        data.isChecksAllowed ? toggleCheckbox(entry as ChecklistCheckboxEntry) : null
+                      }
+                    />
+                  </Item>
+                )
+              }
 
-            // Title
-            if (entry.type === Object.keys(EntryTypes)[1]) {
-              return (
-                <Item
-                  key={entry.uuid}
-                  theme={data.colorTheme}
-                  positionUp={data.isEditingVisible ? entry.position !== 0 : undefined}
-                  positionDown={data.isEditingVisible ? entry.position !== entries.length - 1 : undefined}
-                  deleting={data.isEditingVisible ? entry.position === 0 && entries.length === 1 : undefined}
-                  padding={{
-                    top: entry.position === 0 ? 8 : 24,
-                    bottom: 8,
-                    horizontal: tokens.themes[data.colorTheme].layout.item.horizontal
-                  }}
-                  onPositionChange={(e: IItemPositionChangeEvent) => sortEntry(entry, e.direction)}
-                  onDelete={() => removeEntry(entry)}
-                >
-                  <ItemTitle
+              // Title
+              if (entry.type === Object.keys(EntryTypes)[1]) {
+                return (
+                  <Item
                     key={entry.uuid}
                     theme={data.colorTheme}
-                    contentBody={entry.content}
-                    placeholderBody={'Type something...'}
-                    disabled={!data.isEditingVisible}
-                    onEditEnd={(e: TextEditEvent) => editEntry(entry, e.characters)}
-                  />
-                </Item>
-              )
-            }
-          })}
+                    positionUp={data.isEditingVisible ? entry.position !== 0 : undefined}
+                    positionDown={data.isEditingVisible ? entry.position !== entries.length - 1 : undefined}
+                    deleting={!data.isEditingVisible}
+                    padding={{
+                      top: i === 0 ? 8 : 24,
+                      bottom: 8,
+                      horizontal: tokens.themes[data.colorTheme].layout.item.horizontal
+                    }}
+                    onPositionChange={(e: IItemPositionChangeEvent) => sortEntry(entry, e.direction)}
+                    onDelete={() => removeEntry(entry)}
+                  >
+                    <ItemTitle
+                      key={entry.uuid}
+                      theme={data.colorTheme}
+                      contentBody={entry.content}
+                      placeholderBody={'Type something...'}
+                      disabled={!data.isEditingVisible}
+                      onEditEnd={(e: TextEditEvent) => editEntry(entry, e.characters)}
+                    />
+                  </Item>
+                )
+              }
+            })
+        ) : (
+          <Fragment />
+        )}
+        {entries.filter((entry) => (data.isCompletedVisible ? true : !entry.value)).length === 0 && entries.length > 0 && (
+          <Text
+            {...tokens.themes[data.colorTheme].typo.p5}
+            fill={tokens.themes[data.colorTheme].txt.secondary.default.color}
+            width={'fill-parent'}
+            height={48}
+            horizontalAlignText="center"
+            verticalAlignText="center"
+          >
+            All done. Enjoy your time!
+          </Text>
+        )}
+        {entries.length === 0 && (
+          <Text
+            {...tokens.themes[data.colorTheme].typo.p5}
+            fill={tokens.themes[data.colorTheme].txt.secondary.default.color}
+            width={'fill-parent'}
+            height={48}
+            horizontalAlignText="center"
+            verticalAlignText="center"
+          >
+            What is your next challenge?
+          </Text>
+        )}
       </AutoLayout>
       <Divider theme={data.colorTheme} />
       <Footer theme={data.colorTheme}>
-        <Text
-          key={'Footer__content'}
-          {...tokens.themes[data.colorTheme].typo.p5}
-          fill={tokens.themes[data.colorTheme].txt.secondary.default.color}
-          width={'fill-parent'}
-          horizontalAlignText={'left'}
-        >
-          Completed {entries.filter((entry) => entry.type === Object.keys(EntryTypes)[0] && entry.value).length} of{' '}
-          {entries.filter((entry) => entry.type === Object.keys(EntryTypes)[0]).length}
-        </Text>
+        {entries.length > 0 && (
+          <Text
+            key={'Footer__content'}
+            {...tokens.themes[data.colorTheme].typo.p6}
+            fill={tokens.themes[data.colorTheme].txt.secondary.default.color}
+            width="fill-parent"
+            horizontalAlignText="left"
+            height={32}
+            verticalAlignText="center"
+          >
+            Completed {entries.filter((entry) => entry.type === Object.keys(EntryTypes)[0] && entry.value).length} of{' '}
+            {entries.filter((entry) => entry.type === Object.keys(EntryTypes)[0]).length}
+          </Text>
+        )}
+        {data.isEditingVisible && (
+          <Fragment key={'Footer__actions'}>
+            <ButtonGhost
+              key="Footer__action_showDescription"
+              theme={data.colorTheme}
+              variant="secondary"
+              glyph={data.isDescriptionVisible ? 'visible' : 'hidden'}
+              content="Description"
+              onClick={() => switchDescriptionVisibility()}
+            />
+            <ButtonGhost
+              key="Footer__action_showActors"
+              theme={data.colorTheme}
+              variant="secondary"
+              glyph={data.isActorsVisible ? 'visible' : 'hidden'}
+              content="Actors"
+              onClick={() => switchActorsVisibility()}
+            />
+            <ButtonGhost
+              key="Footer__action_hideCompleted"
+              theme={data.colorTheme}
+              variant="secondary"
+              glyph={data.isCompletedVisible ? 'visible' : 'hidden'}
+              content="Completed tasks"
+              onClick={() => switchCompletedVisibility()}
+            />
+            <ButtonGhost
+              key="Footer__action_addTask"
+              theme={data.colorTheme}
+              variant="primary"
+              glyph="plus"
+              content="Add task"
+              onClick={() => addEntry('check')}
+            />
+          </Fragment>
+        )}
       </Footer>
     </AutoLayout>
   )
