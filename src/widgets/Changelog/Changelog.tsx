@@ -83,7 +83,7 @@ function Widget() {
     [
       {
         itemType: 'link',
-        tooltip: 'Help & documentation',
+        tooltip: 'Help & Documentation',
         propertyName: 'help',
         href: `${meta.website}?utm_superlink=widget_${meta.name}_propertyMenu_${meta.version}`,
         icon: glyphs.info(tokens.themes.light.txt.minor.default.color as string)
@@ -124,7 +124,7 @@ function Widget() {
             },
             {
               itemType: 'dropdown',
-              tooltip: 'Type of new entry',
+              tooltip: 'New entry type',
               propertyName: 'entryType',
               options: Object.keys(EntryTypes).map((s) => ({
                 option: s,

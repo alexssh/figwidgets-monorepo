@@ -147,7 +147,7 @@ function Widget() {
             },
             {
               itemType: 'dropdown',
-              tooltip: 'Type of new entry',
+              tooltip: 'New entry type',
               propertyName: 'entryType',
               options: Object.keys(EntryTypes).map((s) => ({
                 option: s,

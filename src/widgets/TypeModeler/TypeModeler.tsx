@@ -148,7 +148,7 @@ function Widget() {
     [
       {
         itemType: 'link',
-        tooltip: 'Help & documentation',
+        tooltip: 'Help & Documentation',
         propertyName: 'help',
         href: `${meta.website}?utm_superlink=widget_${meta.name}_propertyMenu_${meta.version}`,
         icon: glyphs.info(tokens.themes.light.txt.minor.default.color as string)
@@ -188,7 +188,7 @@ function Widget() {
             },
             {
               itemType: 'dropdown',
-              tooltip: 'Type of new entry',
+              tooltip: 'New property template',
               propertyName: 'entryType',
               options: Object.keys(EntryPresets).map(
                 (s) =>
@@ -201,7 +201,7 @@ function Widget() {
             },
             {
               itemType: 'action',
-              tooltip: 'Add entry',
+              tooltip: 'Add property',
               propertyName: 'addEntry',
               icon: glyphs.plus(tokens.themes.light.txt.minor.default.color as string)
             }
