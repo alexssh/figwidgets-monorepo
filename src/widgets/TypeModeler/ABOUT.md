@@ -4,7 +4,7 @@ Figma + FigJam widget to model types and entities.
 
 - 14 type presets and custom ones
 - Manual sorting
-- Accidental editing protection
+- Editing protection
 - Dark mode support
 
 ## What this widget is good for: 
