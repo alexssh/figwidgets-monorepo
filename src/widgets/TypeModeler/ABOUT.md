@@ -27,7 +27,7 @@ diagram, entity, modeler, type, class, database, erd, content, development, comp
     - Hiding description and date in Header when editing is disabled + the fields are empty 
     - Reordering PropertyMenu items
     - Help item in PropertyMenu + meta config
-    - New views actions: show/hide description, add new property
+    - New view actions: show/hide description, add property
 
 - 1.0.0 
     - Initial release

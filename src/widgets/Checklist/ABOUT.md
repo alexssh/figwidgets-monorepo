@@ -29,7 +29,7 @@ checkbox, checklist, design, handoff, notes, plan, progress tracker, projects, t
     - Help item in PropertyMenu + meta config
     - Type renaming
     - Empty state
-    - New views actions: show/hide description, show/hide actors, show/hide completed and add task
+    - New view actions: show/hide description, show/hide actors, show/hide completed and add task
 
 - 1.0.1
     - Bug fixes

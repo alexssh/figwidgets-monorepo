@@ -11,7 +11,7 @@ Figma + FigJam widget to track any changes in your stuff.
 
 - Design and components system updates
 - Project and progress tracking
-- Development changelogs
+- Development change logs
 
 ## Feedback
 
@@ -27,7 +27,7 @@ changelog, components, cover, development, library, management, design system, n
     - Hiding description and date in Header when editing is disabled + the fields are empty 
     - Reordering PropertyMenu items
     - Help item in PropertyMenu + meta config
-    - New views actions: show/hide description, add new entry
+    - New view actions: show/hide description, add entry
 
 - 1.2.1
     - Bug fixes
