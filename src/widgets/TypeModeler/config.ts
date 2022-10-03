@@ -1,7 +1,7 @@
 export const meta = {
   name: 'typeModeler',
   version: '1.0.1',
-  website: 'https://offframes.com/help/figma-widget/type-modeler'
+  website: 'https://offframes.com/figma-widget/type-modeler'
 }
 
 export const EntryPresets: TableModelerEntryPresetsMapping = {

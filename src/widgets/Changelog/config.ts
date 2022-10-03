@@ -1,7 +1,7 @@
 export const meta = {
   name: 'advancedChangelog',
   version: '1.2.3',
-  website: 'https://offframes.com/help/figma-widget/advanced-changelog'
+  website: 'https://offframes.com/figma-widget/advanced-changelog'
 }
 
 export const EntryTypes: ChangelogEntryMapping = {
