@@ -23,6 +23,9 @@ checkbox, checklist, design, handoff, notes, plan, progress tracker, projects, t
 
 ## Changelog
 
+- 1.1.1
+    - Bug fixes
+
 - 1.1.0
     - Hiding description and date in Header when editing is disabled
     - Reordering PropertyMenu items

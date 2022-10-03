@@ -367,7 +367,7 @@ function Widget() {
                     theme={data.colorTheme}
                     positionUp={data.isEditingVisible ? entry.position !== 0 : undefined}
                     positionDown={data.isEditingVisible ? entry.position !== entries.length - 1 : undefined}
-                    deleting={!data.isEditingVisible}
+                    deleting={data.isEditingVisible ? !data.isEditingVisible : undefined}
                     padding={{
                       vertical: 8,
                       horizontal: tokens.themes[data.colorTheme].layout.item.horizontal
@@ -401,7 +401,7 @@ function Widget() {
                     theme={data.colorTheme}
                     positionUp={data.isEditingVisible ? entry.position !== 0 : undefined}
                     positionDown={data.isEditingVisible ? entry.position !== entries.length - 1 : undefined}
-                    deleting={!data.isEditingVisible}
+                    deleting={data.isEditingVisible ? !data.isEditingVisible : undefined}
                     padding={{
                       top: i === 0 ? 8 : 24,
                       bottom: 8,
