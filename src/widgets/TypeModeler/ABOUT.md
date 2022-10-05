@@ -23,6 +23,9 @@ diagram, entity, modeler, type, class, database, erd, content, development, comp
 
 ## Changelog
 
+- 1.0.2
+    - Fix: shuffling positions of entries after sorting/removing/editing
+
 - 1.0.1
     - Hiding description and date in Header when editing is disabled + the fields are empty 
     - Reordering PropertyMenu items
