@@ -59,7 +59,7 @@ function Widget() {
     { title: 'Type', width: 120, style: { fill: tokens.themes[data.colorTheme].txt.status.success.color } },
     { title: 'Default value', width: 160, visibility: true },
     {
-      title: 'Description',
+      title: 'Comment',
       width: 'fill-parent',
       visibility: true,
       style: { fill: tokens.themes[data.colorTheme].txt.secondary.default.color }
@@ -304,19 +304,23 @@ function Widget() {
   }
 
   const sortEntry = (entry: TableModelerEntry, direction: string) => {
-    const currIndex = entries.findIndex((e) => e.uuid === entry.uuid)
-    const toPosition = direction === 'up' ? currIndex - 1 : currIndex + 1
+    const currIndex = entries.find((e) => e.uuid === entry.uuid) as TableModelerEntry
+    const toPosition = direction === 'up' ? currIndex.position - 1 : currIndex.position + 1
 
     let array = [...entries]
 
-    const selectedEntry = array.splice(currIndex, 1)[0]
+    const selectedEntry = array.splice(currIndex.position, 1)[0]
     array.splice(toPosition, 0, selectedEntry)
 
     setEntries(array.map((entry, i) => ({ ...entry, position: i })))
   }
 
   const removeEntry = (entry: TableModelerEntry) => {
-    setEntries([...entries.filter((e) => e.uuid !== entry.uuid)].map((entry, i) => ({ ...entry, position: i })))
+    setEntries(
+      [...entries.filter((e) => e.uuid !== entry.uuid)]
+        .sort((a, b) => a.position - b.position)
+        .map((entry, i) => ({ ...entry, position: i }))
+    )
   }
 
   const editEntry = (entry: TableModelerEntry, event: IItemTableRowEditEnd) => {
