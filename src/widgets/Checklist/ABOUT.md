@@ -23,6 +23,9 @@ checkbox, checklist, design, handoff, notes, plan, progress tracker, projects, t
 
 ## Changelog
 
+- 1.1.2
+    - Fix: shuffling positions of entries after sorting/removing/editing
+
 - 1.1.1
     - Bug fixes
 

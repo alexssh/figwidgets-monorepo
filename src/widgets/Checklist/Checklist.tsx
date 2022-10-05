@@ -259,19 +259,23 @@ function Widget() {
   }
 
   const sortEntry = (entry: ChecklistCheckboxEntry | ChecklistTitleEntry, direction: string) => {
-    const currIndex = entries.findIndex((e) => e.uuid === entry.uuid)
-    const toPosition = direction === 'up' ? currIndex - 1 : currIndex + 1
+    const currIndex = entries.find((e) => e.uuid === entry.uuid) as ChecklistCheckboxEntry | ChecklistTitleEntry
+    const toPosition = direction === 'up' ? currIndex.position - 1 : currIndex.position + 1
 
     let array = [...entries]
 
-    const selectedEntry = array.splice(currIndex, 1)[0]
+    const selectedEntry = array.splice(currIndex.position, 1)[0]
     array.splice(toPosition, 0, selectedEntry)
 
     setEntries(array.map((entry, i) => ({ ...entry, position: i })))
   }
 
   const removeEntry = (entry: ChecklistCheckboxEntry | ChecklistTitleEntry) => {
-    setEntries([...entries.filter((e) => e.uuid !== entry.uuid)].map((entry, i) => ({ ...entry, position: i })))
+    setEntries(
+      [...entries.filter((e) => e.uuid !== entry.uuid)]
+        .sort((a, b) => a.position - b.position)
+        .map((entry, i) => ({ ...entry, position: i }))
+    )
   }
 
   const editEntry = (entry: ChecklistCheckboxEntry | ChecklistTitleEntry, content: string) => {
