@@ -23,6 +23,9 @@ changelog, components, cover, development, library, management, design system, n
 
 ## Changelog
 
+- 1.2.4
+    - Fix: shuffling positions of entries after sorting/removing/editing
+
 - 1.2.3
     - Hiding description and date in Header when editing is disabled + the fields are empty 
     - Reordering PropertyMenu items
