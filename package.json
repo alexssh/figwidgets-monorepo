@@ -3,8 +3,8 @@
   "description": "Figma + FigJam widget development environment",
   "version": "2.0.0",
   "scripts": {
-    "build": "esbuild src/widgets/$npm_config_widget/$npm_config_widget.tsx --bundle --minify --outfile=dist/$npm_config_widget/index.js",
-    "watch": "npm run build -- --watch"
+    "build": "node esbuild",
+    "watch": "node esbuild -- --watch"
   },
   "author": "alexssh",
   "license": "MIT",
@@ -16,7 +16,8 @@
   "devDependencies": {
     "@figma/plugin-typings": "*",
     "@figma/widget-typings": "*",
-    "esbuild": "^0.13.5",
+    "esbuild": "^0.14.0",
+    "esbuild-copy-static-files": "^0.1.0",
     "prettier": "^2.4.1",
     "typescript": "*"
   }
