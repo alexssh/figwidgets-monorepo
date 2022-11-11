@@ -4,6 +4,7 @@ declare global {
     size?: number
     value: boolean
     disabled?: boolean
+    priority: number
     onClick: () => void
   }
 }

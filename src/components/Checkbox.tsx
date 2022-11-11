@@ -11,6 +11,8 @@ import tokens from 'src/utils/tokens'
 /* --- */
 
 function Checkbox(props: ICheckboxProps) {
+  let state = props.value ? `active${props.priority}` : `empty${props.priority}`
+
   return (
     <AutoLayout
       name="Checkbox"
@@ -20,36 +22,20 @@ function Checkbox(props: ICheckboxProps) {
       spacing={0}
       padding={0}
       onClick={props.onClick}
-      cornerRadius={tokens.themes[props.theme].controls.checkbox.default.cornerRadius as WidgetJSX.CornerRadius}
+      cornerRadius={tokens.themes[props.theme].controls.checkbox.disabled.cornerRadius as WidgetJSX.CornerRadius}
       horizontalAlignItems={'center'}
       verticalAlignItems={'center'}
       fill={
         tokens.themes[props.theme].controls.checkbox[
-          !props.value && !props.disabled
-            ? 'default'
-            : props.value && !props.disabled
-            ? 'active'
-            : !props.value && props.disabled
-            ? 'defaultDisabled'
-            : props.value && props.disabled
-            ? 'activeDisabled'
-            : 'default'
+          !props.disabled ? state : props.value ? 'disabledActive' : 'disabled'
         ].fill
       }
       {...tokens.themes[props.theme].controls.checkbox[
-        !props.value && !props.disabled
-          ? 'default'
-          : props.value && !props.disabled
-          ? 'active'
-          : !props.value && props.disabled
-          ? 'defaultDisabled'
-          : props.value && props.disabled
-          ? 'activeDisabled'
-          : 'default'
+        !props.disabled ? state : props.value ? 'disabledActive' : 'disabled'
       ].border}
       hoverStyle={!props.disabled ? tokens.themes[props.theme].controls.checkbox.hover.border : {}}
     >
-      {props.value && <Icon glyph="check" color={tokens.themes[props.theme].txt.primary.except.color} />}
+      {props.value && <Icon glyph="check" color={tokens.themes[props.theme].txt.primary.inverted.color} />}
     </AutoLayout>
   )
 }

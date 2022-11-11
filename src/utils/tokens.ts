@@ -17,11 +17,15 @@ const COLOR_GREEN_600 = '#29B95F'
 
 const COLOR_BLUE_600 = '#277DFF'
 
+const COLOR_LIGHTBLUE_600 = '#00E0EE'
+
 const COLOR_PURPLE_600 = '#7522C5'
 
-const COLOR_ORANGE_600 = '#F0783C'
+const COLOR_ORANGE_600 = '#FF730E'
 
-const COLOR_RED_600 = '#F04B6A'
+const COLOR_RED_600 = '#E31351'
+
+const COLOR_YELLOW_600 = '#FAB020'
 
 /* Color themes */
 
@@ -98,12 +102,15 @@ const tokens: Tokens = {
         divider: { fill: COLOR_GREY_200 }
       },
       shadow: {
-        container: { type: 'drop-shadow', color: { r: 0, g: 0, b: 0, a: 0.12 }, offset: { x: 0, y: 2 }, blur: 12 }
+        container: { type: 'drop-shadow', color: { r: 0, g: 0, b: 0, a: 0.12 }, offset: { x: 0, y: 2 }, blur: 12 },
+        transparent: { type: 'drop-shadow', color: { r: 0, g: 0, b: 0, a: 0 }, offset: { x: 0, y: 0 }, blur: 0 }
       },
       status: {
         success: { fill: COLOR_GREEN_600, color: COLOR_WHITE },
         warning: { fill: COLOR_ORANGE_600, color: COLOR_WHITE },
         error: { fill: COLOR_RED_600, color: COLOR_WHITE },
+        important: { fill: COLOR_YELLOW_600, color: COLOR_WHITE },
+        secondary: { fill: COLOR_LIGHTBLUE_600, color: COLOR_WHITE },
         primary: { fill: COLOR_BLUE_600, color: COLOR_WHITE },
         info: { fill: COLOR_PURPLE_600, color: COLOR_WHITE },
         dark: { fill: COLOR_BLACK, color: COLOR_WHITE },
@@ -112,7 +119,8 @@ const tokens: Tokens = {
           color: COLOR_GREY_500,
           border: { stroke: COLOR_GREY_400, strokeWidth: 1, strokeAlign: 'inside' }
         },
-        disabled: { fill: COLOR_GREY_400, color: COLOR_WHITE }
+        disabled: { fill: COLOR_GREY_400, color: COLOR_WHITE },
+        white: { fill: COLOR_WHITE, color: COLOR_WHITE }
       },
       radius: {
         container: { cornerRadius: 8 },
@@ -130,28 +138,58 @@ const tokens: Tokens = {
           disabled: { fill: { r: 0, g: 0, b: 0, a: 0 }, cornerRadius: 4 }
         },
         checkbox: {
-          default: {
+          disabled: {
+            fill: COLOR_WHITE,
+            border: { stroke: COLOR_GREY_300, strokeWidth: 1, strokeAlign: 'inside' },
+            cornerRadius: 4
+          },
+          disabledActive: {
+            fill: COLOR_GREY_300,
+            cornerRadius: 4
+          },
+
+          hover: {
+            border: { stroke: COLOR_BLUE_600, strokeWidth: 1, strokeAlign: 'inside' },
+            cornerRadius: 4
+          },
+
+          empty0: {
             fill: COLOR_WHITE,
             border: { stroke: COLOR_GREY_500, strokeWidth: 1, strokeAlign: 'inside' },
             cornerRadius: 4
           },
-          active: {
-            fill: COLOR_BLUE_600,
-            border: { stroke: COLOR_BLUE_600, strokeWidth: 1, strokeAlign: 'inside' },
+          active0: {
+            fill: COLOR_BLACK,
             cornerRadius: 4
           },
-          defaultDisabled: {
+
+          empty1: {
             fill: COLOR_WHITE,
-            border: { stroke: COLOR_GREY_300, strokeWidth: 1, strokeAlign: 'inside' },
+            border: { stroke: COLOR_YELLOW_600, strokeWidth: 2, strokeAlign: 'inside' },
             cornerRadius: 4
           },
-          activeDisabled: {
-            fill: COLOR_GREY_300,
-            border: { stroke: COLOR_GREY_300, strokeWidth: 1, strokeAlign: 'inside' },
+          active1: {
+            fill: COLOR_YELLOW_600,
             cornerRadius: 4
           },
-          hover: {
-            border: { stroke: COLOR_BLACK, strokeWidth: 1, strokeAlign: 'inside' },
+
+          empty2: {
+            fill: COLOR_WHITE,
+            border: { stroke: COLOR_ORANGE_600, strokeWidth: 2, strokeAlign: 'inside' },
+            cornerRadius: 4
+          },
+          active2: {
+            fill: COLOR_ORANGE_600,
+            cornerRadius: 4
+          },
+
+          empty3: {
+            fill: COLOR_WHITE,
+            border: { stroke: COLOR_RED_600, strokeWidth: 2, strokeAlign: 'inside' },
+            cornerRadius: 4
+          },
+          active3: {
+            fill: COLOR_RED_600,
             cornerRadius: 4
           }
         }
@@ -243,12 +281,15 @@ const tokens: Tokens = {
         divider: { fill: COLOR_GREY_800 }
       },
       shadow: {
-        container: { type: 'drop-shadow', color: { r: 0, g: 0, b: 0, a: 0.12 }, offset: { x: 0, y: 2 }, blur: 12 }
+        container: { type: 'drop-shadow', color: { r: 0, g: 0, b: 0, a: 0.12 }, offset: { x: 0, y: 2 }, blur: 12 },
+        transparent: { type: 'drop-shadow', color: { r: 0, g: 0, b: 0, a: 0 }, offset: { x: 0, y: 0 }, blur: 0 }
       },
       status: {
         success: { fill: COLOR_GREEN_600, color: COLOR_WHITE },
         warning: { fill: COLOR_ORANGE_600, color: COLOR_WHITE },
         error: { fill: COLOR_RED_600, color: COLOR_WHITE },
+        important: { fill: COLOR_YELLOW_600, color: COLOR_WHITE },
+        secondary: { fill: COLOR_LIGHTBLUE_600, color: COLOR_WHITE },
         primary: { fill: COLOR_BLUE_600, color: COLOR_WHITE },
         info: { fill: COLOR_PURPLE_600, color: COLOR_WHITE },
         dark: { fill: COLOR_BLACK, color: COLOR_WHITE },
@@ -257,7 +298,8 @@ const tokens: Tokens = {
           color: COLOR_WHITE,
           border: { stroke: COLOR_GREY_200, strokeWidth: 1, strokeAlign: 'inside' }
         },
-        disabled: { fill: COLOR_GREY_400, color: COLOR_WHITE }
+        disabled: { fill: COLOR_GREY_400, color: COLOR_WHITE },
+        white: { fill: COLOR_WHITE, color: COLOR_WHITE }
       },
       radius: {
         container: { cornerRadius: 8 },
@@ -275,28 +317,58 @@ const tokens: Tokens = {
           disabled: { fill: { r: 0, g: 0, b: 0, a: 0 }, cornerRadius: 4 }
         },
         checkbox: {
-          default: {
+          disabled: {
+            fill: COLOR_GREY_900,
+            border: { stroke: COLOR_GREY_700, strokeWidth: 1, strokeAlign: 'inside' },
+            cornerRadius: 4
+          },
+          disabledActive: {
+            fill: COLOR_GREY_700,
+            cornerRadius: 4
+          },
+
+          hover: {
+            border: { stroke: COLOR_BLUE_600, strokeWidth: 1, strokeAlign: 'inside' },
+            cornerRadius: 4
+          },
+
+          empty0: {
             fill: COLOR_GREY_900,
             border: { stroke: COLOR_GREY_400, strokeWidth: 1, strokeAlign: 'inside' },
             cornerRadius: 4
           },
-          active: {
-            fill: COLOR_BLUE_600,
-            border: { stroke: COLOR_BLUE_600, strokeWidth: 1, strokeAlign: 'inside' },
+          active0: {
+            fill: COLOR_WHITE,
             cornerRadius: 4
           },
-          defaultDisabled: {
+
+          empty1: {
             fill: COLOR_GREY_900,
-            border: { stroke: COLOR_GREY_700, strokeWidth: 1, strokeAlign: 'inside' },
+            border: { stroke: COLOR_YELLOW_600, strokeWidth: 2, strokeAlign: 'inside' },
             cornerRadius: 4
           },
-          activeDisabled: {
-            fill: COLOR_GREY_700,
-            border: { stroke: COLOR_GREY_700, strokeWidth: 1, strokeAlign: 'inside' },
+          active1: {
+            fill: COLOR_YELLOW_600,
             cornerRadius: 4
           },
-          hover: {
-            border: { stroke: COLOR_WHITE, strokeWidth: 1, strokeAlign: 'inside' },
+
+          empty2: {
+            fill: COLOR_GREY_900,
+            border: { stroke: COLOR_ORANGE_600, strokeWidth: 2, strokeAlign: 'inside' },
+            cornerRadius: 4
+          },
+          active2: {
+            fill: COLOR_ORANGE_600,
+            cornerRadius: 4
+          },
+
+          empty3: {
+            fill: COLOR_GREY_900,
+            border: { stroke: COLOR_RED_600, strokeWidth: 2, strokeAlign: 'inside' },
+            cornerRadius: 4
+          },
+          active3: {
+            fill: COLOR_RED_600,
             cornerRadius: 4
           }
         }

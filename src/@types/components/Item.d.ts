@@ -5,10 +5,10 @@ declare global {
     children?: FigmaDeclarativeNode
     positionUp?: boolean
     positionDown?: boolean
-    deleting?: boolean
+    more?: boolean
     padding?: WidgetJSX.Padding
     onPositionChange?: (e: IItemPositionChangeEvent) => void
-    onDelete?: () => void
+    onMore?: () => void
   }
 
   interface IItemPositionChangeEvent {

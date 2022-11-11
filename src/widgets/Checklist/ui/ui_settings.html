@@ -1,0 +1,71 @@
+<div class="ui">
+
+  <div class="ui-section">General</div>
+
+  <div class="ui-item-checkbox">
+    <input type="checkbox" id="metadata" onclick="sendAction('metadata')" name="metadata">
+    <label for="metadata">Metadata</label>
+  </div>
+  <div class="ui-item-checkbox">
+    <input type="checkbox" id="completed_tasks" onclick="sendAction('completed_tasks')" name="completed_tasks">
+    <label for="completed_tasks">Completed tasks</label>
+  </div>
+
+  <div class="ui-divider"></div>
+  <div class="ui-section">View</div>
+
+  <div class="ui-item-checkbox">
+    <input type="checkbox" id="ribbon" onclick="sendAction('ribbon')" name="ribbon">
+    <label for="ribbon">Ribbon</label>
+  </div>
+  <div class="ui-item-checkbox">
+    <input type="checkbox" id="title" name="title" onclick="sendAction('title')">
+    <label for="title">Title</label>
+  </div>
+  <div class="ui-item-checkbox">
+    <input type="checkbox" id="description" onclick="sendAction('description')" name="description">
+    <label for="description">Description</label>
+  </div>
+  <div class="ui-item-checkbox">
+    <input type="checkbox" id="footer" onclick="sendAction('footer')" name="footer">
+    <label for="footer">Footer</label>
+  </div>
+
+  <div class="ui-divider"></div>
+  <div class="ui-section">View</div>
+
+  <div class="ui-item-checkbox">
+    <input type="checkbox" id="background" onclick="sendAction('background')" name="background">
+    <label for="background">Background</label>
+  </div>
+
+</div>
+
+<script>
+
+  const id = { pluginId: '1151240412068749314' }
+  const url = 'https://www.figma.com'
+  const view = "settings"
+
+  onmessage = (event) => {
+    if (event.data.pluginMessage.data.isUIopen) {
+      document.getElementById('metadata').checked = event.data.pluginMessage.data.isMetadataVisible;
+      document.getElementById('completed_tasks').checked = event.data.pluginMessage.data.isCompletedVisible;
+      document.getElementById('ribbon').checked = event.data.pluginMessage.data.isRibbonVisible;
+      document.getElementById('title').checked = event.data.pluginMessage.data.isTitleVisible;
+      document.getElementById('description').checked = event.data.pluginMessage.data.isDescriptionVisible;
+      document.getElementById('footer').checked = event.data.pluginMessage.data.isFooterVisible;
+      document.getElementById('background').checked = event.data.pluginMessage.data.isBackgroundVisible;
+    }
+  }
+
+  function sendAction(action) {
+    parent.postMessage({
+      pluginMessage: {
+        view,
+        action: action
+      }, ...id
+    }, url)
+  }
+
+</script>

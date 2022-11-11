@@ -1,0 +1,153 @@
+<div class="ui">
+
+  <div id="priority" style="width: 100%">
+    <div class="ui-section">Priority</div>
+
+    <div class="ui-item-priority">
+
+      <div id="priority_3" class="ui-item-priority-button ui-item-priority-button--selected"
+        onclick="sendAction('priority_3')">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path fill-rule="evenodd" clip-rule="evenodd"
+            d="M4 5.00003L5.34724 4.32641C7.03459 3.48274 9.00217 3.4009 10.7537 4.10153C12.1084 4.64338 13.6014 4.7204 15 4.32576C15.0989 4.29786 15.1973 4.2676 15.2951 4.23499L16 4.00003V5.05413V12L15.2951 12.235C13.8132 12.729 12.2041 12.6817 10.7537 12.1015C9.00217 11.4009 7.03458 11.4827 5.34724 12.3264L5 12.5V17H4V13V11.882V5.00003Z"
+            fill="#E31351" />
+        </svg>
+      </div>
+
+      <div id="priority_2" class="ui-item-priority-button" onclick="sendAction('priority_2')">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path fill-rule="evenodd" clip-rule="evenodd"
+            d="M4 5.00003L5.34724 4.32641C7.03459 3.48274 9.00217 3.4009 10.7537 4.10153C12.1084 4.64338 13.6014 4.7204 15 4.32576C15.0989 4.29786 15.1973 4.2676 15.2951 4.23499L16 4.00003V5.05413V12L15.2951 12.235C13.8132 12.729 12.2041 12.6817 10.7537 12.1015C9.00217 11.4009 7.03458 11.4827 5.34724 12.3264L5 12.5V17H4V13V11.882V5.00003Z"
+            fill="#FF730E" />
+        </svg>
+      </div>
+
+      <div id="priority_1" class="ui-item-priority-button" onclick="sendAction('priority_1')">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path fill-rule="evenodd" clip-rule="evenodd"
+            d="M4 5.00003L5.34724 4.32641C7.03459 3.48274 9.00217 3.4009 10.7537 4.10153C12.1084 4.64338 13.6014 4.7204 15 4.32576C15.0989 4.29786 15.1973 4.2676 15.2951 4.23499L16 4.00003V5.05413V12L15.2951 12.235C13.8132 12.729 12.2041 12.6817 10.7537 12.1015C9.00217 11.4009 7.03458 11.4827 5.34724 12.3264L5 12.5V17H4V13V11.882V5.00003Z"
+            fill="#FAB020" />
+        </svg>
+      </div>
+
+      <div id="priority_0" class="ui-item-priority-button" onclick="sendAction('priority_0')">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path fill-rule="evenodd" clip-rule="evenodd"
+            d="M11.1251 11.1731C9.14285 10.3801 6.92028 10.4576 5 11.3829V5.61807L5.79446 5.22084C7.22632 4.50491 8.89598 4.43546 10.3824 5.03001C11.8547 5.61895 13.4691 5.73097 15 5.35943V11.2793L14.9789 11.2863C13.7214 11.7055 12.3559 11.6654 11.1251 11.1731ZM4 5.00003L5.34724 4.32641C7.03459 3.48274 9.00217 3.4009 10.7537 4.10153C12.1084 4.64338 13.6014 4.7204 15 4.32576C15.0989 4.29786 15.1973 4.2676 15.2951 4.23499L16 4.00003V5.05413V12L15.2951 12.235C13.8132 12.729 12.2041 12.6817 10.7537 12.1015C9.00217 11.4009 7.03458 11.4827 5.34724 12.3264L5 12.5V17H4V13V11.882V5.00003Z"
+            fill="#777777" />
+        </svg>
+
+      </div>
+
+    </div>
+
+    <div class="ui-divider"></div>
+  </div>
+
+  <div class="ui-item-action" id="move_up" onclick="sendAction('move_up')">Move up</div>
+  <div class="ui-item-action" id="move_down" onclick="sendAction('move_down')">Move down</div>
+
+  <div class="ui-divider"></div>
+
+  <div class="ui-item-action" id="show_description" onclick="sendAction('show_description')">Show description</div>
+  <div class="ui-item-action" id="hide_description" onclick="sendAction('hide_description')">Hide description</div>
+  <div class="ui-item-action" id="duplicate" onclick="sendAction('duplicate')">Duplicate</div>
+
+  <div class="ui-divider"></div>
+
+  <div class="ui-item-action ui-item-action--destructive" id="delete_task" onclick="sendAction('delete')">Delete task
+  </div>
+  <div class="ui-item-action ui-item-action--destructive" id="delete_section" onclick="sendAction('delete')">Delete
+    section</div>
+
+</div>
+
+<script>
+
+  const id = { pluginId: '1151240412068749314' }
+  const url = 'https://www.figma.com'
+  const view = "more"
+
+  let uuid = ""
+  let entry = ""
+
+  onmessage = (event) => {
+
+    if (event.data.pluginMessage.data.isUIopen) {
+
+      uuid = event.data.pluginMessage.data.selectedEntry
+
+      let selected = event.data.pluginMessage.entries.reduce((result, curr, i) => {
+
+        if (curr.uuid === uuid) {
+          return {
+            entry: curr,
+            index: i
+          }
+        } else {
+          return result
+        }
+      }, {})
+
+      document.getElementById('priority').style.display = selected.entry.type === "check" ? "block" : "none";
+
+      if (selected.entry.priority === 3) {
+        document.getElementById('priority_3').classList.add('ui-item-priority-button--selected');
+      } else {
+        document.getElementById('priority_3').classList.remove('ui-item-priority-button--selected');
+      }
+
+      if (selected.entry.priority === 2) {
+        document.getElementById('priority_2').classList.add('ui-item-priority-button--selected');
+      } else {
+        document.getElementById('priority_2').classList.remove('ui-item-priority-button--selected');
+      }
+
+      if (selected.entry.priority === 1) {
+        document.getElementById('priority_1').classList.add('ui-item-priority-button--selected');
+      } else {
+        document.getElementById('priority_1').classList.remove('ui-item-priority-button--selected');
+      }
+
+      if (selected.entry.priority === 0) {
+        document.getElementById('priority_0').classList.add('ui-item-priority-button--selected');
+      } else {
+        document.getElementById('priority_0').classList.remove('ui-item-priority-button--selected');
+      }
+
+      if (selected.index === 0) {
+        document.getElementById('move_up').classList.add('ui-item-action--disabled');
+        document.getElementById('move_up').onclick = null;
+      } else {
+        document.getElementById('move_up').classList.remove('ui-item-action--disabled');
+        document.getElementById('move_up').onclick = () => sendAction('move_up')
+      }
+
+      if (selected.index === event.data.pluginMessage.entries.length - 1) {
+        document.getElementById('move_down').classList.add('ui-item-action--disabled');
+        document.getElementById('move_down').onclick = null;
+      } else {
+        document.getElementById('move_down').classList.remove('ui-item-action--disabled');
+        document.getElementById('move_down').onclick = () => sendAction('move_down')
+      }
+
+      document.getElementById('show_description').style.display = !selected.entry.isDescriptionVisible ? "block" : "none";
+      document.getElementById('hide_description').style.display = selected.entry.isDescriptionVisible ? "block" : "none";
+
+      document.getElementById('delete_task').style.display = selected.entry.type === "check" ? "block" : "none";
+      document.getElementById('delete_section').style.display = selected.entry.type === "title" ? "block" : "none";
+
+    }
+  }
+
+  function sendAction(action) {
+    parent.postMessage({
+      pluginMessage: {
+        view,
+        action: action,
+        uuid: uuid
+      }, ...id
+    }, url)
+  }
+
+</script>

@@ -3,13 +3,22 @@ declare global {
     key?: string
     theme: string
     value: boolean
-    contentBody: string
+    contentTitle: string
+    isDescriptionVisible: boolean
+    contentDescription: string
     contentMeta?: string
-    placeholderBody: string
+    placeholderTitle: string
+    placeholderDescription: string
     disabled?: boolean
     disabledCheckbox?: boolean
+    priority: number
     onCheckboxChange: () => void
-    onEditEnd: (e: TextEditEvent) => void
+    onEditEnd: (e: IItemCheckboxOnEditEndEvent) => void
+  }
+
+  interface IItemCheckboxOnEditEndEvent {
+    property: string
+    value: TextEditEvent
   }
 }
 export {}

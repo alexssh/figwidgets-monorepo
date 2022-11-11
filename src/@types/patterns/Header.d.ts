@@ -1,6 +1,7 @@
 declare global {
   interface IHeaderProps {
     theme: string
+    isTitleVisible: boolean
     title: string
     isDescriptionVisible: boolean
     description: string

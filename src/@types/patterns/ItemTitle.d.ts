@@ -2,10 +2,18 @@ declare global {
   interface IItemTitleProps {
     key?: string
     theme: string
-    contentBody: string
-    placeholderBody: string
+    contentTitle: string
+    placeholderTitle: string
+    isDescriptionVisible: boolean
+    contentDescription: string
+    placeholderDescription: string
     disabled?: boolean
-    onEditEnd: (e: TextEditEvent) => void
+    onEditEnd: (e: IItemTitleOnEditEndEvent) => void
+  }
+
+  interface IItemTitleOnEditEndEvent {
+    property: string
+    value: TextEditEvent
   }
 }
 export {}

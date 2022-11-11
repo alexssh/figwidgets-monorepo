@@ -20,11 +20,22 @@ function ItemTitle(props: IItemTitleProps) {
         theme={props.theme}
         variant={{ typo: 'h5', txt: 'primary' }}
         type={'multiline'}
-        content={props.contentBody}
-        placeholder={props.placeholderBody}
+        content={props.contentTitle}
+        placeholder={props.placeholderTitle}
         disabled={Boolean(props.disabled)}
-        onEditEnd={(e) => props.onEditEnd(e as TextEditEvent)}
+        onEditEnd={(e) => props.onEditEnd({ property: 'title', value: e } as IItemTitleOnEditEndEvent)}
       />
+      {props.isDescriptionVisible && (
+        <InputGhost
+          theme={props.theme}
+          variant={{ typo: 'p6', txt: 'secondary' }}
+          type={'multiline'}
+          content={props.contentDescription}
+          placeholder={props.placeholderDescription}
+          disabled={Boolean(props.disabled)}
+          onEditEnd={(e) => props.onEditEnd({ property: 'description', value: e } as IItemCheckboxOnEditEndEvent)}
+        />
+      )}
     </AutoLayout>
   )
 }

@@ -1,6 +1,6 @@
 export const meta = {
   name: 'checklist',
-  version: '1.1.0',
+  version: '6',
   website: 'https://offframes.com/figma-widget/checklist'
 }
 
@@ -20,7 +20,10 @@ export const EntryActions: ChecklistActionsMapping = {
   modified: {
     label: 'Modified'
   },
-  completed: {
+  checked: {
     label: 'Completed'
+  },
+  unchecked: {
+    label: 'Unchecked'
   }
 }

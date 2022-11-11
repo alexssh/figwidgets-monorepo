@@ -7,18 +7,24 @@ declare global {
 
   export type ChecklistCheckboxEntry = ChecklistEntry & {
     value: boolean
-    content: string
+    title: string
+    description: string
+    isDescriptionVisible: boolean
+    priority: number
     actor: string
     timestamp: string
     action: keyof ChecklistActionsMapping
   }
 
   export type ChecklistTitleEntry = ChecklistEntry & {
-    value?: boolean // type fix
+    value: boolean // type fix
+    title: string
+    description: string
+    isDescriptionVisible: boolean
+    priority: number // type fix
     actor?: string // type fix
     timestamp?: string // type fix
     action?: keyof ChecklistActionsMapping // type fix
-    content: string
   }
 
   export type ChecklistEntryMapping = {

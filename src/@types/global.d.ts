@@ -30,7 +30,7 @@ declare global {
             [t: string]: TokenBackground & TokenRadius & Partial<TokenBorder>
           }
           checkbox: {
-            [t: string]: Partial<TokenBackground> & TokenRadius & Partial<TokenBorder>
+            [t: string]: Partial<TokenBackground> & Partial<TokenRadius> & Partial<TokenBorder>
           }
         }
         layer: {

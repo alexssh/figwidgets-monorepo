@@ -34,6 +34,7 @@ function ItemCheckbox(props: IItemCheckboxProps) {
           value={props.value}
           disabled={props.disabledCheckbox}
           onClick={props.onCheckboxChange}
+          priority={props.priority}
         />
       </AutoLayout>
       <AutoLayout
@@ -41,20 +42,39 @@ function ItemCheckbox(props: IItemCheckboxProps) {
         direction="vertical"
         height="hug-contents"
         width="fill-parent"
-        spacing={4}
+        spacing={8}
         padding={{
           right: 16
         }}
       >
-        <InputGhost
-          theme={props.theme}
-          variant={{ typo: 'p5', txt: 'primary' }}
-          type={'multiline'}
-          content={props.contentBody}
-          placeholder={props.placeholderBody}
-          disabled={Boolean(props.disabled)}
-          onEditEnd={(e) => props.onEditEnd(e as TextEditEvent)}
-        />
+        <AutoLayout
+          name="ItemCheckbox__contentBody"
+          direction="vertical"
+          height="hug-contents"
+          width="fill-parent"
+          spacing={5}
+        >
+          <InputGhost
+            theme={props.theme}
+            variant={{ typo: 'p5', txt: 'primary' }}
+            type={'multiline'}
+            content={props.contentTitle}
+            placeholder={props.placeholderTitle}
+            disabled={Boolean(props.disabled)}
+            onEditEnd={(e) => props.onEditEnd({ property: 'title', value: e } as IItemCheckboxOnEditEndEvent)}
+          />
+          {props.isDescriptionVisible && (
+            <InputGhost
+              theme={props.theme}
+              variant={{ typo: 'p6', txt: 'secondary' }}
+              type={'multiline'}
+              content={props.contentDescription}
+              placeholder={props.placeholderDescription}
+              disabled={Boolean(props.disabled)}
+              onEditEnd={(e) => props.onEditEnd({ property: 'description', value: e } as IItemCheckboxOnEditEndEvent)}
+            />
+          )}
+        </AutoLayout>
         {props.contentMeta && (
           <Text
             key={'Footer__content'}

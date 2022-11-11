@@ -47,14 +47,21 @@ import uuid from 'src/utils/uuid'
 
 function Widget() {
   const [data, setData] = useSyncedState('data', {
+    selectedEntry: undefined,
+    isUIopen: false,
     title: 'My checklist',
     description: '',
+    colorRibbon: tokens.themes.light.status.dark.fill,
     colorTheme: 'light',
-    isDescriptionVisible: true,
+    isRibbonVisible: true,
+    isTitleVisible: true,
+    isDescriptionVisible: false,
     isEditingVisible: true,
     isChecksAllowed: true,
     isCompletedVisible: true,
-    isActorsVisible: false
+    isMetadataVisible: false,
+    isFooterVisible: true,
+    isBackgroundVisible: true
   })
 
   const [entryType, setEntryType] = useSyncedState('entryType', Object.keys(EntryTypes)[0])
@@ -64,33 +71,29 @@ function Widget() {
     new Array<ChecklistCheckboxEntry | ChecklistTitleEntry>(
       {
         uuid: uuid(3),
+        value: true,
         position: 0,
         type: Object.keys(EntryTypes)[1],
-        content: 'Today'
+        title: 'Today',
+        isDescriptionVisible: false,
+        description: '',
+        priority: 0
       },
       {
         uuid: uuid(5),
         position: 1,
         type: Object.keys(EntryTypes)[0],
         value: false,
-        content: '',
+        title: '',
+        isDescriptionVisible: false,
+        description: '',
+        priority: 0,
         actor: 'Anonymous',
         timestamp: new Date().toLocaleString('en-US'),
         action: 'created'
       }
     )
   )
-
-  useEffect(() => {
-    // Compatibility with previous versions
-    if (data.isCompletedVisible === undefined || data.isActorsVisible === undefined) {
-      setData({
-        ...data,
-        ...(data.isCompletedVisible === undefined ? { isCompletedVisible: true } : {}),
-        ...(data.isActorsVisible === undefined ? { isActorsVisible: false } : {})
-      })
-    }
-  })
 
   usePropertyMenu(
     [
@@ -101,6 +104,46 @@ function Widget() {
         href: `${meta.website}?utm_superlink=widget_${meta.name}_propertyMenu_${meta.version}`,
         icon: glyphs.info(tokens.themes.light.txt.minor.default.color as string)
       },
+      ...(data.isEditingVisible
+        ? ([
+            {
+              itemType: 'action',
+              tooltip: 'Settings',
+              propertyName: 'openSettings',
+              icon: glyphs.settings(tokens.themes.light.txt.minor.default.color as string)
+            },
+            {
+              itemType: 'toggle',
+              tooltip: 'Switch color theme',
+              propertyName: 'colorTheme',
+              isToggled: data.colorTheme === 'dark',
+              icon: glyphs.darkmode(
+                (data.colorTheme === 'dark'
+                  ? tokens.themes.light.txt.primary.inverted.color
+                  : tokens.themes.light.txt.minor.default.color) as string
+              )
+            },
+            {
+              itemType: 'color-selector',
+              propertyName: 'colorRibbon',
+              tooltip: 'Header color',
+              selectedOption: data.colorRibbon,
+              options: [
+                { option: tokens.themes[data.colorTheme].status.error.fill, tooltip: 'Red' },
+                { option: tokens.themes[data.colorTheme].status.warning.fill, tooltip: 'Orange' },
+                { option: tokens.themes[data.colorTheme].status.important.fill, tooltip: 'Yellow' },
+                { option: tokens.themes[data.colorTheme].status.success.fill, tooltip: 'Green' },
+                { option: tokens.themes[data.colorTheme].status.secondary.fill, tooltip: 'Light blue' },
+                { option: tokens.themes[data.colorTheme].status.primary.fill, tooltip: 'Blue' },
+                { option: tokens.themes[data.colorTheme].status.info.fill, tooltip: 'Purple' },
+                { option: tokens.themes[data.colorTheme].status.dark.fill, tooltip: 'Black' },
+                { option: tokens.themes[data.colorTheme].status.disabled.fill, tooltip: 'Grey' },
+                { option: tokens.themes[data.colorTheme].status.white.fill, tooltip: 'White' }
+              ]
+            }
+          ] as WidgetPropertyMenuItem[])
+        : []),
+
       {
         itemType: 'separator'
       },
@@ -132,20 +175,6 @@ function Widget() {
               itemType: 'separator'
             },
             {
-              itemType: 'toggle',
-              tooltip: 'Switch color theme',
-              propertyName: 'colorTheme',
-              isToggled: data.colorTheme === 'dark',
-              icon: glyphs.darkmode(
-                (data.colorTheme === 'dark'
-                  ? tokens.themes.light.txt.primary.inverted.color
-                  : tokens.themes.light.txt.minor.default.color) as string
-              )
-            },
-            {
-              itemType: 'separator'
-            },
-            {
               itemType: 'dropdown',
               tooltip: 'New entry type',
               propertyName: 'entryType',
@@ -165,20 +194,26 @@ function Widget() {
         : [])
     ],
     ({ propertyName, propertyValue }) => {
-      if (propertyName === 'isDescriptionVisible') {
-        switchDescriptionVisibility()
+      if (propertyName === 'openSettings') {
+        return new Promise((resolve) => {
+          openUI('settings', { data, entry: undefined })
+        })
       }
 
       if (propertyName === 'isEditingVisible') {
-        switchEditingVisibility()
+        setEditingVisibility()
       }
 
       if (propertyName === 'isChecksAllowed') {
-        switchChecks()
+        setChecksAllowed()
       }
 
       if (propertyName === 'colorTheme') {
-        switchTheme()
+        setTheme()
+      }
+
+      if (propertyName === 'colorRibbon') {
+        setRibbon(propertyValue)
       }
 
       if (propertyName === 'entryType') {
@@ -191,83 +226,329 @@ function Widget() {
     }
   )
 
-  /* General */
+  useEffect(() => {
+    if (data.isUIopen) {
+      updateUI()
+    }
 
-  const switchDescriptionVisibility = () => {
-    setData({
-      ...data,
-      isDescriptionVisible: !data.isDescriptionVisible
+    figma.on('close', () => {
+      setData({
+        ...data,
+        isUIopen: false
+      })
+    })
+
+    figma.ui.onmessage = (message) => {
+      if (message.action === 'metadata') {
+        setMetadataVisiblity()
+      }
+
+      if (message.action === 'completed_tasks') {
+        setCompletedVisibility()
+      }
+
+      if (message.action === 'ribbon') {
+        setRibbonVisibility()
+      }
+
+      if (message.action === 'title') {
+        setTitleVisiblity()
+      }
+
+      if (message.action === 'description') {
+        setDescriptionVisiblity()
+      }
+
+      if (message.action === 'footer') {
+        setFooterVisiblity()
+      }
+
+      if (message.action === 'background') {
+        setBackgroundVisiblity()
+      }
+
+      if (message.action === 'priority_0') {
+        setPriority(entries.filter((entry) => entry.uuid === message.uuid)[0], 0)
+
+        figma.closePlugin()
+      }
+
+      if (message.action === 'priority_1') {
+        setPriority(entries.filter((entry) => entry.uuid === message.uuid)[0], 1)
+
+        figma.closePlugin()
+      }
+
+      if (message.action === 'priority_2') {
+        setPriority(entries.filter((entry) => entry.uuid === message.uuid)[0], 2)
+
+        figma.closePlugin()
+      }
+
+      if (message.action === 'priority_3') {
+        setPriority(entries.filter((entry) => entry.uuid === message.uuid)[0], 3)
+
+        figma.closePlugin()
+      }
+
+      if (message.action === 'move_up') {
+        moveEntry(entries.filter((entry) => entry.uuid === message.uuid)[0], 'up')
+      }
+
+      if (message.action === 'move_down') {
+        moveEntry(entries.filter((entry) => entry.uuid === message.uuid)[0], 'down')
+      }
+
+      if (message.action === 'show_description') {
+        toggleDescriptionVisibilitry(entries.filter((entry) => entry.uuid === message.uuid)[0])
+
+        figma.closePlugin()
+      }
+
+      if (message.action === 'hide_description') {
+        toggleDescriptionVisibilitry(entries.filter((entry) => entry.uuid === message.uuid)[0])
+      }
+
+      if (message.action === 'duplicate') {
+        const entry = entries.filter((entry) => entry.uuid === message.uuid)[0]
+
+        addEntry(entry.type, {
+          position: entry.position + 0.5,
+          value: entry.value,
+          title: entry.title,
+          isDescriptionVisible: entry.isDescriptionVisible,
+          description: entry.description,
+          priority: entry.priority
+        })
+
+        figma.closePlugin()
+      }
+
+      if (message.action === 'delete') {
+        removeEntry(entries.filter((entry) => entry.uuid === message.uuid)[0])
+        figma.closePlugin()
+      }
+    }
+  })
+
+  /* UI */
+
+  const updateUI = () => {
+    figma.ui.postMessage({
+      data,
+      entries: entries.filter((entry) =>
+        data.isCompletedVisible ? true : entry.type === 'check' ? !entry.value : true
+      )
     })
   }
 
-  const switchEditingVisibility = () => {
+  const openUI = (view: string, options: any) => {
+    if (view === 'settings') {
+      return new Promise((resolve) => {
+        figma.showUI(__uiFiles__.settings, { themeColors: true, title: 'Settings', width: 240, height: 418 })
+
+        setData({ ...data, isUIopen: true, selectedEntry: undefined })
+      })
+    }
+
+    if (view === 'more-checkbox') {
+      return new Promise((resolve) => {
+        figma.showUI(__uiFiles__.more, {
+          themeColors: true,
+          title: `Task: ${options.entry.title.length ? options.entry.title : '...'}`,
+          width: 240,
+          height: 337
+        })
+        setData({ ...data, isUIopen: true, selectedEntry: options.entry.uuid })
+      })
+    }
+
+    if (view === 'more-title') {
+      return new Promise((resolve) => {
+        figma.showUI(__uiFiles__.more, {
+          themeColors: true,
+          title: `Section: ${options.entry.title.length ? options.entry.title : '...'}`,
+          width: 240,
+          height: 240
+        })
+        setData({ ...data, isUIopen: true, selectedEntry: options.entry.uuid })
+      })
+    }
+  }
+
+  /* General */
+
+  const setEditingVisibility = () => {
     setData({
       ...data,
       isEditingVisible: !data.isEditingVisible
     })
   }
 
-  const switchChecks = () => {
+  const setChecksAllowed = () => {
     setData({
       ...data,
       isChecksAllowed: !data.isChecksAllowed
     })
   }
 
-  const switchTheme = () => {
+  const setTheme = () => {
     setData({
       ...data,
       colorTheme: data.colorTheme === 'dark' ? 'light' : 'dark'
     })
   }
 
-  const switchCompletedVisibility = () => {
+  const setRibbon = (color: HexCode | undefined) => {
+    if (color) {
+      setData({
+        ...data,
+        colorRibbon: color
+      })
+    }
+  }
+
+  const setCompletedVisibility = () => {
     setData({
       ...data,
       isCompletedVisible: !data.isCompletedVisible
     })
   }
 
-  const switchActorsVisibility = () => {
+  const setRibbonVisibility = () => {
     setData({
       ...data,
-      isActorsVisible: !data.isActorsVisible
+      isRibbonVisible: !data.isRibbonVisible
+    })
+  }
+
+  const setTitleVisiblity = () => {
+    setData({
+      ...data,
+      isTitleVisible: !data.isTitleVisible
+    })
+  }
+
+  const setDescriptionVisiblity = () => {
+    setData({
+      ...data,
+      isDescriptionVisible: !data.isDescriptionVisible
+    })
+  }
+
+  const setMetadataVisiblity = () => {
+    setData({
+      ...data,
+      isMetadataVisible: !data.isMetadataVisible
+    })
+  }
+
+  const setFooterVisiblity = () => {
+    setData({
+      ...data,
+      isFooterVisible: !data.isFooterVisible
+    })
+  }
+
+  const setBackgroundVisiblity = () => {
+    setData({
+      ...data,
+      isBackgroundVisible: !data.isBackgroundVisible
     })
   }
 
   /* Entries */
 
-  const addEntry = (type: string) => {
+  const addEntry = (
+    type: string,
+    options?: {
+      position?: number
+      value: boolean
+      title: string
+      isDescriptionVisible: boolean
+      description: string
+      priority: number
+    }
+  ) => {
     const id = uuid()
 
     if (!entries.filter((entry) => entry.uuid === id).length) {
-      setEntries([
+      let _entries = [
         ...entries,
         {
           uuid: id,
+          value: type === 'title' ? true : false,
           position: entries.length === 0 ? 0 : entries[entries.length - 1].position + 1,
           type,
-          content: '',
+          title: '',
+          isDescriptionVisible: false,
+          description: '',
+          priority: 0,
           actor: figma.currentUser?.name ?? 'Anonymous',
           timestamp: new Date().toLocaleString('en-US'),
-          action: 'created'
+          action: 'created',
+          ...options
         }
-      ])
+      ]
+
+      _entries.sort((a, b) => a.position - b.position)
+      setEntries(_entries.map((entry, i) => ({ ...entry, position: i })))
     } else {
       addEntry(type)
     }
   }
 
-  const sortEntry = (entry: ChecklistCheckboxEntry | ChecklistTitleEntry, direction: string) => {
-    const currIndex = entries.find((e) => e.uuid === entry.uuid) as ChecklistCheckboxEntry | ChecklistTitleEntry
-    const toPosition = direction === 'up' ? currIndex.position - 1 : currIndex.position + 1
+  const moveEntry = (entry: ChecklistCheckboxEntry | ChecklistTitleEntry, direction: string) => {
+    let _entries = entries.map((_entry, i) => {
+      if (entry.uuid === _entry.uuid) {
+        return {
+          ..._entry,
+          position: data.isCompletedVisible
+            ? direction === 'up'
+              ? _entry.position - 1.5
+              : _entry.position + 1.5
+            : findSortPosition(i, entries, direction)
+        }
+      } else {
+        return _entry
+      }
+    })
 
-    let array = [...entries]
+    _entries.sort((a, b) => a.position - b.position)
+    setEntries(_entries.map((_entry, i) => ({ ..._entry, position: i })))
+  }
 
-    const selectedEntry = array.splice(currIndex.position, 1)[0]
-    array.splice(toPosition, 0, selectedEntry)
+  const findSortPosition = (
+    currentIndex: number,
+    entries: Array<ChecklistCheckboxEntry | ChecklistTitleEntry>,
+    direction: string
+  ) => {
+    if (direction === 'up') {
+      let _entries = entries.slice(0, currentIndex)
+      let index = _entries.length - 1
+      while (index >= 0) {
+        if (_entries[index].value && _entries[index].type === 'check') {
+          index--
+        } else {
+          break
+        }
+      }
+      return index - 0.5
+    } else {
+      let _entries = entries.slice(currentIndex + 1, entries.length)
+      let index = 0
 
-    setEntries(array.map((entry, i) => ({ ...entry, position: i })))
+      while (index < _entries.length) {
+        if (_entries[index].value && _entries[index].type === 'check') {
+          index++
+        } else {
+          index++
+          break
+        }
+      }
+
+      return currentIndex + index + 0.5
+    }
   }
 
   const removeEntry = (entry: ChecklistCheckboxEntry | ChecklistTitleEntry) => {
@@ -278,15 +559,15 @@ function Widget() {
     )
   }
 
-  const editEntry = (entry: ChecklistCheckboxEntry | ChecklistTitleEntry, content: string) => {
+  const editEntry = (entry: ChecklistCheckboxEntry | ChecklistTitleEntry, event: IItemCheckboxOnEditEndEvent) => {
     setEntries([
       ...entries.filter((e) => e.uuid !== entry.uuid),
       {
         ...entry,
-        content: content,
         actor: figma.currentUser?.name ?? 'Anonymous',
         timestamp: new Date().toLocaleString('en-US'),
-        action: 'modified'
+        action: 'modified',
+        [event.property]: event.value.characters
       }
     ])
   }
@@ -299,7 +580,33 @@ function Widget() {
         value: !entry.value,
         actor: figma.currentUser?.name ?? 'Anonymous',
         timestamp: new Date().toLocaleString('en-US'),
-        action: entry.value ? 'modified' : 'completed'
+        action: entry.value ? 'unchecked' : 'checked'
+      }
+    ])
+  }
+
+  const setPriority = (entry: ChecklistCheckboxEntry | ChecklistTitleEntry, priority: number) => {
+    setEntries([
+      ...entries.filter((e) => e.uuid !== entry.uuid),
+      {
+        ...entry,
+        priority: priority,
+        actor: figma.currentUser?.name ?? 'Anonymous',
+        timestamp: new Date().toLocaleString('en-US'),
+        action: 'modified'
+      }
+    ])
+  }
+
+  const toggleDescriptionVisibilitry = (entry: ChecklistCheckboxEntry | ChecklistTitleEntry) => {
+    setEntries([
+      ...entries.filter((e) => e.uuid !== entry.uuid),
+      {
+        ...entry,
+        isDescriptionVisible: !entry.isDescriptionVisible,
+        actor: figma.currentUser?.name ?? 'Anonymous',
+        timestamp: new Date().toLocaleString('en-US'),
+        action: 'modified'
       }
     ])
   }
@@ -324,6 +631,10 @@ function Widget() {
     }
   }
 
+  const entriesForRender = entries.filter((entry) =>
+    data.isCompletedVisible ? true : entry.type === 'check' ? !entry.value : true
+  )
+
   return (
     <AutoLayout
       name="Widget"
@@ -331,13 +642,16 @@ function Widget() {
       direction="vertical"
       spacing={0}
       padding={0}
-      cornerRadius={tokens.themes[data.colorTheme].radius.container.cornerRadius}
-      fill={tokens.themes[data.colorTheme].layer.default.fill}
+      cornerRadius={data.isBackgroundVisible ? tokens.themes[data.colorTheme].radius.container.cornerRadius : 0}
+      fill={data.isBackgroundVisible ? tokens.themes[data.colorTheme].layer.default.fill : { r: 0, g: 0, b: 0, a: 0 }}
       width={800}
-      effect={tokens.themes[data.colorTheme].shadow.container}
+      effect={tokens.themes[data.colorTheme].shadow[data.isBackgroundVisible ? 'container' : 'transparent']}
     >
+      {data.isRibbonVisible && <Frame name="Widget__ribbon" fill={data.colorRibbon} width="fill-parent" height={8} />}
+
       <Header
         theme={data.colorTheme}
+        isTitleVisible={data.isEditingVisible ? data.isTitleVisible : data.isTitleVisible && Boolean(data.title.length)}
         title={data.title}
         isDescriptionVisible={
           data.isEditingVisible
@@ -349,7 +663,7 @@ function Widget() {
         onTitleEditEnd={(e: TextEditEvent) => editData('title', e.characters)}
         onDescriptionEditEnd={(e: TextEditEvent) => editData('description', e.characters)}
       />
-      <Divider theme={data.colorTheme} />
+
       <AutoLayout
         name="Widget__list"
         verticalAlignItems="center"
@@ -358,9 +672,8 @@ function Widget() {
         padding={{ left: 0, right: 0, top: 16, bottom: 16 }}
         width="fill-parent"
       >
-        {Boolean(entries.length) ? (
-          entries
-            .filter((entry) => (data.isCompletedVisible ? true : !entry.value))
+        {Boolean(entriesForRender.length) ? (
+          entriesForRender
             .sort((a, b) => a.position - b.position)
             .map((entry, i) => {
               // Checkbox
@@ -369,26 +682,30 @@ function Widget() {
                   <Item
                     key={entry.uuid}
                     theme={data.colorTheme}
-                    positionUp={data.isEditingVisible ? entry.position !== 0 : undefined}
-                    positionDown={data.isEditingVisible ? entry.position !== entries.length - 1 : undefined}
-                    deleting={data.isEditingVisible ? !data.isEditingVisible : undefined}
+                    positionUp={data.isEditingVisible ? i !== 0 : undefined}
+                    positionDown={data.isEditingVisible ? i !== entriesForRender.length - 1 : undefined}
+                    more={data.isEditingVisible ? !data.isEditingVisible : undefined}
                     padding={{
                       vertical: 8,
                       horizontal: tokens.themes[data.colorTheme].layout.item.horizontal
                     }}
-                    onPositionChange={(e: IItemPositionChangeEvent) => sortEntry(entry, e.direction)}
-                    onDelete={() => removeEntry(entry)}
+                    onPositionChange={(e: IItemPositionChangeEvent) => moveEntry(entry, e.direction)}
+                    onMore={() => openUI('more-checkbox', { data, entry })}
                   >
                     <ItemCheckbox
                       key={entry.uuid}
                       theme={data.colorTheme}
                       value={Boolean(entry.value)}
-                      contentBody={entry.content}
-                      contentMeta={data.isActorsVisible ? getEntryCheckMeta(entry) : undefined}
-                      placeholderBody={'Type something...'}
+                      contentTitle={entry.title}
+                      isDescriptionVisible={entry.isDescriptionVisible}
+                      contentDescription={entry.description}
+                      contentMeta={data.isMetadataVisible ? getEntryCheckMeta(entry) : undefined}
+                      placeholderTitle={'Title...'}
+                      placeholderDescription={'Description...'}
                       disabled={!data.isEditingVisible}
                       disabledCheckbox={!data.isChecksAllowed}
-                      onEditEnd={(e: TextEditEvent) => editEntry(entry, e.characters)}
+                      priority={entry.priority}
+                      onEditEnd={(e: IItemCheckboxOnEditEndEvent) => editEntry(entry, e)}
                       onCheckboxChange={() =>
                         data.isChecksAllowed ? toggleCheckbox(entry as ChecklistCheckboxEntry) : null
                       }
@@ -403,24 +720,27 @@ function Widget() {
                   <Item
                     key={entry.uuid}
                     theme={data.colorTheme}
-                    positionUp={data.isEditingVisible ? entry.position !== 0 : undefined}
-                    positionDown={data.isEditingVisible ? entry.position !== entries.length - 1 : undefined}
-                    deleting={data.isEditingVisible ? !data.isEditingVisible : undefined}
+                    positionUp={data.isEditingVisible ? i !== 0 : undefined}
+                    positionDown={data.isEditingVisible ? i !== entriesForRender.length - 1 : undefined}
+                    more={data.isEditingVisible ? !data.isEditingVisible : undefined}
                     padding={{
                       top: i === 0 ? 8 : 24,
                       bottom: 8,
                       horizontal: tokens.themes[data.colorTheme].layout.item.horizontal
                     }}
-                    onPositionChange={(e: IItemPositionChangeEvent) => sortEntry(entry, e.direction)}
-                    onDelete={() => removeEntry(entry)}
+                    onPositionChange={(e: IItemPositionChangeEvent) => moveEntry(entry, e.direction)}
+                    onMore={() => openUI('more-title', { data, entry })}
                   >
                     <ItemTitle
                       key={entry.uuid}
                       theme={data.colorTheme}
-                      contentBody={entry.content}
-                      placeholderBody={'Type something...'}
+                      contentTitle={entry.title}
+                      placeholderTitle={'Type something...'}
+                      isDescriptionVisible={entry.isDescriptionVisible}
+                      contentDescription={entry.description}
+                      placeholderDescription={'Description...'}
                       disabled={!data.isEditingVisible}
-                      onEditEnd={(e: TextEditEvent) => editEntry(entry, e.characters)}
+                      onEditEnd={(e: IItemCheckboxOnEditEndEvent) => editEntry(entry, e)}
                     />
                   </Item>
                 )
@@ -454,61 +774,47 @@ function Widget() {
           </Text>
         )}
       </AutoLayout>
-      <Divider theme={data.colorTheme} />
-      <Footer theme={data.colorTheme}>
-        {entries.length > 0 && (
-          <Text
-            key={'Footer__content'}
-            {...tokens.themes[data.colorTheme].typo.p6}
-            fill={tokens.themes[data.colorTheme].txt.secondary.default.color}
-            width="fill-parent"
-            horizontalAlignText="left"
-            height={32}
-            verticalAlignText="center"
-          >
-            Completed {entries.filter((entry) => entry.type === Object.keys(EntryTypes)[0] && entry.value).length} of{' '}
-            {entries.filter((entry) => entry.type === Object.keys(EntryTypes)[0]).length}
-          </Text>
-        )}
-        {data.isEditingVisible && (
-          <Fragment key={'Footer__actions'}>
-            <ButtonGhost
-              key="Footer__action_showDescription"
-              theme={data.colorTheme}
-              variant="secondary"
-              glyph={data.isDescriptionVisible ? 'visible' : 'hidden'}
-              content="Description"
-              onClick={() => switchDescriptionVisibility()}
-            />
-            <ButtonGhost
-              key="Footer__action_showActors"
-              theme={data.colorTheme}
-              variant="secondary"
-              glyph={data.isActorsVisible ? 'visible' : 'hidden'}
-              content="Actors"
-              onClick={() => switchActorsVisibility()}
-            />
-            <ButtonGhost
-              key="Footer__action_hideCompleted"
-              theme={data.colorTheme}
-              variant="secondary"
-              glyph={data.isCompletedVisible ? 'visible' : 'hidden'}
-              content="Completed tasks"
-              onClick={() => switchCompletedVisibility()}
-            />
-            <ButtonGhost
-              key="Footer__action_addTask"
-              theme={data.colorTheme}
-              variant="primary"
-              glyph="plus"
-              content="Add task"
-              onClick={() => addEntry('check')}
-            />
-          </Fragment>
-        )}
-      </Footer>
+
+      {data.isFooterVisible && (
+        <Fragment>
+          <Divider theme={data.colorTheme} />
+          <Footer theme={data.colorTheme}>
+            {entries.length > 0 && (
+              <AutoLayout
+                key="Footer__left"
+                direction="horizontal"
+                horizontalAlignItems="start"
+                width={'fill-parent'}
+                verticalAlignItems="center"
+              >
+                <ButtonGhost
+                  key="Footer__action_hideCompleted"
+                  theme={data.colorTheme}
+                  variant="secondary"
+                  glyph={data.isCompletedVisible ? 'visible' : 'hidden'}
+                  content={`Completed ${
+                    entries.filter((entry) => entry.type === Object.keys(EntryTypes)[0] && entry.value).length
+                  } of ${entries.filter((entry) => entry.type === Object.keys(EntryTypes)[0]).length}`}
+                  onClick={() => setCompletedVisibility()}
+                />
+              </AutoLayout>
+            )}
+            {data.isEditingVisible && (
+              <Fragment key={'Footer__actions'}>
+                <ButtonGhost
+                  key="Footer__action_addTask"
+                  theme={data.colorTheme}
+                  variant="primary"
+                  glyph="plus"
+                  content="Add task"
+                  onClick={() => addEntry('check')}
+                />
+              </Fragment>
+            )}
+          </Footer>
+        </Fragment>
+      )}
     </AutoLayout>
   )
 }
-
 widget.register(Widget)

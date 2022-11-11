@@ -12,7 +12,7 @@ import tokens from 'src/utils/tokens'
 
 function Item(props: IItemProps) {
   const isActionsVisible =
-    props.positionUp !== undefined || props.positionDown !== undefined || props.deleting !== undefined
+    props.positionUp !== undefined || props.positionDown !== undefined || props.more !== undefined
 
   return (
     <AutoLayout
@@ -62,13 +62,8 @@ function Item(props: IItemProps) {
             />
           )}
 
-          {props.deleting !== undefined && (
-            <ButtonGhost
-              theme={props.theme}
-              glyph="minus"
-              disabled={props.deleting}
-              onClick={() => props.onDelete?.()}
-            />
+          {props.more !== undefined && (
+            <ButtonGhost theme={props.theme} glyph="more" disabled={props.more} onClick={() => props.onMore?.()} />
           )}
         </AutoLayout>
       )}

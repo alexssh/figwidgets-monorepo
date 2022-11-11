@@ -1,0 +1,218 @@
+<div class="ui">
+
+  <div class="ui-section">General</div>
+
+  <div class="ui-item-checkbox">
+    <input type="checkbox" id="metadata" onclick="sendAction('metadata')" name="metadata">
+    <label for="metadata">Metadata</label>
+  </div>
+  <div class="ui-item-checkbox">
+    <input type="checkbox" id="completed_tasks" onclick="sendAction('completed_tasks')" name="completed_tasks">
+    <label for="completed_tasks">Completed tasks</label>
+  </div>
+
+  <div class="ui-divider"></div>
+  <div class="ui-section">View</div>
+
+  <div class="ui-item-checkbox">
+    <input type="checkbox" id="ribbon" onclick="sendAction('ribbon')" name="ribbon">
+    <label for="ribbon">Ribbon</label>
+  </div>
+  <div class="ui-item-checkbox">
+    <input type="checkbox" id="title" name="title" onclick="sendAction('title')">
+    <label for="title">Title</label>
+  </div>
+  <div class="ui-item-checkbox">
+    <input type="checkbox" id="description" onclick="sendAction('description')" name="description">
+    <label for="description">Description</label>
+  </div>
+  <div class="ui-item-checkbox">
+    <input type="checkbox" id="footer" onclick="sendAction('footer')" name="footer">
+    <label for="footer">Footer</label>
+  </div>
+
+  <div class="ui-divider"></div>
+  <div class="ui-section">View</div>
+
+  <div class="ui-item-checkbox">
+    <input type="checkbox" id="background" onclick="sendAction('background')" name="background">
+    <label for="background">Background</label>
+  </div>
+
+</div>
+
+<script>
+
+  const id = { pluginId: '1151240412068749314' }
+  const url = 'https://www.figma.com'
+  const view = "settings"
+
+  onmessage = (event) => {
+    if (event.data.pluginMessage.data.isUIopen) {
+      document.getElementById('metadata').checked = event.data.pluginMessage.data.isMetadataVisible;
+      document.getElementById('completed_tasks').checked = event.data.pluginMessage.data.isCompletedVisible;
+      document.getElementById('ribbon').checked = event.data.pluginMessage.data.isRibbonVisible;
+      document.getElementById('title').checked = event.data.pluginMessage.data.isTitleVisible;
+      document.getElementById('description').checked = event.data.pluginMessage.data.isDescriptionVisible;
+      document.getElementById('footer').checked = event.data.pluginMessage.data.isFooterVisible;
+      document.getElementById('background').checked = event.data.pluginMessage.data.isBackgroundVisible;
+    }
+  }
+
+  function sendAction(action) {
+    parent.postMessage({
+      pluginMessage: {
+        view,
+        action: action
+      }, ...id
+    }, url)
+  }
+
+</script>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  display: block;
+  margin: 0;
+}
+
+.ui {
+  width: 100%;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding: 8px 0;
+  background-color: var(--figma-color-bg);
+}
+
+.ui-section {
+  width: 100%;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 10px 12px;
+  font-family: Inter, sans-serif;
+  font-size: 11px;
+  line-height: 16px;
+  font-weight: 600;
+  color: var(--figma-color-text);
+}
+
+.ui-divider {
+  width: 100%;
+  height: 1px;
+  margin: 10px 0;
+  background-color: var(--figma-color-border);
+}
+
+.ui-item-checkbox {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.ui-item-checkbox:hover {
+  background-color: var(--figma-color-bg-hover);
+}
+
+.ui-item-checkbox input {
+  position: absolute;
+  left: 12px;
+  top: 11px;
+  height: 12px;
+  width: 12px;
+  margin: 0px;
+  outline: none;
+  border: 1px solid var(--figma-color-border-strong);
+  background-color: var(--figma-color-bg);
+  border-radius: 2px;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.ui-item-checkbox input:checked::before {
+  position: absolute;
+  content: '';
+  left: -1px;
+  top: -1px;
+  width: 12px;
+  height: 12px;
+  box-shadow: inset 1em 1em var(--figma-color-icon-onselected-strong);
+  transform-origin: bottom left;
+  clip-path: polygon(28% 38%, 41% 53%, 75% 24%, 86% 38%, 40% 78%, 15% 50%);
+}
+
+.ui-item-checkbox input:checked {
+  border: 1px solid var(--figma-color-bg-brand);
+  background-color: var(--figma-color-bg-brand);
+}
+
+.ui-item-checkbox label {
+  width: 100%;
+  padding: 10px 12px 10px 32px;
+  font-family: Inter, sans-serif;
+  font-size: 11px;
+  line-height: 16px;
+  font-weight: 400;
+  color: var(--figma-color-text);
+}
+
+.ui-item-action {
+  width: 100%;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 10px 12px;
+  font-family: Inter, sans-serif;
+  font-size: 11px;
+  line-height: 16px;
+  font-weight: 500;
+  color: var(--figma-color-text);
+}
+
+.ui-item-action:hover {
+  background-color: var(--figma-color-bg-hover);
+}
+
+.ui-item-action--disabled {
+  color: var(--figma-color-text-disabled);
+  background-color: transparent !important;
+}
+
+.ui-item-action--destructive {
+  color: var(--figma-color-text-danger);
+}
+
+.ui-item-priority {
+  display: flex;
+  flex-flow: row-nowrap;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 0 12px;
+  gap: 3px;
+}
+
+.ui-item-priority-button {
+  padding: 10px;
+  border-radius: 2px;
+}
+
+.ui-item-priority-button:hover {
+  background-color: var(--figma-color-bg-hover);
+}
+
+.ui-item-priority-button--selected {
+  border: 1px solid var(--figma-color-border-selected);
+}
+
+</style>
