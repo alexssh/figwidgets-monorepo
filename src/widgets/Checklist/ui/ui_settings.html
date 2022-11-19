@@ -32,7 +32,15 @@
   </div>
 
   <div class="ui-divider"></div>
-  <div class="ui-section">View</div>
+  <div class="ui-section">Container</div>
+
+  <div class="ui-item-select">
+    <select id="width" name="width" size="1" onchange="sendAction(this.value)">
+      <option value="small">Small</option>
+      <option value="medium">Medium</option>
+      <option value="large">Large</option>
+    </select>
+  </div>
 
   <div class="ui-item-checkbox">
     <input type="checkbox" id="background" onclick="sendAction('background')" name="background">
@@ -55,11 +63,13 @@
       document.getElementById('title').checked = event.data.pluginMessage.data.isTitleVisible;
       document.getElementById('description').checked = event.data.pluginMessage.data.isDescriptionVisible;
       document.getElementById('footer').checked = event.data.pluginMessage.data.isFooterVisible;
+      document.getElementById('width').value = event.data.pluginMessage.data.width === 800 ? 'large' : event.data.pluginMessage.data.width === 600 ? 'medium' : event.data.pluginMessage.data.width === 400 ? 'small' : 'large'
       document.getElementById('background').checked = event.data.pluginMessage.data.isBackgroundVisible;
     }
   }
 
   function sendAction(action) {
+    console.log(action)
     parent.postMessage({
       pluginMessage: {
         view,

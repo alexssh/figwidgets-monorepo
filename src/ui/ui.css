@@ -122,7 +122,7 @@ body {
 
 .ui-item-priority {
   display: flex;
-  flex-flow: row-nowrap;
+  flex-flow: row nowrap;
   justify-content: flex-start;
   align-items: center;
   padding: 0 12px;
@@ -140,4 +140,71 @@ body {
 
 .ui-item-priority-button--selected {
   border: 1px solid var(--figma-color-border-selected);
+}
+
+.ui-item-select {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+  align-items: center;
+  height: 36px;
+  gap: 8px;
+  padding: 0 12px;
+  width: 100%;
+  position: relative;
+}
+
+.ui-item-select::after {
+  position: absolute;
+  display: block;
+  content: '';
+  right: 18px;
+  top: 16px;
+  width: 7px;
+  height: 5px;
+  mask: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOCIgaGVpZ2h0PSI1IiB2aWV3Qm94PSIwIDAgOCA1IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTQuMDAwMDEgMy4yOTI5M0wxLjM1MzU2IDAuNjQ2NDg0TDAuNjQ2NDU0IDEuMzUzNTlMNC4wMDAwMSA0LjcwNzE0TDcuMzUzNTYgMS4zNTM1OUw2LjY0NjQ1IDAuNjQ2NDg0TDQuMDAwMDEgMy4yOTI5M1oiIGZpbGw9IiNCNEI0QjQiLz4KPC9zdmc+Cg==)
+    no-repeat center;
+  mask-size: cover;
+  -webkit-mask: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOCIgaGVpZ2h0PSI1IiB2aWV3Qm94PSIwIDAgOCA1IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTQuMDAwMDEgMy4yOTI5M0wxLjM1MzU2IDAuNjQ2NDg0TDAuNjQ2NDU0IDEuMzUzNTlMNC4wMDAwMSA0LjcwNzE0TDcuMzUzNTYgMS4zNTM1OUw2LjY0NjQ1IDAuNjQ2NDg0TDQuMDAwMDEgMy4yOTI5M1oiIGZpbGw9IiNCNEI0QjQiLz4KPC9zdmc+Cg==)
+    no-repeat center;
+  -webkit-mask-size: cover;
+  background-color: var(--figma-color-icon-secondary);
+}
+
+.ui-item-select select {
+  appearance: none;
+  position: absolute;
+  padding: 10px 12px;
+  font-family: Inter, sans-serif;
+  font-size: 11px;
+  line-height: 16px;
+  font-weight: 500;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  background: none;
+  outline: none;
+  border: none;
+  color: var(--figma-color-text);
+}
+
+.ui-item-select:hover {
+  background-color: var(--figma-color-bg-hover);
+}
+
+.ui-item-select--disabled select {
+  color: var(--figma-color-text-disabled);
+  background-color: transparent !important;
+}
+
+.ui-item-select--preview select {
+  padding-left: 36px;
+}
+
+.ui-item-select-preview {
+  width: 16;
+  height: 16;
+  border-radius: 100%;
+  background-color: var(--figma-color-icon-secondary);
 }

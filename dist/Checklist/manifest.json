@@ -7,7 +7,8 @@
   "containsWidget": true,
   "permissions": ["currentuser"],
   "ui": {
-    "more": "ui_more.html",
+    "more_checkbox": "ui_more_checkbox.html",
+    "more_title": "ui_more_title.html",
     "settings": "ui_settings.html"
   },
   "widgetApi": "1.0.0"

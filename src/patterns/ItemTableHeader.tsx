@@ -39,15 +39,6 @@ function ItemTableHeader(props: IItemTableHeaderProps) {
               {cell.title}
             </Text>
           )}
-          {typeof cell.visibility === 'boolean' && !props.disabled && (
-            <ButtonGhost
-              theme={props.theme}
-              variant="secondary"
-              size={200}
-              glyph={cell.visibility ? 'visible' : 'hidden'}
-              onClick={() => props.onVisibilityChanged?.({ index: i })}
-            />
-          )}
         </AutoLayout>
       ))}
     </AutoLayout>

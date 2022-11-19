@@ -53,6 +53,7 @@ function Widget() {
     description: '',
     colorRibbon: tokens.themes.light.status.dark.fill,
     colorTheme: 'light',
+    width: 800,
     isRibbonVisible: true,
     isTitleVisible: true,
     isDescriptionVisible: false,
@@ -66,34 +67,7 @@ function Widget() {
 
   const [entryType, setEntryType] = useSyncedState('entryType', Object.keys(EntryTypes)[0])
 
-  const [entries, setEntries] = useSyncedState(
-    'entries',
-    new Array<ChecklistCheckboxEntry | ChecklistTitleEntry>(
-      {
-        uuid: uuid(3),
-        value: true,
-        position: 0,
-        type: Object.keys(EntryTypes)[1],
-        title: 'Today',
-        isDescriptionVisible: false,
-        description: '',
-        priority: 0
-      },
-      {
-        uuid: uuid(5),
-        position: 1,
-        type: Object.keys(EntryTypes)[0],
-        value: false,
-        title: '',
-        isDescriptionVisible: false,
-        description: '',
-        priority: 0,
-        actor: 'Anonymous',
-        timestamp: new Date().toLocaleString('en-US'),
-        action: 'created'
-      }
-    )
-  )
+  const entries = useSyncedMap<ChecklistCheckboxEntry | ChecklistTitleEntry>('entries')
 
   usePropertyMenu(
     [
@@ -259,6 +233,18 @@ function Widget() {
         setDescriptionVisiblity()
       }
 
+      if (message.action === 'small') {
+        setWidth(message.action)
+      }
+
+      if (message.action === 'medium') {
+        setWidth(message.action)
+      }
+
+      if (message.action === 'large') {
+        setWidth(message.action)
+      }
+
       if (message.action === 'footer') {
         setFooterVisiblity()
       }
@@ -268,49 +254,45 @@ function Widget() {
       }
 
       if (message.action === 'priority_0') {
-        setPriority(entries.filter((entry) => entry.uuid === message.uuid)[0], 0)
-
+        setPriority(entries.get(message.uuid) as ChecklistCheckboxEntry | ChecklistTitleEntry, 0)
         figma.closePlugin()
       }
 
       if (message.action === 'priority_1') {
-        setPriority(entries.filter((entry) => entry.uuid === message.uuid)[0], 1)
-
+        setPriority(entries.get(message.uuid) as ChecklistCheckboxEntry | ChecklistTitleEntry, 1)
         figma.closePlugin()
       }
 
       if (message.action === 'priority_2') {
-        setPriority(entries.filter((entry) => entry.uuid === message.uuid)[0], 2)
-
+        setPriority(entries.get(message.uuid) as ChecklistCheckboxEntry | ChecklistTitleEntry, 2)
         figma.closePlugin()
       }
 
       if (message.action === 'priority_3') {
-        setPriority(entries.filter((entry) => entry.uuid === message.uuid)[0], 3)
-
+        setPriority(entries.get(message.uuid) as ChecklistCheckboxEntry | ChecklistTitleEntry, 3)
         figma.closePlugin()
       }
 
       if (message.action === 'move_up') {
-        moveEntry(entries.filter((entry) => entry.uuid === message.uuid)[0], 'up')
+        moveEntry(entries.get(message.uuid) as ChecklistCheckboxEntry | ChecklistTitleEntry, 'up')
       }
 
       if (message.action === 'move_down') {
-        moveEntry(entries.filter((entry) => entry.uuid === message.uuid)[0], 'down')
+        moveEntry(entries.get(message.uuid) as ChecklistCheckboxEntry | ChecklistTitleEntry, 'down')
       }
 
       if (message.action === 'show_description') {
-        toggleDescriptionVisibilitry(entries.filter((entry) => entry.uuid === message.uuid)[0])
+        toggleDescriptionVisibilitry(entries.get(message.uuid) as ChecklistCheckboxEntry | ChecklistTitleEntry)
 
         figma.closePlugin()
       }
 
       if (message.action === 'hide_description') {
-        toggleDescriptionVisibilitry(entries.filter((entry) => entry.uuid === message.uuid)[0])
+        toggleDescriptionVisibilitry(entries.get(message.uuid) as ChecklistCheckboxEntry | ChecklistTitleEntry)
       }
 
       if (message.action === 'duplicate') {
-        const entry = entries.filter((entry) => entry.uuid === message.uuid)[0]
+        const entry = entries.get(message.uuid) as ChecklistCheckboxEntry | ChecklistTitleEntry
 
         addEntry(entry.type, {
           position: entry.position + 0.5,
@@ -325,7 +307,7 @@ function Widget() {
       }
 
       if (message.action === 'delete') {
-        removeEntry(entries.filter((entry) => entry.uuid === message.uuid)[0])
+        removeEntry(entries.get(message.uuid) as ChecklistCheckboxEntry | ChecklistTitleEntry)
         figma.closePlugin()
       }
     }
@@ -336,16 +318,14 @@ function Widget() {
   const updateUI = () => {
     figma.ui.postMessage({
       data,
-      entries: entries.filter((entry) =>
-        data.isCompletedVisible ? true : entry.type === 'check' ? !entry.value : true
-      )
+      entries: entries.values().filter((entry) => (data.isCompletedVisible ? true : !entry.value))
     })
   }
 
   const openUI = (view: string, options: any) => {
     if (view === 'settings') {
       return new Promise((resolve) => {
-        figma.showUI(__uiFiles__.settings, { themeColors: true, title: 'Settings', width: 240, height: 418 })
+        figma.showUI(__uiFiles__.settings, { themeColors: true, title: 'Settings', width: 240, height: 454 })
 
         setData({ ...data, isUIopen: true, selectedEntry: undefined })
       })
@@ -353,7 +333,7 @@ function Widget() {
 
     if (view === 'more-checkbox') {
       return new Promise((resolve) => {
-        figma.showUI(__uiFiles__.more, {
+        figma.showUI(__uiFiles__.more_checkbox, {
           themeColors: true,
           title: `Task: ${options.entry.title.length ? options.entry.title : '...'}`,
           width: 240,
@@ -365,7 +345,7 @@ function Widget() {
 
     if (view === 'more-title') {
       return new Promise((resolve) => {
-        figma.showUI(__uiFiles__.more, {
+        figma.showUI(__uiFiles__.more_title, {
           themeColors: true,
           title: `Section: ${options.entry.title.length ? options.entry.title : '...'}`,
           width: 240,
@@ -457,6 +437,13 @@ function Widget() {
     })
   }
 
+  const setWidth = (value: string) => {
+    setData({
+      ...data,
+      width: value === 'small' ? 400 : value === 'medium' ? 600 : value === 'large' ? 800 : 800
+    })
+  }
+
   /* Entries */
 
   const addEntry = (
@@ -472,50 +459,43 @@ function Widget() {
   ) => {
     const id = uuid()
 
-    if (!entries.filter((entry) => entry.uuid === id).length) {
-      let _entries = [
-        ...entries,
-        {
-          uuid: id,
-          value: type === 'title' ? true : false,
-          position: entries.length === 0 ? 0 : entries[entries.length - 1].position + 1,
-          type,
-          title: '',
-          isDescriptionVisible: false,
-          description: '',
-          priority: 0,
-          actor: figma.currentUser?.name ?? 'Anonymous',
-          timestamp: new Date().toLocaleString('en-US'),
-          action: 'created',
-          ...options
-        }
-      ]
-
-      _entries.sort((a, b) => a.position - b.position)
-      setEntries(_entries.map((entry, i) => ({ ...entry, position: i })))
+    if (!entries.get(id)) {
+      entries.set(id, {
+        uuid: id,
+        value: false,
+        position: entries.values().length === 0 ? 0 : entries.values().length,
+        type,
+        title: '',
+        isDescriptionVisible: false,
+        description: '',
+        priority: 0,
+        actor: figma.currentUser?.name ?? 'Anonymous',
+        timestamp: new Date().toLocaleString('en-US'),
+        action: 'created',
+        ...options
+      })
+      sortPositions()
     } else {
       addEntry(type)
     }
   }
 
   const moveEntry = (entry: ChecklistCheckboxEntry | ChecklistTitleEntry, direction: string) => {
-    let _entries = entries.map((_entry, i) => {
-      if (entry.uuid === _entry.uuid) {
-        return {
-          ..._entry,
-          position: data.isCompletedVisible
-            ? direction === 'up'
-              ? _entry.position - 1.5
-              : _entry.position + 1.5
-            : findSortPosition(i, entries, direction)
-        }
-      } else {
-        return _entry
-      }
-    })
+    let targetEntry = entries.get(entry.uuid) as ChecklistCheckboxEntry | ChecklistTitleEntry
 
-    _entries.sort((a, b) => a.position - b.position)
-    setEntries(_entries.map((_entry, i) => ({ ..._entry, position: i })))
+    entries.set(entry.uuid, {
+      ...entry,
+      position: data.isCompletedVisible
+        ? direction === 'up'
+          ? targetEntry.position - 1.5
+          : targetEntry.position + 1.5
+        : findSortPosition(
+            entry.position,
+            entries.values().sort((a, b) => a.position - b.position),
+            direction
+          )
+    })
+    sortPositions()
   }
 
   const findSortPosition = (
@@ -551,64 +531,61 @@ function Widget() {
     }
   }
 
+  const sortPositions = () => {
+    entries
+      .values()
+      .sort((a, b) => a.position - b.position)
+      .forEach((_entry, i) => {
+        entries.set(_entry.uuid, {
+          ..._entry,
+          position: i
+        })
+      })
+  }
+
   const removeEntry = (entry: ChecklistCheckboxEntry | ChecklistTitleEntry) => {
-    setEntries(
-      [...entries.filter((e) => e.uuid !== entry.uuid)]
-        .sort((a, b) => a.position - b.position)
-        .map((entry, i) => ({ ...entry, position: i }))
-    )
+    entries.delete(entry.uuid)
+    sortPositions()
   }
 
   const editEntry = (entry: ChecklistCheckboxEntry | ChecklistTitleEntry, event: IItemCheckboxOnEditEndEvent) => {
-    setEntries([
-      ...entries.filter((e) => e.uuid !== entry.uuid),
-      {
-        ...entry,
-        actor: figma.currentUser?.name ?? 'Anonymous',
-        timestamp: new Date().toLocaleString('en-US'),
-        action: 'modified',
-        [event.property]: event.value.characters
-      }
-    ])
+    entries.set(entry.uuid, {
+      ...entry,
+      actor: figma.currentUser?.name ?? 'Anonymous',
+      timestamp: new Date().toLocaleString('en-US'),
+      action: 'modified',
+      [event.property]: event.value.characters
+    })
   }
 
   const toggleCheckbox = (entry: ChecklistCheckboxEntry) => {
-    setEntries([
-      ...entries.filter((e) => e.uuid !== entry.uuid),
-      {
-        ...entry,
-        value: !entry.value,
-        actor: figma.currentUser?.name ?? 'Anonymous',
-        timestamp: new Date().toLocaleString('en-US'),
-        action: entry.value ? 'unchecked' : 'checked'
-      }
-    ])
+    entries.set(entry.uuid, {
+      ...entry,
+      value: !entry.value,
+      actor: figma.currentUser?.name ?? 'Anonymous',
+      timestamp: new Date().toLocaleString('en-US'),
+      action: entry.value ? 'unchecked' : 'checked'
+    })
   }
 
   const setPriority = (entry: ChecklistCheckboxEntry | ChecklistTitleEntry, priority: number) => {
-    setEntries([
-      ...entries.filter((e) => e.uuid !== entry.uuid),
-      {
-        ...entry,
-        priority: priority,
-        actor: figma.currentUser?.name ?? 'Anonymous',
-        timestamp: new Date().toLocaleString('en-US'),
-        action: 'modified'
-      }
-    ])
+    entries.set(entry.uuid, {
+      ...entry,
+      priority: priority,
+      actor: figma.currentUser?.name ?? 'Anonymous',
+      timestamp: new Date().toLocaleString('en-US'),
+      action: 'modified'
+    })
   }
 
   const toggleDescriptionVisibilitry = (entry: ChecklistCheckboxEntry | ChecklistTitleEntry) => {
-    setEntries([
-      ...entries.filter((e) => e.uuid !== entry.uuid),
-      {
-        ...entry,
-        isDescriptionVisible: !entry.isDescriptionVisible,
-        actor: figma.currentUser?.name ?? 'Anonymous',
-        timestamp: new Date().toLocaleString('en-US'),
-        action: 'modified'
-      }
-    ])
+    entries.set(entry.uuid, {
+      ...entry,
+      isDescriptionVisible: !entry.isDescriptionVisible,
+      actor: figma.currentUser?.name ?? 'Anonymous',
+      timestamp: new Date().toLocaleString('en-US'),
+      action: 'modified'
+    })
   }
 
   /* Data */
@@ -631,9 +608,11 @@ function Widget() {
     }
   }
 
-  const entriesForRender = entries.filter((entry) =>
-    data.isCompletedVisible ? true : entry.type === 'check' ? !entry.value : true
-  )
+  const entriesForRender = entries
+    .values()
+    .filter((entry) => (data.isCompletedVisible ? true : entry.type === 'check' ? !entry.value : true))
+
+  const renderEntries = () => {}
 
   return (
     <AutoLayout
@@ -644,7 +623,7 @@ function Widget() {
       padding={0}
       cornerRadius={data.isBackgroundVisible ? tokens.themes[data.colorTheme].radius.container.cornerRadius : 0}
       fill={data.isBackgroundVisible ? tokens.themes[data.colorTheme].layer.default.fill : { r: 0, g: 0, b: 0, a: 0 }}
-      width={800}
+      width={data.width}
       effect={tokens.themes[data.colorTheme].shadow[data.isBackgroundVisible ? 'container' : 'transparent']}
     >
       {data.isRibbonVisible && <Frame name="Widget__ribbon" fill={data.colorRibbon} width="fill-parent" height={8} />}
@@ -749,19 +728,20 @@ function Widget() {
         ) : (
           <Fragment />
         )}
-        {entries.filter((entry) => (data.isCompletedVisible ? true : !entry.value)).length === 0 && entries.length > 0 && (
-          <Text
-            {...tokens.themes[data.colorTheme].typo.p5}
-            fill={tokens.themes[data.colorTheme].txt.secondary.default.color}
-            width={'fill-parent'}
-            height={48}
-            horizontalAlignText="center"
-            verticalAlignText="center"
-          >
-            All done. Enjoy your time!
-          </Text>
-        )}
-        {entries.length === 0 && (
+        {entries.values().filter((entry) => (data.isCompletedVisible ? true : !entry.value)).length === 0 &&
+          entries.values().length > 0 && (
+            <Text
+              {...tokens.themes[data.colorTheme].typo.p5}
+              fill={tokens.themes[data.colorTheme].txt.secondary.default.color}
+              width={'fill-parent'}
+              height={48}
+              horizontalAlignText="center"
+              verticalAlignText="center"
+            >
+              All done. Enjoy your time!
+            </Text>
+          )}
+        {entries.values().length === 0 && (
           <Text
             {...tokens.themes[data.colorTheme].typo.p5}
             fill={tokens.themes[data.colorTheme].txt.secondary.default.color}
@@ -779,7 +759,7 @@ function Widget() {
         <Fragment>
           <Divider theme={data.colorTheme} />
           <Footer theme={data.colorTheme}>
-            {entries.length > 0 && (
+            {entries.values().length > 0 && (
               <AutoLayout
                 key="Footer__left"
                 direction="horizontal"
@@ -793,8 +773,8 @@ function Widget() {
                   variant="secondary"
                   glyph={data.isCompletedVisible ? 'visible' : 'hidden'}
                   content={`Completed ${
-                    entries.filter((entry) => entry.type === Object.keys(EntryTypes)[0] && entry.value).length
-                  } of ${entries.filter((entry) => entry.type === Object.keys(EntryTypes)[0]).length}`}
+                    entries.values().filter((entry) => entry.type === Object.keys(EntryTypes)[0] && entry.value).length
+                  } of ${entries.values().filter((entry) => entry.type === Object.keys(EntryTypes)[0]).length}`}
                   onClick={() => setCompletedVisibility()}
                 />
               </AutoLayout>
@@ -817,4 +797,5 @@ function Widget() {
     </AutoLayout>
   )
 }
+
 widget.register(Widget)

@@ -11,10 +11,16 @@ function ItemTitle(props: IItemTitleProps) {
     <AutoLayout
       key={props.key}
       name="ItemTitle"
-      direction="horizontal"
+      direction="vertical"
       height="hug-contents"
       width="fill-parent"
-      padding={0}
+      spacing={5}
+      padding={{
+        top: 0,
+        left: 0,
+        bottom: props.isDescriptionVisible ? 8 : 0,
+        right: 0
+      }}
     >
       <InputGhost
         theme={props.theme}
