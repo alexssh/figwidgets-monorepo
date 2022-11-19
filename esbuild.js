@@ -19,6 +19,8 @@ const appendUIStyles = (options) => ({
               if (err) throw err
             })
           })
+
+          console.log('Build - Done', `${process.hrtime()[1] / 100000000}ms`)
         })
       })
     )
