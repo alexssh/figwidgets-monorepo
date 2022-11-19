@@ -759,6 +759,9 @@ function Widget() {
         <Fragment>
           <Divider theme={data.colorTheme} />
           <Footer theme={data.colorTheme}>
+            {entries.values().length === 0 && (
+              <AutoLayout key={'Footer__left'} width={'fill-parent'} height={1}></AutoLayout>
+            )}
             {entries.values().length > 0 && (
               <AutoLayout
                 key="Footer__left"
