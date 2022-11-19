@@ -24,6 +24,9 @@ checkbox, checklist, design, handoff, notes, plan, progress tracker, projects, t
 
 ## Changelog
 
+- Version 8
+    - Optimisation
+
 - Version 7
     - Width setting
     - Bug fixes & optimisation
