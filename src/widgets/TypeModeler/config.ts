@@ -1,6 +1,6 @@
 export const meta = {
   name: 'typeModeler',
-  version: '1.0.1',
+  version: '4',
   website: 'https://offframes.com/figma-widget/type-modeler'
 }
 

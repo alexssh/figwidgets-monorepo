@@ -47,19 +47,38 @@ import uuid from 'src/utils/uuid'
 
 function Widget() {
   const [data, setData] = useSyncedState('data', {
+    selectedEntry: undefined,
+    isUIopen: false,
     title: 'Entity name',
     description: '',
-    isDescriptionVisible: true,
     isEditingVisible: true,
-    colorTheme: 'light'
+    colorTheme: 'light',
+    colorRibbon: tokens.themes.light.status.dark.fill,
+
+    isTitleVisible: true,
+    isDescriptionVisible: false,
+    isRibbonVisible: true,
+    isFooterVisible: true,
+
+    width: 800,
+    isBackgroundVisible: true,
+
+    isTableTypeVisible: true,
+    isTableDefaultValueVisible: true,
+    isTableDescriptionVisible: true
   })
 
   const [tableConfig, setTableConfig] = useSyncedState('tableConfig', [
-    { title: 'Name', width: 120, style: { fontWeight: 600 } },
-    { title: 'Type', width: 120, style: { fill: tokens.themes[data.colorTheme].txt.status.success.color } },
+    { title: 'Name', width: 120, visibility: true, style: { fontWeight: 600 } },
+    {
+      title: 'Type',
+      width: 120,
+      visibility: true,
+      style: { fill: tokens.themes[data.colorTheme].txt.status.success.color }
+    },
     { title: 'Default value', width: 160, visibility: true },
     {
-      title: 'Comment',
+      title: 'Description',
       width: 'fill-parent',
       visibility: true,
       style: { fill: tokens.themes[data.colorTheme].txt.secondary.default.color }
@@ -68,81 +87,7 @@ function Widget() {
 
   const [entryType, setEntryType] = useSyncedState('table', Object.keys(EntryPresets)[0])
 
-  const [entries, setEntries] = useSyncedState(
-    'entries',
-    new Array<TableModelerEntry>(
-      {
-        uuid: uuid(2),
-        position: 0,
-        row: [
-          {
-            ...tableConfig[0],
-            content: 'id'
-          } as TableCell,
-          {
-            ...tableConfig[1],
-            content: 'uuid'
-          } as TableCell,
-          {
-            ...tableConfig[2],
-            content: 'uuid()'
-          } as TableCell,
-          {
-            ...tableConfig[3],
-            content: ''
-          } as TableCell
-        ]
-      },
-      {
-        uuid: uuid(4),
-        position: 1,
-        row: [
-          {
-            ...tableConfig[0],
-            content: 'likes'
-          } as TableCell,
-          {
-            ...tableConfig[1],
-            content: 'number'
-          } as TableCell,
-          {
-            ...tableConfig[2],
-            content: '0'
-          } as TableCell,
-          {
-            ...tableConfig[3],
-            content: ''
-          } as TableCell
-        ]
-      },
-      {
-        uuid: uuid(6),
-        position: 2,
-        row: [
-          {
-            ...tableConfig[0],
-            content: 'content?'
-          } as TableCell,
-          {
-            ...tableConfig[1],
-            content: 'string'
-          } as TableCell,
-          {
-            ...tableConfig[2],
-            content: '""'
-          } as TableCell,
-          {
-            ...tableConfig[3],
-            content: '160 symbols max'
-          } as TableCell
-        ]
-      }
-    )
-  )
-
-  useEffect(() => {
-    // Compatibility with previous versions
-  })
+  const entries = useSyncedMap<TableModelerEntry>('entries')
 
   usePropertyMenu(
     [
@@ -153,6 +98,45 @@ function Widget() {
         href: `${meta.website}?utm_superlink=widget_${meta.name}_propertyMenu_${meta.version}`,
         icon: glyphs.info(tokens.themes.light.txt.minor.default.color as string)
       },
+      ...(data.isEditingVisible
+        ? ([
+            {
+              itemType: 'action',
+              tooltip: 'Settings',
+              propertyName: 'openSettings',
+              icon: glyphs.settings(tokens.themes.light.txt.minor.default.color as string)
+            },
+            {
+              itemType: 'toggle',
+              tooltip: 'Switch color theme',
+              propertyName: 'colorTheme',
+              isToggled: data.colorTheme === 'dark',
+              icon: glyphs.darkmode(
+                (data.colorTheme === 'dark'
+                  ? tokens.themes.light.txt.primary.inverted.color
+                  : tokens.themes.light.txt.minor.default.color) as string
+              )
+            },
+            {
+              itemType: 'color-selector',
+              propertyName: 'colorRibbon',
+              tooltip: 'Header color',
+              selectedOption: data.colorRibbon,
+              options: [
+                { option: tokens.themes[data.colorTheme].status.error.fill, tooltip: 'Red' },
+                { option: tokens.themes[data.colorTheme].status.warning.fill, tooltip: 'Orange' },
+                { option: tokens.themes[data.colorTheme].status.important.fill, tooltip: 'Yellow' },
+                { option: tokens.themes[data.colorTheme].status.success.fill, tooltip: 'Green' },
+                { option: tokens.themes[data.colorTheme].status.secondary.fill, tooltip: 'Cyan' },
+                { option: tokens.themes[data.colorTheme].status.primary.fill, tooltip: 'Blue' },
+                { option: tokens.themes[data.colorTheme].status.info.fill, tooltip: 'Purple' },
+                { option: tokens.themes[data.colorTheme].status.dark.fill, tooltip: 'Black' },
+                { option: tokens.themes[data.colorTheme].status.disabled.fill, tooltip: 'Grey' },
+                { option: tokens.themes[data.colorTheme].status.white.fill, tooltip: 'White' }
+              ]
+            }
+          ] as WidgetPropertyMenuItem[])
+        : []),
       {
         itemType: 'separator'
       },
@@ -169,20 +153,6 @@ function Widget() {
       },
       ...(data.isEditingVisible
         ? ([
-            {
-              itemType: 'separator'
-            },
-            {
-              itemType: 'toggle',
-              tooltip: 'Switch color theme',
-              propertyName: 'colorTheme',
-              isToggled: data.colorTheme === 'dark',
-              icon: glyphs.darkmode(
-                (data.colorTheme === 'dark'
-                  ? tokens.themes.light.txt.primary.inverted.color
-                  : tokens.themes.light.txt.minor.default.color) as string
-              )
-            },
             {
               itemType: 'separator'
             },
@@ -209,8 +179,10 @@ function Widget() {
         : [])
     ],
     ({ propertyName, propertyValue }) => {
-      if (propertyName === 'isDescriptionVisible') {
-        switchDescriptionVisibility()
+      if (propertyName === 'openSettings') {
+        return new Promise((resolve) => {
+          openUI('settings', { data, entry: undefined })
+        })
       }
 
       if (propertyName === 'isEditingVisible') {
@@ -219,6 +191,10 @@ function Widget() {
 
       if (propertyName === 'colorTheme') {
         switchTheme()
+      }
+
+      if (propertyName === 'colorRibbon') {
+        setRibbon(propertyValue)
       }
 
       if (propertyName === 'entryType') {
@@ -231,14 +207,117 @@ function Widget() {
     }
   )
 
-  /* General */
+  useEffect(() => {
+    if (data.isUIopen) {
+      updateUI()
+    }
 
-  const switchDescriptionVisibility = () => {
-    setData({
-      ...data,
-      isDescriptionVisible: !data.isDescriptionVisible
+    figma.on('close', () => {
+      setData({
+        ...data,
+        isUIopen: false
+      })
+    })
+
+    figma.ui.onmessage = (message) => {
+      if (message.action === 'table_type') {
+        setTableTypeVisibility()
+      }
+
+      if (message.action === 'table_default_value') {
+        setTableDefaultValueVisibility()
+      }
+
+      if (message.action === 'table_description') {
+        setTableDescriptionVisibility()
+      }
+
+      if (message.action === 'ribbon') {
+        setRibbonVisibility()
+      }
+
+      if (message.action === 'title') {
+        setTitleVisiblity()
+      }
+
+      if (message.action === 'description') {
+        setDescriptionVisiblity()
+      }
+
+      if (message.action === 'footer') {
+        setFooterVisiblity()
+      }
+
+      if (message.action.indexOf('width') > -1) {
+        setWidth(message.action)
+      }
+
+      if (message.action === 'background') {
+        setBackgroundVisiblity()
+      }
+
+      if (message.action.indexOf('color') > -1) {
+        setEntryTypeColor(entries.get(message.uuid) as TableModelerEntry, message.action)
+      }
+
+      if (message.action === 'move_up') {
+        moveEntry(entries.get(message.uuid) as TableModelerEntry, 'up')
+      }
+
+      if (message.action === 'move_down') {
+        moveEntry(entries.get(message.uuid) as TableModelerEntry, 'down')
+      }
+
+      if (message.action === 'duplicate') {
+        const entry = entries.get(message.uuid) as TableModelerEntry
+
+        addEntry(null, {
+          position: entry.position + 0.5,
+          row: entry.row
+        })
+
+        figma.closePlugin()
+      }
+
+      if (message.action === 'delete') {
+        removeEntry(entries.get(message.uuid) as TableModelerEntry)
+        figma.closePlugin()
+      }
+    }
+  })
+
+  /* UI */
+
+  const updateUI = () => {
+    figma.ui.postMessage({
+      data,
+      entries: entries.values()
     })
   }
+
+  const openUI = (view: string, options: any) => {
+    if (view === 'settings') {
+      return new Promise((resolve) => {
+        figma.showUI(__uiFiles__.settings, { themeColors: true, title: 'Settings', width: 240, height: 454 })
+
+        setData({ ...data, isUIopen: true, selectedEntry: undefined })
+      })
+    }
+
+    if (view === 'more') {
+      return new Promise((resolve) => {
+        figma.showUI(__uiFiles__.more, {
+          themeColors: true,
+          title: `Property: ${options.entry.row[0].content.length ? options.entry.row[0].content : '...'}`,
+          width: 240,
+          height: 259
+        })
+        setData({ ...data, isUIopen: true, selectedEntry: options.entry.uuid })
+      })
+    }
+  }
+
+  /* General */
 
   const switchEditingVisibility = () => {
     setData({
@@ -254,29 +333,176 @@ function Widget() {
     })
   }
 
+  const setTableTypeVisibility = () => {
+    setData({
+      ...data,
+      isTableTypeVisible: !data.isTableTypeVisible
+    })
+    updateTableConfig(1, { visibility: !tableConfig[1].visibility })
+  }
+
+  const setTableDefaultValueVisibility = () => {
+    setData({
+      ...data,
+      isTableDefaultValueVisible: !data.isTableDefaultValueVisible
+    })
+    updateTableConfig(2, { visibility: !tableConfig[2].visibility })
+  }
+
+  const setTableDescriptionVisibility = () => {
+    setData({
+      ...data,
+      isTableDescriptionVisible: !data.isTableDescriptionVisible
+    })
+    updateTableConfig(3, { visibility: !tableConfig[3].visibility })
+  }
+
+  const setRibbon = (color: HexCode | undefined) => {
+    if (color) {
+      setData({
+        ...data,
+        colorRibbon: color
+      })
+    }
+  }
+
+  const setRibbonVisibility = () => {
+    setData({
+      ...data,
+      isRibbonVisible: !data.isRibbonVisible
+    })
+  }
+
+  const setTitleVisiblity = () => {
+    setData({
+      ...data,
+      isTitleVisible: !data.isTitleVisible
+    })
+  }
+
+  const setDescriptionVisiblity = () => {
+    setData({
+      ...data,
+      isDescriptionVisible: !data.isDescriptionVisible
+    })
+  }
+
+  const setFooterVisiblity = () => {
+    setData({
+      ...data,
+      isFooterVisible: !data.isFooterVisible
+    })
+  }
+
+  const setBackgroundVisiblity = () => {
+    setData({
+      ...data,
+      isBackgroundVisible: !data.isBackgroundVisible
+    })
+  }
+
+  const setWidth = (value: string) => {
+    setData({
+      ...data,
+      width: parseInt(value.split('_')[1])
+    })
+  }
+
   /* Entries */
 
-  const addEntry = (preset: string) => {
+  const addEntry = (
+    preset: string | null,
+    options?: {
+      position?: number
+      row: any
+    }
+  ) => {
     const id = uuid()
 
-    if (!entries.filter((entry) => entry.uuid === id).length) {
-      setEntries([
-        ...entries,
-        {
-          uuid: id,
-          position: entries[entries.length - 1].position + 1,
-          row: EntryPresets[preset].row.map(
-            (cell, i) =>
-              ({
-                ...tableConfig[i],
-                ...cell
-              } as TableCell)
-          )
-        }
-      ])
+    if (!entries.get(id)) {
+      entries.set(id, {
+        uuid: id,
+        position: entries.values().length === 0 ? 0 : entries.values().length,
+        row:
+          preset !== null
+            ? EntryPresets[preset].row.map(
+                (cell, i) =>
+                  ({
+                    ...tableConfig[i],
+                    ...cell
+                  } as TableCell)
+              )
+            : [],
+
+        ...options
+      })
+      sortPositions()
     } else {
       addEntry(preset)
     }
+  }
+
+  const moveEntry = (entry: TableModelerEntry, direction: string) => {
+    let targetEntry = entries.get(entry.uuid) as TableModelerEntry
+
+    entries.set(entry.uuid, {
+      ...entry,
+      position: direction === 'up' ? targetEntry.position - 1.5 : targetEntry.position + 1.5
+    })
+
+    sortPositions()
+  }
+
+  const sortPositions = () => {
+    entries
+      .values()
+      .sort((a, b) => a.position - b.position)
+      .forEach((_entry, i) => {
+        entries.set(_entry.uuid, {
+          ..._entry,
+          position: i
+        })
+      })
+  }
+
+  const removeEntry = (entry: TableModelerEntry) => {
+    entries.delete(entry.uuid)
+    sortPositions()
+  }
+
+  const editEntry = (entry: TableModelerEntry, event: IItemTableRowEditEnd) => {
+    entries.set(entry.uuid, {
+      ...entry,
+      row: entry.row.map((cell, i) => {
+        if (i === event.index) {
+          return {
+            ...cell,
+            content: event.characters
+          }
+        } else {
+          return cell
+        }
+      })
+    })
+  }
+
+  const setEntryTypeColor = (entry: TableModelerEntry, color: string) => {
+    entries.set(entry.uuid, {
+      ...entry,
+      row: entry.row.map((cell, i) => {
+        if (i === 1) {
+          return {
+            ...cell,
+            style: {
+              ...cell.style,
+              fill: color.split('_')[1]
+            }
+          }
+        } else {
+          return cell
+        }
+      })
+    })
   }
 
   /* Data */
@@ -303,45 +529,6 @@ function Widget() {
     )
   }
 
-  const sortEntry = (entry: TableModelerEntry, direction: string) => {
-    const currIndex = entries.find((e) => e.uuid === entry.uuid) as TableModelerEntry
-    const toPosition = direction === 'up' ? currIndex.position - 1 : currIndex.position + 1
-
-    let array = [...entries]
-
-    const selectedEntry = array.splice(currIndex.position, 1)[0]
-    array.splice(toPosition, 0, selectedEntry)
-
-    setEntries(array.map((entry, i) => ({ ...entry, position: i })))
-  }
-
-  const removeEntry = (entry: TableModelerEntry) => {
-    setEntries(
-      [...entries.filter((e) => e.uuid !== entry.uuid)]
-        .sort((a, b) => a.position - b.position)
-        .map((entry, i) => ({ ...entry, position: i }))
-    )
-  }
-
-  const editEntry = (entry: TableModelerEntry, event: IItemTableRowEditEnd) => {
-    setEntries([
-      ...entries.filter((e) => e.uuid !== entry.uuid),
-      {
-        ...entry,
-        row: entry.row.map((cell, i) => {
-          if (i === event.index) {
-            return {
-              ...cell,
-              content: event.characters
-            }
-          } else {
-            return cell
-          }
-        })
-      }
-    ])
-  }
-
   /* Render */
 
   return (
@@ -351,14 +538,17 @@ function Widget() {
       direction="vertical"
       spacing={0}
       padding={0}
-      cornerRadius={tokens.themes[data.colorTheme].radius.container.cornerRadius}
-      fill={tokens.themes[data.colorTheme].layer.default.fill}
-      width={800}
-      effect={tokens.themes[data.colorTheme].shadow.container}
+      cornerRadius={data.isBackgroundVisible ? tokens.themes[data.colorTheme].radius.container.cornerRadius : 0}
+      fill={data.isBackgroundVisible ? tokens.themes[data.colorTheme].layer.default.fill : { r: 0, g: 0, b: 0, a: 0 }}
+      width={data.width}
+      effect={tokens.themes[data.colorTheme].shadow[data.isBackgroundVisible ? 'container' : 'transparent']}
     >
+      {data.isRibbonVisible && <Frame name="Widget__ribbon" fill={data.colorRibbon} width="fill-parent" height={8} />}
+
       <Header
         theme={data.colorTheme}
         title={data.title}
+        isTitleVisible={data.isEditingVisible ? data.isTitleVisible : data.isTitleVisible && Boolean(data.title.length)}
         isDescriptionVisible={
           data.isEditingVisible
             ? data.isDescriptionVisible
@@ -369,16 +559,8 @@ function Widget() {
         onTitleEditEnd={(e: TextEditEvent) => editData('title', e.characters)}
         onDescriptionEditEnd={(e: TextEditEvent) => editData('description', e.characters)}
       />
-      <Divider theme={data.colorTheme} />
-      <ItemTableHeader
-        key={'Widget__tableHeader'}
-        theme={data.colorTheme}
-        disabled={!data.isEditingVisible}
-        row={tableConfig as TableCell[]}
-        onVisibilityChanged={(e: IItemTableHeaderVisibilityChanged) =>
-          updateTableConfig(e.index, { visibility: !tableConfig[e.index].visibility })
-        }
-      />
+
+      <ItemTableHeader key={'Widget__tableHeader'} theme={data.colorTheme} row={tableConfig as TableCell[]} />
 
       <Divider theme={data.colorTheme} />
       <AutoLayout
@@ -390,16 +572,17 @@ function Widget() {
         width="fill-parent"
       >
         {entries
+          .values()
           .sort((a, b) => a.position - b.position)
           .map((entry) => (
             <Item
               key={entry.uuid}
               theme={data.colorTheme}
               positionUp={data.isEditingVisible ? entry.position !== 0 : undefined}
-              positionDown={data.isEditingVisible ? entry.position !== entries.length - 1 : undefined}
-              deleting={data.isEditingVisible ? entry.position === 0 && entries.length === 1 : undefined}
-              onPositionChange={(e: IItemPositionChangeEvent) => sortEntry(entry, e.direction)}
-              onDelete={() => removeEntry(entry)}
+              positionDown={data.isEditingVisible ? entry.position !== entries.values().length - 1 : undefined}
+              more={data.isEditingVisible ? !data.isEditingVisible : undefined}
+              onPositionChange={(e: IItemPositionChangeEvent) => moveEntry(entry, e.direction)}
+              onMore={() => openUI('more', { data, entry })}
               padding={{
                 vertical: 4,
                 horizontal: tokens.themes[data.colorTheme].layout.item.horizontal
@@ -412,51 +595,73 @@ function Widget() {
                 row={entry.row.map(
                   (cell, i) =>
                     ({
-                      ...cell,
-                      ...tableConfig[i]
+                      ...tableConfig[i],
+                      ...cell
                     } as TableCell)
                 )}
                 onEditEnd={(e: IItemTableRowEditEnd) => editEntry(entry, e)}
               />
             </Item>
           ))}
+        {entries.values().length === 0 && (
+          <Text
+            {...tokens.themes[data.colorTheme].typo.p5}
+            fill={tokens.themes[data.colorTheme].txt.secondary.default.color}
+            width={'fill-parent'}
+            height={48}
+            horizontalAlignText="center"
+            verticalAlignText="center"
+          >
+            What is your next data structure?
+          </Text>
+        )}
       </AutoLayout>
 
-      {data.isEditingVisible && (
+      {data.isFooterVisible && (
         <Fragment>
           <Divider theme={data.colorTheme} />
           <Footer theme={data.colorTheme}>
-            {entries.length > 0 && (
-              <Text
-                key={'Footer__content'}
-                {...tokens.themes[data.colorTheme].typo.p6}
-                fill={tokens.themes[data.colorTheme].txt.secondary.default.color}
-                width="fill-parent"
-                horizontalAlignText="left"
-                height={32}
-                verticalAlignText="center"
-              >
-                {entries.length > 1 ? `${entries.length} properties` : `${entries.length} property`}
-              </Text>
+            {entries.values().length === 0 && (
+              <AutoLayout key={'Footer__left'} width={'fill-parent'} height={1}></AutoLayout>
             )}
-            <Fragment key={'Footer__actions'}>
-              <ButtonGhost
-                key="Footer__action_showDescription"
-                theme={data.colorTheme}
-                variant="secondary"
-                glyph={data.isDescriptionVisible ? 'visible' : 'hidden'}
-                content="Description"
-                onClick={() => switchDescriptionVisibility()}
-              />
-              <ButtonGhost
-                key="Footer__action_addProperty"
-                theme={data.colorTheme}
-                variant="primary"
-                glyph="plus"
-                content="Add property"
-                onClick={() => addEntry('custom')}
-              />
-            </Fragment>
+            {entries.values().length > 0 && (
+              <AutoLayout
+                key="Footer__left"
+                direction="horizontal"
+                horizontalAlignItems="start"
+                width={'fill-parent'}
+                verticalAlignItems="center"
+                padding={{
+                  left: 16
+                }}
+              >
+                <Text
+                  key={'Footer__content'}
+                  {...tokens.themes[data.colorTheme].typo.p6}
+                  fill={tokens.themes[data.colorTheme].txt.secondary.default.color}
+                  width="fill-parent"
+                  horizontalAlignText="left"
+                  height={32}
+                  verticalAlignText="center"
+                >
+                  {entries.values().length > 1
+                    ? `${entries.values().length} properties`
+                    : `${entries.values().length} property`}
+                </Text>
+              </AutoLayout>
+            )}
+            {data.isEditingVisible && (
+              <Fragment key={'Footer__actions'}>
+                <ButtonGhost
+                  key="Footer__action_addProperty"
+                  theme={data.colorTheme}
+                  variant="primary"
+                  glyph="plus"
+                  content="Add property"
+                  onClick={() => addEntry('custom')}
+                />
+              </Fragment>
+            )}
           </Footer>
         </Fragment>
       )}

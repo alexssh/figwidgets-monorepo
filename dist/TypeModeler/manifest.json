@@ -5,5 +5,9 @@
   "main": "index.js",
   "editorType": ["figma", "figjam"],
   "containsWidget": true,
+  "ui": {
+    "more": "ui_more.html",
+    "settings": "ui_settings.html"
+  },
   "widgetApi": "1.0.0"
 }

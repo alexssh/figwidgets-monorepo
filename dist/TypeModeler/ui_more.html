@@ -1,3 +1,94 @@
+<div class="ui">
+
+  <div class="ui-item-select ui-item-select--preview">
+    <div id="color_preview" class="ui-item-select-preview"></div>
+    <select id="color" name="color" size="1" onchange="sendAction(`color_${this.value}`)">
+      <option value="#E31351">Red</option>
+      <option value="#FF730E">Orange</option>
+      <option value="#FAB020">Yellow</option>
+      <option value="#29B95F">Green</option>
+      <option value="#00E0EE">Cyan</option>
+      <option value="#277DFF">Blue</option>
+      <option value="#7522C5">Purple</option>
+      <option value="#000000">Black</option>
+      <option value="#979797">Grey</option>
+    </select>
+  </div>
+
+  <div class="ui-divider"></div>
+
+  <div class="ui-item-action" id="move_up" onclick="sendAction('move_up')">Move up</div>
+  <div class="ui-item-action" id="move_down" onclick="sendAction('move_down')">Move down</div>
+
+  <div class="ui-divider"></div>
+
+  <div class="ui-item-action" id="duplicate" onclick="sendAction('duplicate')">Duplicate</div>
+
+  <div class="ui-divider"></div>
+
+  <div class="ui-item-action ui-item-action--destructive" id="delete" onclick="sendAction('delete')">Delete property
+  </div>
+
+</div>
+
+<script>
+
+  const id = { pluginId: '1154859859907562654' }
+  const url = 'https://www.figma.com'
+  const view = "more"
+
+  let uuid = ""
+  let index = 0
+
+  onmessage = (event) => {
+
+    if (event.data.pluginMessage.data.isUIopen) {
+
+      uuid = event.data.pluginMessage.data.selectedEntry
+
+      let selected = event.data.pluginMessage.entries.sort((a, b) => a.position - b.position).filter((entry, i) => {
+        if (entry.uuid === uuid) {
+          index = i
+          return true
+        } else {
+          return false
+        }
+      })[0]
+
+      document.getElementById('color').value = selected.row[1].style.fill;
+      document.getElementById('color_preview').style.backgroundColor = selected.row[1].style.fill;
+
+      if (index === 0) {
+        document.getElementById('move_up').classList.add('ui-item-action--disabled');
+        document.getElementById('move_up').onclick = null;
+      } else {
+        document.getElementById('move_up').classList.remove('ui-item-action--disabled');
+        document.getElementById('move_up').onclick = () => sendAction('move_up')
+      }
+
+      if (index === event.data.pluginMessage.entries.length - 1) {
+        document.getElementById('move_down').classList.add('ui-item-action--disabled');
+        document.getElementById('move_down').onclick = null;
+      } else {
+        document.getElementById('move_down').classList.remove('ui-item-action--disabled');
+        document.getElementById('move_down').onclick = () => sendAction('move_down')
+      }
+    }
+  }
+
+  function sendAction(action) {
+    parent.postMessage({
+      pluginMessage: {
+        view,
+        action: action,
+        uuid: uuid
+      }, ...id
+    }, url)
+  }
+
+</script>
+
+<style>
 * {
   box-sizing: border-box;
 }
@@ -209,3 +300,5 @@ body {
   border-radius: 100%;
   background-color: var(--figma-color-icon-secondary);
 }
+
+</style>
