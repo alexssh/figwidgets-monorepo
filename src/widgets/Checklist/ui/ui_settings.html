@@ -35,7 +35,7 @@
   <div class="ui-section">Container</div>
 
   <div class="ui-item-select">
-    <select id="width" name="width" size="1" onchange="sendAction(this.value)">
+    <select id="width" name="width" size="1" onchange="sendAction(`width_${this.value}`)">
       <option value="small">Small</option>
       <option value="medium">Medium</option>
       <option value="large">Large</option>
@@ -59,11 +59,13 @@
     if (event.data.pluginMessage.data.isUIopen) {
       document.getElementById('metadata').checked = event.data.pluginMessage.data.isMetadataVisible;
       document.getElementById('completed_tasks').checked = event.data.pluginMessage.data.isCompletedVisible;
+
       document.getElementById('ribbon').checked = event.data.pluginMessage.data.isRibbonVisible;
       document.getElementById('title').checked = event.data.pluginMessage.data.isTitleVisible;
       document.getElementById('description').checked = event.data.pluginMessage.data.isDescriptionVisible;
       document.getElementById('footer').checked = event.data.pluginMessage.data.isFooterVisible;
-      document.getElementById('width').value = event.data.pluginMessage.data.width === 800 ? 'large' : event.data.pluginMessage.data.width === 600 ? 'medium' : event.data.pluginMessage.data.width === 400 ? 'small' : 'large'
+
+      document.getElementById('width').value = event.data.pluginMessage.data.width;
       document.getElementById('background').checked = event.data.pluginMessage.data.isBackgroundVisible;
     }
   }

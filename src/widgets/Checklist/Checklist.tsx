@@ -107,7 +107,7 @@ function Widget() {
                 { option: tokens.themes[data.colorTheme].status.warning.fill, tooltip: 'Orange' },
                 { option: tokens.themes[data.colorTheme].status.important.fill, tooltip: 'Yellow' },
                 { option: tokens.themes[data.colorTheme].status.success.fill, tooltip: 'Green' },
-                { option: tokens.themes[data.colorTheme].status.secondary.fill, tooltip: 'Light blue' },
+                { option: tokens.themes[data.colorTheme].status.secondary.fill, tooltip: 'Cyan' },
                 { option: tokens.themes[data.colorTheme].status.primary.fill, tooltip: 'Blue' },
                 { option: tokens.themes[data.colorTheme].status.info.fill, tooltip: 'Purple' },
                 { option: tokens.themes[data.colorTheme].status.dark.fill, tooltip: 'Black' },
@@ -233,15 +233,7 @@ function Widget() {
         setDescriptionVisiblity()
       }
 
-      if (message.action === 'small') {
-        setWidth(message.action)
-      }
-
-      if (message.action === 'medium') {
-        setWidth(message.action)
-      }
-
-      if (message.action === 'large') {
+      if (message.action.indexOf('width') > -1) {
         setWidth(message.action)
       }
 
@@ -440,7 +432,7 @@ function Widget() {
   const setWidth = (value: string) => {
     setData({
       ...data,
-      width: value === 'small' ? 400 : value === 'medium' ? 600 : value === 'large' ? 800 : 800
+      width: parseInt(value.split('_')[1])
     })
   }
 
