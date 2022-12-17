@@ -4,6 +4,7 @@ Figma + FigJam widget to track any changes in your stuff.
 
 - 8 types of entries
 - Manual sorting
+- Customise the appearance: hide or show a description, a colour ribbon or even the background
 - Editing protection
 - Dark mode support
 
