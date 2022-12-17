@@ -23,25 +23,32 @@ changelog, components, cover, development, library, management, design system, n
 
 ## Changelog
 
-- 1.2.4
+- Version 7
+    - Added: Colour ribbon to add differentiation to your changelogs
+    - Added: Editing an entry type (available via the context menu, ≡)
+    - Added: Settings menu to customise your widget view
+    - Fix: Entries position sorting
+    - Fix: Minor UX improvements
+
+- Version 6
     - Fix: shuffling positions of entries after sorting/removing/editing
 
-- 1.2.3
+- Version 5
     - Hiding description and date in Header when editing is disabled + the fields are empty 
     - Reordering PropertyMenu items
     - Help item in PropertyMenu + meta config
     - New view actions: show/hide description, add entry
 
-- 1.2.1
+- Version 4
     - Bug fixes
 
-- 1.2.0
+- Version 3
     - Ability to enable/disable editing (new property menu item)
 
-- 1.1.0
+- Version 2
     - Editing an entry type (click on a entry's type to change it)
     - Ability to hide description (new property menu item)
     - Typo & visual fixes
 
-- 1.0.0 
+- Version 1
     - Initial release

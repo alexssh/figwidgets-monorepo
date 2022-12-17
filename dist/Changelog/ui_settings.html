@@ -1,3 +1,68 @@
+<div class="ui">
+
+  <div class="ui-section">View</div>
+
+  <div class="ui-item-checkbox">
+    <input type="checkbox" id="ribbon" onclick="sendAction('ribbon')" name="ribbon">
+    <label for="ribbon">Ribbon</label>
+  </div>
+  <div class="ui-item-checkbox">
+    <input type="checkbox" id="title" name="title" onclick="sendAction('title')">
+    <label for="title">Title</label>
+  </div>
+  <div class="ui-item-checkbox">
+    <input type="checkbox" id="description" onclick="sendAction('description')" name="description">
+    <label for="description">Description</label>
+  </div>
+  <div class="ui-item-checkbox">
+    <input type="checkbox" id="date" onclick="sendAction('date')" name="date">
+    <label for="date">Date</label>
+  </div>
+  <div class="ui-item-checkbox">
+    <input type="checkbox" id="footer" onclick="sendAction('footer')" name="footer">
+    <label for="footer">Footer</label>
+  </div>
+
+  <div class="ui-divider"></div>
+  <div class="ui-section">Container</div>
+
+  <div class="ui-item-checkbox">
+    <input type="checkbox" id="background" onclick="sendAction('background')" name="background">
+    <label for="background">Background</label>
+  </div>
+
+</div>
+
+<script>
+
+  const id = { pluginId: '1142539867133322876' }
+  const url = 'https://www.figma.com'
+  const view = "settings"
+
+  onmessage = (event) => {
+    if (event.data.pluginMessage.data.isUIopen) {
+      document.getElementById('ribbon').checked = event.data.pluginMessage.data.isRibbonVisible;
+      document.getElementById('title').checked = event.data.pluginMessage.data.isTitleVisible;
+      document.getElementById('description').checked = event.data.pluginMessage.data.isDescriptionVisible;
+      document.getElementById('date').checked = event.data.pluginMessage.data.isDateVisible;
+      document.getElementById('footer').checked = event.data.pluginMessage.data.isFooterVisible;
+
+      document.getElementById('background').checked = event.data.pluginMessage.data.isBackgroundVisible;
+    }
+  }
+
+  function sendAction(action) {
+    parent.postMessage({
+      pluginMessage: {
+        view,
+        action: action
+      }, ...id
+    }, url)
+  }
+
+</script>
+
+<style>
 * {
   box-sizing: border-box;
 }
@@ -210,3 +275,5 @@ body {
   background-color: var(--figma-color-icon-secondary);
   box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
 }
+
+</style>

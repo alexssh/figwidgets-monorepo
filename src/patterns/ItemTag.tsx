@@ -26,7 +26,7 @@ function ItemTag(props: IItemTagProps) {
           right: 24
         }}
       >
-        <Tag theme={props.theme} variant={props.type} content={props.contentTag} onClick={props.onTypeChange} />
+        <Tag theme={props.theme} variant={props.type} content={props.contentTag} />
       </AutoLayout>
       <InputGhost
         theme={props.theme}

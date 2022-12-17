@@ -7,7 +7,6 @@ declare global {
     placeholderBody: string
     contentTag: string
     disabled?: boolean
-    onTypeChange: () => void
     onEditEnd: (e: TextEditEvent) => void
   }
 }
