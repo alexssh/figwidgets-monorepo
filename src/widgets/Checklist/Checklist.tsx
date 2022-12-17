@@ -27,7 +27,7 @@ const {
   waitForTask
 } = widget
 
-import { meta, EntryTypes, EntryActions } from './config'
+import { EntryTypes, EntryActions } from './config'
 
 /* Components */
 import Header from 'src/patterns/Header'
@@ -71,13 +71,6 @@ function Widget() {
 
   usePropertyMenu(
     [
-      {
-        itemType: 'link',
-        tooltip: 'Help & Documentation',
-        propertyName: 'help',
-        href: `${meta.website}?utm_superlink=widget_${meta.name}_propertyMenu_${meta.version}`,
-        icon: glyphs.info(tokens.themes.light.txt.minor.default.color as string)
-      },
       ...(data.isEditingVisible
         ? ([
             {
@@ -114,13 +107,12 @@ function Widget() {
                 { option: tokens.themes[data.colorTheme].status.disabled.fill, tooltip: 'Grey' },
                 { option: tokens.themes[data.colorTheme].status.white.fill, tooltip: 'White' }
               ]
+            },
+            {
+              itemType: 'separator'
             }
           ] as WidgetPropertyMenuItem[])
         : []),
-
-      {
-        itemType: 'separator'
-      },
       {
         itemType: 'toggle',
         tooltip: 'Enable/disable editing',

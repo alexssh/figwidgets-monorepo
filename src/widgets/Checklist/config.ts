@@ -1,9 +1,3 @@
-export const meta = {
-  name: 'checklist',
-  version: '7',
-  website: 'https://offframes.com/figma-widget/checklist'
-}
-
 export const EntryTypes: ChecklistEntryMapping = {
   check: {
     label: 'Task'
