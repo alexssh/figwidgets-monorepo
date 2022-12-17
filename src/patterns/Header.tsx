@@ -12,7 +12,6 @@ import tokens from 'src/utils/tokens'
 /* --- */
 
 function Header(props: IHeaderProps) {
-  console.log(props)
   return (
     <Fragment>
       {(props.isTitleVisible || props.isDescriptionVisible || props.suffix !== null) && (
