@@ -1,9 +1,3 @@
-export const meta = {
-  name: 'typeModeler',
-  version: '4',
-  website: 'https://offframes.com/figma-widget/type-modeler'
-}
-
 export const EntryPresets: TableModelerEntryPresetsMapping = {
   custom: {
     label: 'Custom',

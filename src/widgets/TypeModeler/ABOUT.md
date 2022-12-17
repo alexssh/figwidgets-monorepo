@@ -24,6 +24,9 @@ diagram, entity, modeler, type, class, database, erd, content, development, comp
 
 ## Changelog
 
+- Version 5
+    - Fix: Minor UX improvements
+
 - Version 4
     - Added: Colour ribbon to add differentiation to your types
     - Added: Settings menu to customise your widget view
