@@ -2,6 +2,8 @@ Figma + FigJam widget development environment with UI components and utils.
 
 Widget examples:
 - [Advanced Changelog](https://www.figma.com/community/widget/1142539867133322876)
+- [Type Modeller](https://www.figma.com/community/widget/1154859859907562654)
+- [Checklist](https://www.figma.com/community/widget/1151240412068749314)
 
 ---
 
@@ -21,8 +23,3 @@ Widget examples:
 
 1. Run `$ npm run build --widget=<WidgetName>`
 2. Publish the `~/dist/<WidgetName>` folder in Figma 
-
-## Changelog
-
-- 2.0.0
-    - Monorepo migration
