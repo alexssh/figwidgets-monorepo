@@ -17,8 +17,8 @@ function Footer(props: IFooterProps) {
       spacing={0}
       padding={{
         vertical: 16,
-        left: tokens.themes[props.theme].layout.container.horizontal - 16,
-        right: tokens.themes[props.theme].layout.container.horizontal - 16
+        left: tokens.themes.layout.container.horizontal - 16,
+        right: tokens.themes.layout.container.horizontal - 16
       }}
       verticalAlignItems="center"
     >

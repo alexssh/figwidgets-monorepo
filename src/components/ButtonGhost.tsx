@@ -15,16 +15,16 @@ function ButtonGhost(props: IButtonGhostProps) {
     <AutoLayout
       name="ButtonGhost"
       direction="horizontal"
-      height={tokens.themes[props.theme].controls.size[props.size ?? 400]}
-      width={!props.content ? tokens.themes[props.theme].controls.size[props.size ?? 400] : 'hug-contents'}
+      height={tokens.themes.controls.size[props.size ?? 400]}
+      width={!props.content ? tokens.themes.controls.size[props.size ?? 400] : 'hug-contents'}
       spacing={4}
       padding={{
         left: props.content && props.glyph ? 12 : props.content ? 16 : 0,
         right: props.content && props.glyph ? 16 : props.content ? 16 : 0
       }}
       onClick={!props.disabled ? props.onClick : () => {}}
-      cornerRadius={tokens.themes[props.theme].controls.ghost.default.cornerRadius as WidgetJSX.CornerRadius}
-      hoverStyle={!props.disabled ? tokens.themes[props.theme].controls.ghost.hover : undefined}
+      cornerRadius={tokens.themes.controls.radius.cornerRadius}
+      hoverStyle={!props.disabled ? tokens.themes.controls.ghost.hover[props.theme] : undefined}
       horizontalAlignItems={'center'}
       verticalAlignItems={'center'}
     >
@@ -34,19 +34,19 @@ function ButtonGhost(props: IButtonGhostProps) {
             glyph={props.glyph as string}
             color={
               props.disabled
-                ? tokens.themes[props.theme].txt.minor.default.color
-                : tokens.themes[props.theme].txt[props.variant ? props.variant : 'primary'].default.color
+                ? tokens.themes.txt.minor.default[props.theme].color
+                : tokens.themes.txt[props.variant ? props.variant : 'primary'].default[props.theme].color
             }
           />
         </Frame>
       )}
       {props.content && (
         <Text
-          {...tokens.themes[props.theme].typo.p6}
+          {...tokens.themes.typo.p6}
           fill={
             props.disabled
-              ? tokens.themes[props.theme].txt.minor.default.color
-              : tokens.themes[props.theme].txt[props.variant ? props.variant : 'primary'].default.color
+              ? tokens.themes.txt.minor.default[props.theme].color
+              : tokens.themes.txt[props.variant ? props.variant : 'primary'].default[props.theme].color
           }
         >
           {props.content}

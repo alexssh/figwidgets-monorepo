@@ -18,22 +18,22 @@ function ItemTableHeader(props: IItemTableHeaderProps) {
       height="hug-contents"
       width="fill-parent"
       spacing={16}
-      padding={tokens.themes[props.theme].layout.item}
+      padding={tokens.themes.layout.item}
     >
       {props.row.map((cell, i) => (
         <AutoLayout
           key={`ItemTableHeader__cell_${i}`}
           name="ItemTableHeader__cell"
           direction="horizontal"
-          height={tokens.themes[props.theme].controls.size[200]}
+          height={tokens.themes.controls.size[200]}
           verticalAlignItems="center"
-          width={cell.visibility !== false ? cell.width : tokens.themes[props.theme].controls.size[200]}
+          width={cell.visibility !== false ? cell.width : tokens.themes.controls.size[200]}
           spacing={2}
         >
           {cell.visibility !== false && (
             <Text
-              {...tokens.themes[props.theme].typo.p6}
-              fill={tokens.themes[props.theme].txt.secondary.default.color}
+              {...tokens.themes.typo.p6}
+              fill={tokens.themes.txt.secondary.default[props.theme].color}
               horizontalAlignText="left"
             >
               {cell.title}

@@ -40,6 +40,7 @@ import Divider from 'src/components/Divider'
 import Footer from 'src/patterns/Footer'
 
 /* Utils */
+import datetime from 'src/utils/datetime'
 import tokens from 'src/utils/tokens'
 import uuid from 'src/utils/uuid'
 
@@ -51,7 +52,7 @@ function Widget() {
     isUIopen: false,
     title: 'My checklist',
     description: '',
-    colorRibbon: tokens.themes.light.status.dark.fill,
+    colorRibbon: tokens.themes.status.dark.light.fill,
     colorTheme: 'light',
     width: 800,
     isRibbonVisible: true,
@@ -77,7 +78,7 @@ function Widget() {
               itemType: 'action',
               tooltip: 'Settings',
               propertyName: 'openSettings',
-              icon: glyphs.settings(tokens.themes.light.txt.minor.default.color as string)
+              icon: glyphs.settings(tokens.themes.txt.minor.default.light.color as string)
             },
             {
               itemType: 'toggle',
@@ -86,8 +87,8 @@ function Widget() {
               isToggled: data.colorTheme === 'dark',
               icon: glyphs.darkmode(
                 (data.colorTheme === 'dark'
-                  ? tokens.themes.light.txt.primary.inverted.color
-                  : tokens.themes.light.txt.minor.default.color) as string
+                  ? tokens.themes.txt.primary.inverted.light.color
+                  : tokens.themes.txt.minor.default.light.color) as string
               )
             },
             {
@@ -96,16 +97,16 @@ function Widget() {
               tooltip: 'Header color',
               selectedOption: data.colorRibbon,
               options: [
-                { option: tokens.themes[data.colorTheme].status.error.fill, tooltip: 'Red' },
-                { option: tokens.themes[data.colorTheme].status.warning.fill, tooltip: 'Orange' },
-                { option: tokens.themes[data.colorTheme].status.important.fill, tooltip: 'Yellow' },
-                { option: tokens.themes[data.colorTheme].status.success.fill, tooltip: 'Green' },
-                { option: tokens.themes[data.colorTheme].status.secondary.fill, tooltip: 'Cyan' },
-                { option: tokens.themes[data.colorTheme].status.primary.fill, tooltip: 'Blue' },
-                { option: tokens.themes[data.colorTheme].status.info.fill, tooltip: 'Purple' },
-                { option: tokens.themes[data.colorTheme].status.dark.fill, tooltip: 'Black' },
-                { option: tokens.themes[data.colorTheme].status.disabled.fill, tooltip: 'Grey' },
-                { option: tokens.themes[data.colorTheme].status.white.fill, tooltip: 'White' }
+                { option: tokens.themes.status.error[data.colorTheme].fill, tooltip: 'Red' },
+                { option: tokens.themes.status.warning[data.colorTheme].fill, tooltip: 'Orange' },
+                { option: tokens.themes.status.important[data.colorTheme].fill, tooltip: 'Yellow' },
+                { option: tokens.themes.status.success[data.colorTheme].fill, tooltip: 'Green' },
+                { option: tokens.themes.status.secondary[data.colorTheme].fill, tooltip: 'Cyan' },
+                { option: tokens.themes.status.primary[data.colorTheme].fill, tooltip: 'Blue' },
+                { option: tokens.themes.status.info[data.colorTheme].fill, tooltip: 'Purple' },
+                { option: tokens.themes.status.dark[data.colorTheme].fill, tooltip: 'Black' },
+                { option: tokens.themes.status.disabled[data.colorTheme].fill, tooltip: 'Grey' },
+                { option: tokens.themes.status.white[data.colorTheme].fill, tooltip: 'White' }
               ]
             },
             {
@@ -120,8 +121,8 @@ function Widget() {
         isToggled: !data.isEditingVisible,
         icon: glyphs.editingNo(
           (data.isEditingVisible
-            ? tokens.themes.light.txt.minor.default.color
-            : tokens.themes.light.txt.primary.inverted.color) as string
+            ? tokens.themes.txt.minor.default.light.color
+            : tokens.themes.txt.primary.inverted.light.color) as string
         )
       },
       {
@@ -131,8 +132,8 @@ function Widget() {
         isToggled: !data.isChecksAllowed,
         icon: glyphs.checkNo(
           (data.isChecksAllowed
-            ? tokens.themes.light.txt.minor.default.color
-            : tokens.themes.light.txt.primary.inverted.color) as string
+            ? tokens.themes.txt.minor.default.light.color
+            : tokens.themes.txt.primary.inverted.light.color) as string
         )
       },
       ...(data.isEditingVisible
@@ -154,7 +155,7 @@ function Widget() {
               itemType: 'action',
               tooltip: 'Add entry',
               propertyName: 'addEntry',
-              icon: glyphs.plus(tokens.themes.light.txt.minor.default.color as string)
+              icon: glyphs.plus(tokens.themes.txt.minor.default.light.color as string)
             }
           ] as WidgetPropertyMenuItem[])
         : [])
@@ -454,7 +455,7 @@ function Widget() {
         description: '',
         priority: 0,
         actor: figma.currentUser?.name ?? 'Anonymous',
-        timestamp: new Date().toLocaleString('en-US'),
+        timestamp: datetime(new Date()).full,
         action: 'created',
         ...options
       })
@@ -596,8 +597,6 @@ function Widget() {
     .values()
     .filter((entry) => (data.isCompletedVisible ? true : entry.type === 'check' ? !entry.value : true))
 
-  const renderEntries = () => {}
-
   return (
     <AutoLayout
       name="Widget"
@@ -605,17 +604,17 @@ function Widget() {
       direction="vertical"
       spacing={0}
       padding={0}
-      cornerRadius={data.isBackgroundVisible ? tokens.themes[data.colorTheme].radius.container.cornerRadius : 0}
-      fill={data.isBackgroundVisible ? tokens.themes[data.colorTheme].layer.default.fill : { r: 0, g: 0, b: 0, a: 0 }}
+      cornerRadius={data.isBackgroundVisible ? tokens.themes.radius.container.cornerRadius : 0}
+      fill={data.isBackgroundVisible ? tokens.themes.layer.default[data.colorTheme].fill : { r: 0, g: 0, b: 0, a: 0 }}
       width={data.width}
-      effect={tokens.themes[data.colorTheme].shadow[data.isBackgroundVisible ? 'container' : 'transparent']}
+      effect={tokens.themes.shadow[data.isBackgroundVisible ? 'container' : 'transparent'][data.colorTheme]}
     >
       {data.isRibbonVisible && <Frame name="Widget__ribbon" fill={data.colorRibbon} width="fill-parent" height={8} />}
 
       <Header
         theme={data.colorTheme}
-        isTitleVisible={data.isEditingVisible ? data.isTitleVisible : data.isTitleVisible && Boolean(data.title.length)}
         title={data.title}
+        isTitleVisible={data.isEditingVisible ? data.isTitleVisible : data.isTitleVisible && Boolean(data.title.length)}
         isDescriptionVisible={
           data.isEditingVisible
             ? data.isDescriptionVisible
@@ -650,7 +649,7 @@ function Widget() {
                     more={data.isEditingVisible ? !data.isEditingVisible : undefined}
                     padding={{
                       vertical: 8,
-                      horizontal: tokens.themes[data.colorTheme].layout.item.horizontal
+                      horizontal: tokens.themes.layout.item.horizontal
                     }}
                     onPositionChange={(e: IItemPositionChangeEvent) => moveEntry(entry, e.direction)}
                     onMore={() => openUI('more-checkbox', { data, entry })}
@@ -689,7 +688,7 @@ function Widget() {
                     padding={{
                       top: i === 0 ? 8 : 24,
                       bottom: 8,
-                      horizontal: tokens.themes[data.colorTheme].layout.item.horizontal
+                      horizontal: tokens.themes.layout.item.horizontal
                     }}
                     onPositionChange={(e: IItemPositionChangeEvent) => moveEntry(entry, e.direction)}
                     onMore={() => openUI('more-title', { data, entry })}
@@ -715,8 +714,8 @@ function Widget() {
         {entries.values().filter((entry) => (data.isCompletedVisible ? true : !entry.value)).length === 0 &&
           entries.values().length > 0 && (
             <Text
-              {...tokens.themes[data.colorTheme].typo.p5}
-              fill={tokens.themes[data.colorTheme].txt.secondary.default.color}
+              {...tokens.themes.typo.p5}
+              fill={tokens.themes.txt.secondary.default[data.colorTheme].color}
               width={'fill-parent'}
               height={48}
               horizontalAlignText="center"
@@ -727,8 +726,8 @@ function Widget() {
           )}
         {entries.values().length === 0 && (
           <Text
-            {...tokens.themes[data.colorTheme].typo.p5}
-            fill={tokens.themes[data.colorTheme].txt.secondary.default.color}
+            {...tokens.themes.typo.p5}
+            fill={tokens.themes.txt.secondary.default[data.colorTheme].color}
             width={'fill-parent'}
             height={48}
             horizontalAlignText="center"
@@ -743,17 +742,29 @@ function Widget() {
         <Fragment>
           <Divider theme={data.colorTheme} />
           <Footer theme={data.colorTheme}>
-            {entries.values().length === 0 && (
-              <AutoLayout key={'Footer__left'} width={'fill-parent'} height={1}></AutoLayout>
-            )}
-            {entries.values().length > 0 && (
-              <AutoLayout
-                key="Footer__left"
-                direction="horizontal"
-                horizontalAlignItems="start"
-                width={'fill-parent'}
-                verticalAlignItems="center"
-              >
+            <AutoLayout
+              key="Footer__left"
+              direction="horizontal"
+              horizontalAlignItems="start"
+              width={'fill-parent'}
+              verticalAlignItems="center"
+            >
+              {entries.values().length === 0 && (
+                <AutoLayout key="Footer__empty" padding={{ left: 16 }}>
+                  <Text
+                    key={'Footer__content'}
+                    {...tokens.themes.typo.p6}
+                    fill={tokens.themes.txt.secondary.default[data.colorTheme].color}
+                    width="fill-parent"
+                    horizontalAlignText="left"
+                    height={32}
+                    verticalAlignText="center"
+                  >
+                    {'No tasks'}
+                  </Text>
+                </AutoLayout>
+              )}
+              {entries.values().length > 0 && (
                 <ButtonGhost
                   key="Footer__action_hideCompleted"
                   theme={data.colorTheme}
@@ -764,8 +775,9 @@ function Widget() {
                   } of ${entries.values().filter((entry) => entry.type === Object.keys(EntryTypes)[0]).length}`}
                   onClick={() => setCompletedVisibility()}
                 />
-              </AutoLayout>
-            )}
+              )}
+            </AutoLayout>
+
             {data.isEditingVisible && (
               <Fragment key={'Footer__actions'}>
                 <ButtonGhost

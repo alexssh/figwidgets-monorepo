@@ -11,7 +11,7 @@ function Tag(props: ITagProps) {
   return (
     <AutoLayout
       name="Tag"
-      cornerRadius={tokens.themes[props.theme].radius.tag.cornerRadius}
+      cornerRadius={tokens.themes.radius.tag.cornerRadius}
       overflow="visible"
       padding={{
         vertical: 4,
@@ -21,15 +21,15 @@ function Tag(props: ITagProps) {
       horizontalAlignItems="center"
       verticalAlignItems="center"
       onClick={() => props.onClick?.()}
-      {...tokens.themes[props.theme].status[props.variant]}
-      {...tokens.themes[props.theme].status[props.variant]?.border}
+      {...tokens.themes.status[props.variant][props.theme]}
+      {...tokens.themes.status[props.variant]?.[props.theme].border}
     >
       <Text
         name="Tag__input"
         width="fill-parent"
         horizontalAlignText="center"
-        fill={tokens.themes[props.theme].status[props.variant].color}
-        {...tokens.themes[props.theme].typo.caption}
+        fill={tokens.themes.status[props.variant][props.theme].color}
+        {...tokens.themes.typo.caption}
       >
         {props.content}
       </Text>

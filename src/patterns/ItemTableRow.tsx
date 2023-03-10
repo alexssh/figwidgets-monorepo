@@ -25,7 +25,7 @@ function ItemTableRow(props: IItemTableRowProps) {
           name="ItemTableRow__cell"
           direction="horizontal"
           verticalAlignItems="start"
-          width={cell.visibility !== false ? cell.width : tokens.themes[props.theme].controls.size[200]}
+          width={cell.visibility !== false ? cell.width : tokens.themes.controls.size[200]}
           height={cell.visibility !== false ? 'hug-contents' : 1}
         >
           {cell.visibility !== false && (

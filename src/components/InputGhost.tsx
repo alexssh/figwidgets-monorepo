@@ -17,24 +17,24 @@ function InputGhost(props: IInputGhostProps) {
           value={props.content}
           placeholder={props.placeholder}
           placeholderProps={{
-            fill: tokens.themes[props.theme].txt.minor.default.color,
+            fill: tokens.themes.txt.minor.default[props.theme].color,
             opacity: 1
           }}
           width={props?.style?.width ?? 'fill-parent'}
           onTextEditEnd={(e) => props.onEditEnd(e as TextEditEvent)}
-          fill={tokens.themes[props.theme].txt[props.variant.txt].default.color}
+          fill={tokens.themes.txt[props.variant.txt].default[props.theme].color}
           horizontalAlignText={props?.style?.textAlign ?? 'left'}
           hoverStyle={{
-            fill: tokens.themes[props.theme].txt.link.default.color
+            fill: tokens.themes.txt.link.default[props.theme].color
           }}
-          {...tokens.themes[props.theme].typo[props.variant.typo]}
+          {...tokens.themes.typo[props.variant.typo]}
           {...props?.style}
         />
       )}
       {props.disabled && (
         <Text
-          {...tokens.themes[props.theme].typo[props.variant.typo]}
-          fill={tokens.themes[props.theme].txt[props.variant.txt].default.color}
+          {...tokens.themes.typo[props.variant.typo]}
+          fill={tokens.themes.txt[props.variant.txt].default[props.theme].color}
           width={props?.style?.width ?? 'fill-parent'}
           horizontalAlignText={props?.style?.textAlign ?? 'left'}
           {...props?.style}

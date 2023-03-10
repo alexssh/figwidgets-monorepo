@@ -1,50 +1,58 @@
 declare global {
   type Tokens = {
     themes: {
-      [scheme: string]: {
-        typo: {
-          [t: string]: TextProps
+      typo: {
+        [t: string]: TextProps
+      }
+      txt: {
+        [t: string]: {
+          [t: string]: { [scheme: string]: TokenTxt }
         }
-        txt: {
+      }
+      border: {
+        [t: string]: { [scheme: string]: TokenBackground }
+      }
+      shadow: {
+        [t: string]: { [scheme: string]: TokenShadow }
+      }
+      status: {
+        [t: string]: {
+          [scheme: string]: TokenBackground &
+            TokenTxt & {
+              border?: Partial<TokenBorder>
+            }
+        }
+      }
+      radius: {
+        [t: string]: TokenRadius
+      }
+      controls: {
+        size: {
+          [t: number]: TokenSize
+        }
+        radius: TokenRadius
+        ghost: {
+          [t: string]: { [scheme: string]: TokenBackground }
+        }
+        checkbox: {
           [t: string]: {
-            [t: string]: TokenTxt
+            [scheme: string]: Partial<TokenBackground> & {
+              border?: Partial<TokenBorder>
+            }
           }
         }
-        border: {
-          [t: string]: TokenBackground
+      }
+      layer: {
+        [t: string]: { [scheme: string]: TokenBackground }
+      }
+      layout: {
+        container: {
+          vertical: number
+          horizontal: number
         }
-        shadow: {
-          [t: string]: TokenShadow
-        }
-        status: {
-          [t: string]: TokenBackground & TokenTxt & Partial<TokenBorder>
-        }
-        radius: {
-          [t: string]: TokenRadius
-        }
-        controls: {
-          size: {
-            [t: number]: TokenSize
-          }
-          ghost: {
-            [t: string]: TokenBackground & TokenRadius & Partial<TokenBorder>
-          }
-          checkbox: {
-            [t: string]: Partial<TokenBackground> & Partial<TokenRadius> & Partial<TokenBorder>
-          }
-        }
-        layer: {
-          [t: string]: TokenBackground
-        }
-        layout: {
-          container: {
-            vertical: number
-            horizontal: number
-          }
-          item: {
-            vertical: number
-            horizontal: number
-          }
+        item: {
+          vertical: number
+          horizontal: number
         }
       }
     }
@@ -61,11 +69,9 @@ declare global {
   }
 
   type TokenBorder = {
-    border: {
-      stroke: HexCode | RGBA
-      strokeWidth: number
-      strokeAlign: WidgetJSX.StrokeAlign
-    }
+    stroke: HexCode | RGBA
+    strokeWidth: number
+    strokeAlign: WidgetJSX.StrokeAlign
   }
 
   type TokenRadius = {

@@ -62,6 +62,14 @@ function ItemCheckbox(props: IItemCheckboxProps) {
             placeholder={props.placeholderTitle}
             disabled={Boolean(props.disabled)}
             onEditEnd={(e) => props.onEditEnd({ property: 'title', value: e } as IItemCheckboxOnEditEndEvent)}
+            style={
+              props.value && props.contentTitle.length > 0
+                ? {
+                    textDecoration: 'strikethrough',
+                    fill: tokens.themes.txt.secondary.default[props.theme].color
+                  }
+                : {}
+            }
           />
           {props.isDescriptionVisible && (
             <InputGhost
@@ -78,8 +86,8 @@ function ItemCheckbox(props: IItemCheckboxProps) {
         {props.contentMeta && (
           <Text
             key={'Footer__content'}
-            {...tokens.themes[props.theme].typo.p6}
-            fill={tokens.themes[props.theme].txt.secondary.default.color}
+            {...tokens.themes.typo.p6}
+            fill={tokens.themes.txt.secondary.default[props.theme].color}
             width="fill-parent"
             horizontalAlignText="left"
           >
