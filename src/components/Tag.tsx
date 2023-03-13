@@ -20,7 +20,6 @@ function Tag(props: ITagProps) {
       width="fill-parent"
       horizontalAlignItems="center"
       verticalAlignItems="center"
-      onClick={() => props.onClick?.()}
       {...tokens.themes.status[props.variant][props.theme]}
       {...tokens.themes.status[props.variant]?.[props.theme].border}
     >

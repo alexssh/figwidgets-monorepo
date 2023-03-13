@@ -108,6 +108,12 @@ const tokens: Tokens = {
           light: { color: COLOR_BLUE_600 },
           dark: { color: COLOR_BLUE_600 }
         }
+      },
+      error: {
+        default: {
+          light: { color: COLOR_RED_600 },
+          dark: { color: COLOR_RED_600 }
+        }
       }
     },
     border: {

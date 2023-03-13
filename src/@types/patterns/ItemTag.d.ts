@@ -7,7 +7,14 @@ declare global {
     placeholderBody: string
     contentTag: string
     disabled?: boolean
-    onEditEnd: (e: TextEditEvent) => void
+    link?: Link
+    onEditEnd: (e: IItemTagOnEditEndEvent) => void
+  }
+
+  interface IItemTagOnEditEndEvent {
+    property: string
+    value: TextEditEvent
   }
 }
+
 export {}

@@ -4,6 +4,7 @@ Figma + FigJam widget to track any changes in your stuff.
 
 - 8 types of entries
 - Manual sorting
+- Links support
 - Customise the appearance: hide or show a description, a colour ribbon or even the background
 - Editing protection
 - Dark mode support
@@ -23,6 +24,11 @@ Like it? Found bugs? Feature request? Please leave a comment below or check out 
 changelog, components, cover, development, library, management, design system, notes, tools, updates
 
 ## Changelog
+
+- Version 8
+    - Bug fixes & optimisation
+    - Minor UX improvements
+    - Added: Links for entries (available via the context menu, ≡)
 
 - Version 7
     - Added: Colour ribbon to add differentiation to your changelogs

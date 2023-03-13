@@ -21,6 +21,8 @@
 
   <div class="ui-divider"></div>
 
+  <div class="ui-item-action" id="show_link" onclick="sendAction('show_link')">Show link</div>
+  <div class="ui-item-action" id="hide_link" onclick="sendAction('hide_link')">Hide link</div>
   <div class="ui-item-action" id="duplicate" onclick="sendAction('duplicate')">Duplicate</div>
 
   <div class="ui-divider"></div>
@@ -55,7 +57,7 @@
       })[0]
 
       document.getElementById('type').value = selected.type;
-      document.getElementById('color_preview').style.backgroundColor = selected.type === "inProgress" ? "#FFFFFF" : event.data.pluginMessage.tokens.themes[event.data.pluginMessage.data.colorTheme].status[event.data.pluginMessage.entryTypes[selected.type].status].fill;
+      document.getElementById('color_preview').style.backgroundColor = selected.type === "inProgress" ? "#FFFFFF" : event.data.pluginMessage.tokens.themes.status[event.data.pluginMessage.entryTypes[selected.type].status][event.data.pluginMessage.data.colorTheme].fill;
 
       if (index === 0) {
         document.getElementById('move_up').classList.add('ui-item-action--disabled');
@@ -72,6 +74,10 @@
         document.getElementById('move_down').classList.remove('ui-item-action--disabled');
         document.getElementById('move_down').onclick = () => sendAction('move_down')
       }
+
+      document.getElementById('show_link').style.display = !selected.isLinkVisible ? "block" : "none";
+      document.getElementById('hide_link').style.display = selected.isLinkVisible ? "block" : "none";
+
     }
   }
 
@@ -135,6 +141,7 @@ body {
   flex-flow: row nowrap;
   justify-content: flex-start;
   align-items: center;
+  cursor: pointer;
 }
 
 .ui-item-checkbox:hover {
@@ -154,6 +161,7 @@ body {
   border-radius: 2px;
   -webkit-appearance: none;
   appearance: none;
+  cursor: pointer;
 }
 
 .ui-item-checkbox input:checked::before {
@@ -195,6 +203,7 @@ body {
   line-height: 16px;
   font-weight: 500;
   color: var(--figma-color-text);
+  cursor: pointer;
 }
 
 .ui-item-action:hover {
@@ -204,6 +213,7 @@ body {
 .ui-item-action--disabled {
   color: var(--figma-color-text-disabled);
   background-color: transparent !important;
+  cursor: default !important;
 }
 
 .ui-item-action--destructive {
@@ -222,6 +232,7 @@ body {
 .ui-item-priority-button {
   padding: 10px;
   border-radius: 2px;
+  cursor: pointer;
 }
 
 .ui-item-priority-button:hover {
@@ -277,6 +288,7 @@ body {
   outline: none;
   border: none;
   color: var(--figma-color-text);
+  cursor: pointer;
 }
 
 .ui-item-select:hover {
@@ -286,6 +298,7 @@ body {
 .ui-item-select--disabled select {
   color: var(--figma-color-text-disabled);
   background-color: transparent !important;
+  cursor: default !important;
 }
 
 .ui-item-select--preview select {

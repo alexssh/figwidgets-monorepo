@@ -21,6 +21,8 @@
 
   <div class="ui-divider"></div>
 
+  <div class="ui-item-action" id="show_link" onclick="sendAction('show_link')">Show link</div>
+  <div class="ui-item-action" id="hide_link" onclick="sendAction('hide_link')">Hide link</div>
   <div class="ui-item-action" id="duplicate" onclick="sendAction('duplicate')">Duplicate</div>
 
   <div class="ui-divider"></div>
@@ -55,7 +57,7 @@
       })[0]
 
       document.getElementById('type').value = selected.type;
-      document.getElementById('color_preview').style.backgroundColor = selected.type === "inProgress" ? "#FFFFFF" : event.data.pluginMessage.tokens.themes[event.data.pluginMessage.data.colorTheme].status[event.data.pluginMessage.entryTypes[selected.type].status].fill;
+      document.getElementById('color_preview').style.backgroundColor = selected.type === "inProgress" ? "#FFFFFF" : event.data.pluginMessage.tokens.themes.status[event.data.pluginMessage.entryTypes[selected.type].status][event.data.pluginMessage.data.colorTheme].fill;
 
       if (index === 0) {
         document.getElementById('move_up').classList.add('ui-item-action--disabled');
@@ -72,6 +74,10 @@
         document.getElementById('move_down').classList.remove('ui-item-action--disabled');
         document.getElementById('move_down').onclick = () => sendAction('move_down')
       }
+
+      document.getElementById('show_link').style.display = !selected.isLinkVisible ? "block" : "none";
+      document.getElementById('hide_link').style.display = selected.isLinkVisible ? "block" : "none";
+
     }
   }
 

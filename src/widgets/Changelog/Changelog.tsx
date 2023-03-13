@@ -40,6 +40,7 @@ import InputGhost from 'src/components/InputGhost'
 import Divider from 'src/components/Divider'
 
 /* Utils */
+import link from 'src/utils/link'
 import datetime from 'src/utils/datetime'
 import tokens from 'src/utils/tokens'
 import uuid from 'src/utils/uuid'
@@ -51,7 +52,7 @@ function Widget() {
     selectedEntry: undefined,
     isUIopen: false,
     title: '1.0.0',
-    date: datetime(new Date()).date,
+    date: datetime().date,
     description: '',
     colorTheme: 'light',
     colorRibbon: tokens.themes.status.dark.light.fill,
@@ -225,6 +226,18 @@ function Widget() {
         moveEntry(entries.get(message.uuid) as ChangelogEntry, 'down')
       }
 
+      if (message.action === 'show_link') {
+        toggleLinkVisibility(entries.get(message.uuid) as ChangelogEntry)
+
+        figma.closePlugin()
+      }
+
+      if (message.action === 'hide_link') {
+        toggleLinkVisibility(entries.get(message.uuid) as ChangelogEntry)
+
+        figma.closePlugin()
+      }
+
       if (message.action === 'duplicate') {
         const entry = entries.get(message.uuid) as ChangelogEntry
 
@@ -270,7 +283,7 @@ function Widget() {
           themeColors: true,
           title: `Entry: ${options.entry.content.length ? options.entry.content : '...'}`,
           width: 240,
-          height: 259
+          height: 295
         })
         setData({ ...data, isUIopen: true, selectedEntry: options.entry.uuid })
       })
@@ -362,12 +375,24 @@ function Widget() {
         position: entries.values().length === 0 ? 0 : entries.values().length,
         type,
         content: '',
+        isLinkVisible: true,
+        link: {
+          src: '',
+          valid: false
+        },
         ...options
       })
       sortPositions()
     } else {
       addEntry(type)
     }
+  }
+
+  const toggleLinkVisibility = (entry: ChangelogEntry) => {
+    entries.set(entry.uuid, {
+      ...entry,
+      isLinkVisible: !entry.isLinkVisible
+    })
   }
 
   /* Data */
@@ -407,11 +432,23 @@ function Widget() {
     sortPositions()
   }
 
-  const editEntry = (entry: ChangelogEntry, content: string) => {
-    entries.set(entry.uuid, {
-      ...entry,
-      content: content
-    })
+  const editEntry = (entry: ChangelogEntry, event: IItemTagOnEditEndEvent) => {
+    if (event.property === 'body') {
+      entries.set(entry.uuid, {
+        ...entry,
+        content: event.value.characters
+      })
+    }
+
+    if (event.property === 'link') {
+      entries.set(entry.uuid, {
+        ...entry,
+        link: {
+          src: event.value.characters,
+          valid: link(event.value.characters)
+        }
+      })
+    }
   }
 
   const editEntryType = (entry: ChangelogEntry, type: string) => {
@@ -493,7 +530,8 @@ function Widget() {
                 placeholderBody={'Type something...'}
                 disabled={!data.isEditingVisible}
                 contentTag={EntryTypes[entry.type].label}
-                onEditEnd={(e: TextEditEvent) => editEntry(entry, e.characters)}
+                link={entry.isLinkVisible ? entry.link : undefined}
+                onEditEnd={(e: IItemTagOnEditEndEvent) => editEntry(entry, e)}
               />
             </Item>
           ))}

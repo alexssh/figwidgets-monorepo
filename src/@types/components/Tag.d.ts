@@ -3,7 +3,6 @@ declare global {
     theme: string
     variant: string
     content: string
-    onClick?: () => void
   }
 }
 

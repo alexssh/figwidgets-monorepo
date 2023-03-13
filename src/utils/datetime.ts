@@ -1,4 +1,4 @@
-const datetime = (date?: Date) => {
+const datetime = () => {
   const array = String(new Date().toUTCString()).split(',')[1].trim().split(' ')
   const time = array[3].split(':')
 

@@ -2,6 +2,7 @@ declare global {
   interface ITconProps {
     glyph: string
     color: HexCode | RGBA
+    size?: number
   }
 
   type IIconGlyph = {

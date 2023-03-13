@@ -98,6 +98,11 @@ declare global {
       [p: string]: any
     }
   }
+
+  export type Link = {
+    src: string
+    valid: boolean
+  }
 }
 
 export {}

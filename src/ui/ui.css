@@ -45,6 +45,7 @@ body {
   flex-flow: row nowrap;
   justify-content: flex-start;
   align-items: center;
+  cursor: pointer;
 }
 
 .ui-item-checkbox:hover {
@@ -64,6 +65,7 @@ body {
   border-radius: 2px;
   -webkit-appearance: none;
   appearance: none;
+  cursor: pointer;
 }
 
 .ui-item-checkbox input:checked::before {
@@ -105,6 +107,7 @@ body {
   line-height: 16px;
   font-weight: 500;
   color: var(--figma-color-text);
+  cursor: pointer;
 }
 
 .ui-item-action:hover {
@@ -114,6 +117,7 @@ body {
 .ui-item-action--disabled {
   color: var(--figma-color-text-disabled);
   background-color: transparent !important;
+  cursor: default !important;
 }
 
 .ui-item-action--destructive {
@@ -132,6 +136,7 @@ body {
 .ui-item-priority-button {
   padding: 10px;
   border-radius: 2px;
+  cursor: pointer;
 }
 
 .ui-item-priority-button:hover {
@@ -187,6 +192,7 @@ body {
   outline: none;
   border: none;
   color: var(--figma-color-text);
+  cursor: pointer;
 }
 
 .ui-item-select:hover {
@@ -196,6 +202,7 @@ body {
 .ui-item-select--disabled select {
   color: var(--figma-color-text-disabled);
   background-color: transparent !important;
+  cursor: default !important;
 }
 
 .ui-item-select--preview select {
