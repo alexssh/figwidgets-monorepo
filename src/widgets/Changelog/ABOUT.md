@@ -25,6 +25,9 @@ changelog, components, cover, development, library, management, design system, n
 
 ## Changelog
 
+- Version 9
+    - Fix: Retaining links when duplicating an entry
+
 - Version 8
     - Bug fixes & optimisation
     - Minor UX improvements

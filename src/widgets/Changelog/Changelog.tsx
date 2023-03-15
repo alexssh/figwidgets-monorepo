@@ -244,7 +244,9 @@ function Widget() {
         addEntry(entry.type, {
           position: entry.position + 0.5,
           content: entry.content,
-          type: entry.type
+          type: entry.type,
+          isLinkVisible: entry.isLinkVisible,
+          link: entry.link
         })
 
         figma.closePlugin()
@@ -365,6 +367,8 @@ function Widget() {
       position?: number
       content?: string
       type?: string
+      link?: Link
+      isLinkVisible: boolean
     }
   ) => {
     const id = uuid()
