@@ -3,6 +3,7 @@ const { AutoLayout } = widget
 
 /* Components */
 import InputGhost from 'src/components/InputGhost'
+import LinkBox from 'src/patterns/LinkBox'
 
 /* --- */
 
@@ -31,17 +32,42 @@ function ItemTitle(props: IItemTitleProps) {
         disabled={Boolean(props.disabled)}
         onEditEnd={(e) => props.onEditEnd({ property: 'title', value: e } as IItemTitleOnEditEndEvent)}
       />
-      {props.isDescriptionVisible && (
-        <InputGhost
-          theme={props.theme}
-          variant={{ typo: 'p6', txt: 'secondary' }}
-          type={'multiline'}
-          content={props.contentDescription}
-          placeholder={props.placeholderDescription}
-          disabled={Boolean(props.disabled)}
-          onEditEnd={(e) => props.onEditEnd({ property: 'description', value: e } as IItemCheckboxOnEditEndEvent)}
-        />
-      )}
+      <>
+        {props.isDescriptionVisible && (
+          <InputGhost
+            theme={props.theme}
+            variant={{ typo: 'p6', txt: 'secondary' }}
+            type={'multiline'}
+            content={props.contentDescription}
+            placeholder={props.placeholderDescription}
+            disabled={Boolean(props.disabled)}
+            onEditEnd={(e) => props.onEditEnd({ property: 'description', value: e } as IItemTitleOnEditEndEvent)}
+          />
+        )}
+      </>
+      <>
+        {props.link && (
+          <AutoLayout
+            name="ItemTitle__link"
+            direction="vertical"
+            height="hug-contents"
+            width="fill-parent"
+            padding={{
+              top: props.isDescriptionVisible ? 3 : 2,
+              bottom: 8
+            }}
+          >
+            <LinkBox
+              theme={props.theme}
+              contentTitle={props.link.src}
+              placeholderTitle={'Paste any link...'}
+              valid={props.link.valid}
+              disabled={Boolean(props.disabled)}
+              onEditEnd={(e) => props.onEditEnd({ property: 'link', value: e } as IItemTitleOnEditEndEvent)}
+            />
+          </AutoLayout>
+        )}
+      </>
     </AutoLayout>
   )
 }

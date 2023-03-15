@@ -281,8 +281,8 @@ const tokens: Tokens = {
           }
         },
         active2: {
-          light: { fill: COLOR_ORANGE_600 },
-          dark: { fill: COLOR_ORANGE_600 }
+          light: { fill: COLOR_YELLOW_600 },
+          dark: { fill: COLOR_YELLOW_600 }
         },
 
         empty3: {

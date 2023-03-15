@@ -7,6 +7,7 @@ import tokens from 'src/utils/tokens'
 /* Components */
 import Checkbox from 'src/components/Checkbox'
 import InputGhost from 'src/components/InputGhost'
+import LinkBox from 'src/patterns/LinkBox'
 
 /* --- */
 
@@ -48,7 +49,7 @@ function ItemCheckbox(props: IItemCheckboxProps) {
         }}
       >
         <AutoLayout
-          name="ItemCheckbox__contentBody"
+          name="ItemCheckbox__body"
           direction="vertical"
           height="hug-contents"
           width="fill-parent"
@@ -71,21 +72,46 @@ function ItemCheckbox(props: IItemCheckboxProps) {
                 : {}
             }
           />
-          {props.isDescriptionVisible && (
-            <InputGhost
-              theme={props.theme}
-              variant={{ typo: 'p6', txt: 'secondary' }}
-              type={'multiline'}
-              content={props.contentDescription}
-              placeholder={props.placeholderDescription}
-              disabled={Boolean(props.disabled)}
-              onEditEnd={(e) => props.onEditEnd({ property: 'description', value: e } as IItemCheckboxOnEditEndEvent)}
-            />
-          )}
+          <>
+            {props.isDescriptionVisible && (
+              <InputGhost
+                theme={props.theme}
+                variant={{ typo: 'p6', txt: 'secondary' }}
+                type={'multiline'}
+                content={props.contentDescription}
+                placeholder={props.placeholderDescription}
+                disabled={Boolean(props.disabled)}
+                onEditEnd={(e) => props.onEditEnd({ property: 'description', value: e } as IItemCheckboxOnEditEndEvent)}
+              />
+            )}
+          </>
+          <>
+            {props.link && (
+              <AutoLayout
+                name="ItemCheckbox__link"
+                direction="vertical"
+                height="hug-contents"
+                width="fill-parent"
+                padding={{
+                  top: 1,
+                  bottom: 4
+                }}
+              >
+                <LinkBox
+                  theme={props.theme}
+                  contentTitle={props.link.src}
+                  placeholderTitle={'Paste any link...'}
+                  valid={props.link.valid}
+                  disabled={Boolean(props.disabled)}
+                  onEditEnd={(e) => props.onEditEnd({ property: 'link', value: e } as IItemCheckboxOnEditEndEvent)}
+                />
+              </AutoLayout>
+            )}
+          </>
         </AutoLayout>
         {props.contentMeta && (
           <Text
-            key={'Footer__content'}
+            key={'ItemCheckbox__body'}
             {...tokens.themes.typo.p6}
             fill={tokens.themes.txt.secondary.default[props.theme].color}
             width="fill-parent"

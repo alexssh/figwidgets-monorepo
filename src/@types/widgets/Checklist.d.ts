@@ -14,6 +14,8 @@ declare global {
     actor: string
     timestamp: string
     action: keyof ChecklistActionsMapping
+    isLinkVisible: boolean
+    link: Link
   }
 
   export type ChecklistTitleEntry = ChecklistEntry & {
@@ -25,6 +27,8 @@ declare global {
     actor?: string // type fix
     timestamp?: string // type fix
     action?: keyof ChecklistActionsMapping // type fix
+    isLinkVisible: boolean
+    link: Link
   }
 
   export type ChecklistEntryMapping = {

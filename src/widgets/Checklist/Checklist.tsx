@@ -40,6 +40,7 @@ import Divider from 'src/components/Divider'
 import Footer from 'src/patterns/Footer'
 
 /* Utils */
+import link from 'src/utils/link'
 import datetime from 'src/utils/datetime'
 import tokens from 'src/utils/tokens'
 import uuid from 'src/utils/uuid'
@@ -267,13 +268,27 @@ function Widget() {
       }
 
       if (message.action === 'show_description') {
-        toggleDescriptionVisibilitry(entries.get(message.uuid) as ChecklistCheckboxEntry | ChecklistTitleEntry)
+        toggleDescriptionVisibility(entries.get(message.uuid) as ChecklistCheckboxEntry | ChecklistTitleEntry)
 
         figma.closePlugin()
       }
 
       if (message.action === 'hide_description') {
-        toggleDescriptionVisibilitry(entries.get(message.uuid) as ChecklistCheckboxEntry | ChecklistTitleEntry)
+        toggleDescriptionVisibility(entries.get(message.uuid) as ChecklistCheckboxEntry | ChecklistTitleEntry)
+
+        figma.closePlugin()
+      }
+
+      if (message.action === 'show_link') {
+        toggleLinkVisibility(entries.get(message.uuid) as ChecklistCheckboxEntry | ChecklistTitleEntry)
+
+        figma.closePlugin()
+      }
+
+      if (message.action === 'hide_link') {
+        toggleLinkVisibility(entries.get(message.uuid) as ChecklistCheckboxEntry | ChecklistTitleEntry)
+
+        figma.closePlugin()
       }
 
       if (message.action === 'duplicate') {
@@ -285,7 +300,9 @@ function Widget() {
           title: entry.title,
           isDescriptionVisible: entry.isDescriptionVisible,
           description: entry.description,
-          priority: entry.priority
+          priority: entry.priority,
+          isLinkVisible: entry.isLinkVisible,
+          link: entry.link
         })
 
         figma.closePlugin()
@@ -322,7 +339,7 @@ function Widget() {
           themeColors: true,
           title: `Task: ${options.entry.title.length ? options.entry.title : '...'}`,
           width: 240,
-          height: 337
+          height: 373
         })
         setData({ ...data, isUIopen: true, selectedEntry: options.entry.uuid })
       })
@@ -334,7 +351,7 @@ function Widget() {
           themeColors: true,
           title: `Section: ${options.entry.title.length ? options.entry.title : '...'}`,
           width: 240,
-          height: 240
+          height: 274
         })
         setData({ ...data, isUIopen: true, selectedEntry: options.entry.uuid })
       })
@@ -440,6 +457,8 @@ function Widget() {
       isDescriptionVisible: boolean
       description: string
       priority: number
+      isLinkVisible: boolean
+      link: Link
     }
   ) => {
     const id = uuid()
@@ -455,8 +474,13 @@ function Widget() {
         description: '',
         priority: 0,
         actor: figma.currentUser?.name ?? 'Anonymous',
-        timestamp: datetime(new Date()).full,
+        timestamp: datetime().full,
         action: 'created',
+        isLinkVisible: false,
+        link: {
+          src: '',
+          valid: false
+        },
         ...options
       })
       sortPositions()
@@ -534,13 +558,27 @@ function Widget() {
   }
 
   const editEntry = (entry: ChecklistCheckboxEntry | ChecklistTitleEntry, event: IItemCheckboxOnEditEndEvent) => {
-    entries.set(entry.uuid, {
-      ...entry,
-      actor: figma.currentUser?.name ?? 'Anonymous',
-      timestamp: new Date().toLocaleString('en-US'),
-      action: 'modified',
-      [event.property]: event.value.characters
-    })
+    if (event.property === 'title' || event.property === 'description') {
+      entries.set(entry.uuid, {
+        ...entry,
+        actor: figma.currentUser?.name ?? 'Anonymous',
+        timestamp: datetime().full,
+        action: 'modified',
+        [event.property]: event.value.characters
+      })
+    }
+    if (event.property === 'link') {
+      entries.set(entry.uuid, {
+        ...entry,
+        actor: figma.currentUser?.name ?? 'Anonymous',
+        timestamp: datetime().full,
+        action: 'modified',
+        link: {
+          src: event.value.characters,
+          valid: link(event.value.characters)
+        }
+      })
+    }
   }
 
   const toggleCheckbox = (entry: ChecklistCheckboxEntry) => {
@@ -548,7 +586,7 @@ function Widget() {
       ...entry,
       value: !entry.value,
       actor: figma.currentUser?.name ?? 'Anonymous',
-      timestamp: new Date().toLocaleString('en-US'),
+      timestamp: datetime().full,
       action: entry.value ? 'unchecked' : 'checked'
     })
   }
@@ -558,17 +596,27 @@ function Widget() {
       ...entry,
       priority: priority,
       actor: figma.currentUser?.name ?? 'Anonymous',
-      timestamp: new Date().toLocaleString('en-US'),
+      timestamp: datetime().full,
       action: 'modified'
     })
   }
 
-  const toggleDescriptionVisibilitry = (entry: ChecklistCheckboxEntry | ChecklistTitleEntry) => {
+  const toggleDescriptionVisibility = (entry: ChecklistCheckboxEntry | ChecklistTitleEntry) => {
     entries.set(entry.uuid, {
       ...entry,
       isDescriptionVisible: !entry.isDescriptionVisible,
       actor: figma.currentUser?.name ?? 'Anonymous',
-      timestamp: new Date().toLocaleString('en-US'),
+      timestamp: datetime().full,
+      action: 'modified'
+    })
+  }
+
+  const toggleLinkVisibility = (entry: ChecklistCheckboxEntry | ChecklistTitleEntry) => {
+    entries.set(entry.uuid, {
+      ...entry,
+      isLinkVisible: !entry.isLinkVisible,
+      actor: figma.currentUser?.name ?? 'Anonymous',
+      timestamp: datetime().full,
       action: 'modified'
     })
   }
@@ -667,6 +715,7 @@ function Widget() {
                       disabled={!data.isEditingVisible}
                       disabledCheckbox={!data.isChecksAllowed}
                       priority={entry.priority}
+                      link={entry.isLinkVisible ? entry.link : undefined}
                       onEditEnd={(e: IItemCheckboxOnEditEndEvent) => editEntry(entry, e)}
                       onCheckboxChange={() =>
                         data.isChecksAllowed ? toggleCheckbox(entry as ChecklistCheckboxEntry) : null
@@ -702,6 +751,7 @@ function Widget() {
                       contentDescription={entry.description}
                       placeholderDescription={'Description...'}
                       disabled={!data.isEditingVisible}
+                      link={entry.isLinkVisible ? entry.link : undefined}
                       onEditEnd={(e: IItemCheckboxOnEditEndEvent) => editEntry(entry, e)}
                     />
                   </Item>

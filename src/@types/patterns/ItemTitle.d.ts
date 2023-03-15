@@ -8,6 +8,7 @@ declare global {
     contentDescription: string
     placeholderDescription: string
     disabled?: boolean
+    link?: Link
     onEditEnd: (e: IItemTitleOnEditEndEvent) => void
   }
 
