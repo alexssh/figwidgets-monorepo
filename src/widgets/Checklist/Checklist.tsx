@@ -95,7 +95,7 @@ function Widget() {
             {
               itemType: 'color-selector',
               propertyName: 'colorRibbon',
-              tooltip: 'Header color',
+              tooltip: 'Ribbon color',
               selectedOption: data.colorRibbon,
               options: [
                 { option: tokens.themes.status.error[data.colorTheme].fill, tooltip: 'Red' },
@@ -656,6 +656,8 @@ function Widget() {
       fill={data.isBackgroundVisible ? tokens.themes.layer.default[data.colorTheme].fill : { r: 0, g: 0, b: 0, a: 0 }}
       width={data.width}
       effect={tokens.themes.shadow[data.isBackgroundVisible ? 'container' : 'transparent'][data.colorTheme]}
+      stroke={tokens.themes.border.container[data.colorTheme].fill}
+      strokeWidth={1}
     >
       {data.isRibbonVisible && <Frame name="Widget__ribbon" fill={data.colorRibbon} width="fill-parent" height={8} />}
 
@@ -670,8 +672,7 @@ function Widget() {
         }
         description={data.description}
         disabled={!data.isEditingVisible}
-        onTitleEditEnd={(e: TextEditEvent) => editData('title', e.characters)}
-        onDescriptionEditEnd={(e: TextEditEvent) => editData('description', e.characters)}
+        onEditEnd={(e: IItemHeaderOnEditEndEvent) => editData(e.property, e.value.characters)}
       />
 
       <AutoLayout
