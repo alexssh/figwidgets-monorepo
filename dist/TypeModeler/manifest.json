@@ -1,12 +1,11 @@
 {
-  "name": "Type Modeler",
+  "name": "ERD Modeler",
   "id": "1154859859907562654",
   "api": "1.0.0",
   "main": "index.js",
-  "editorType": ["figma", "figjam"],
+  "editorType": ["figjam"],
   "containsWidget": true,
   "ui": {
-    "more": "ui_more.html",
     "settings": "ui_settings.html"
   },
   "widgetApi": "1.0.0"

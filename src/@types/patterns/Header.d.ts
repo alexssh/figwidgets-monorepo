@@ -7,8 +7,13 @@ declare global {
     description: string
     suffix?: FigmaDeclarativeNode
     disabled?: boolean
-    onTitleEditEnd: (e: TextEditEvent) => void
-    onDescriptionEditEnd: (e: TextEditEvent) => void
+    link?: Link
+    onEditEnd: (e: IItemHeaderOnEditEndEvent) => void
+  }
+
+  interface IItemHeaderOnEditEndEvent {
+    property: string
+    value: TextEditEvent
   }
 }
 

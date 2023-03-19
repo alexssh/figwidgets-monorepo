@@ -1,242 +1,35 @@
 export const EntryPresets: TableModelerEntryPresetsMapping = {
-  custom: {
-    label: 'Custom',
-    row: [
-      {
-        content: ''
-      },
-      {
-        content: ''
-      },
-      {
-        content: ''
-      },
-      {
-        content: ''
-      }
-    ]
+  header: {
+    label: 'Header'
   },
-  id: {
-    label: 'ID',
-    row: [
-      {
-        content: 'id'
-      },
-      {
-        content: 'uuid'
-      },
-      {
-        content: ''
-      },
-      {
-        content: ''
-      }
-    ]
+  entry: {
+    label: 'Attribute'
+  }
+}
+
+export const KeyPresets: TableModelerKeyPresetsMapping = {
+  none: {
+    label: 'No key'
   },
-  number: {
-    label: 'Number',
-    row: [
-      {
-        content: 'counter'
-      },
-      {
-        content: 'number'
-      },
-      {
-        content: '0'
-      },
-      {
-        content: ''
-      }
-    ]
+  pk: {
+    label: 'Primary key (PK)'
   },
-  string: {
-    label: 'String',
-    row: [
-      {
-        content: 'title'
-      },
-      {
-        content: 'string'
-      },
-      {
-        content: '""'
-      },
-      {
-        content: ''
-      }
-    ]
+  uk: {
+    label: 'Unique key (UK)'
   },
-  boolean: {
-    label: 'Boolean',
-    row: [
-      {
-        content: 'state'
-      },
-      {
-        content: 'boolean'
-      },
-      {
-        content: 'false'
-      },
-      {
-        content: ''
-      }
-    ]
+  sk: {
+    label: 'Super key (SK)'
   },
-  timestamp: {
-    label: 'Timestamp',
-    row: [
-      {
-        content: 'date'
-      },
-      {
-        content: 'timestamp'
-      },
-      {
-        content: 'now'
-      },
-      {
-        content: ''
-      }
-    ]
+  fr: {
+    label: 'Foreign key (FK)'
   },
-  object: {
-    label: 'Object',
-    row: [
-      {
-        content: 'meta'
-      },
-      {
-        content: 'object'
-      },
-      {
-        content: `{
-    rating: 0
-}`
-      },
-      {
-        content: ''
-      }
-    ]
+  ak: {
+    label: 'Alternate key (AK)'
   },
-  array: {
-    label: 'Array',
-    row: [
-      {
-        content: 'reviews'
-      },
-      {
-        content: 'array'
-      },
-      {
-        content: '[]'
-      },
-      {
-        content: ''
-      }
-    ]
+  ck: {
+    label: 'Candidate key (CK)'
   },
-  enum: {
-    label: 'Enum',
-    row: [
-      {
-        content: 'status'
-      },
-      {
-        content: 'enum'
-      },
-      {
-        content: 'active, disabled'
-      },
-      {
-        content: ''
-      }
-    ]
-  },
-  function: {
-    label: 'Function',
-    row: [
-      {
-        content: 'onClick'
-      },
-      {
-        content: 'function'
-      },
-      {
-        content: 'onClickEvent'
-      },
-      {
-        content: ''
-      }
-    ]
-  },
-  richtext: {
-    label: 'Richtext',
-    row: [
-      {
-        content: 'comment'
-      },
-      {
-        content: 'richtext'
-      },
-      {
-        content: '""'
-      },
-      {
-        content: ''
-      }
-    ]
-  },
-  image: {
-    label: 'Image',
-    row: [
-      {
-        content: 'preview'
-      },
-      {
-        content: 'image'
-      },
-      {
-        content: 'undefined'
-      },
-      {
-        content: ''
-      }
-    ]
-  },
-  color: {
-    label: 'Color',
-    row: [
-      {
-        content: 'theme'
-      },
-      {
-        content: 'color'
-      },
-      {
-        content: '#FFFFFF'
-      },
-      {
-        content: ''
-      }
-    ]
-  },
-  link: {
-    label: 'Link',
-    row: [
-      {
-        content: 'twitter'
-      },
-      {
-        content: 'link'
-      },
-      {
-        content: 'undefined'
-      },
-      {
-        content: ''
-      }
-    ]
+  cp: {
+    label: 'Composite key (CPK)'
   }
 }

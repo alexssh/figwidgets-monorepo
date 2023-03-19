@@ -1,18 +1,15 @@
-# Type Modeler
+# ERD Modeler
 
-Figma + FigJam widget to model types and entities.
+FigJam widget to design Entity-Relationship Diagrams (ERDs) and data bases.
 
-- 14 type presets and custom ones
-- Manual sorting
-- Customise the appearance: hide or show a description, change type colours or even the background
-- Editing protection
+- Design diagrams with 6-cells tables (key, name, type, mandatory, default, description)
+- Customise the appearance: hide or show a description, change type colours
 - Dark mode support
 
 ## What this widget is good for: 
 
-- Types and entity modelling like interfaces, databases and entity–relationship diagrams (ERD).
-- Content structure planning
-- Components and design system documentation
+- Types and entity modelling like interfaces and databases 
+- Any kind of entity–relationship diagrams (ERD)
 
 ## Feedback
 
@@ -23,6 +20,10 @@ Like it? Found bugs? Feature request? Please leave a comment below!
 diagram, entity, modeler, type, class, database, erd, content, development, components, documentation, tools
 
 ## Changelog
+
+- Version 6
+    - Reworked the widget architecture, now it is possible to use connectors for each table entry
+    - Simplified settings, removed the edit-protect function
 
 - Version 5
     - Fix: Minor UX improvements

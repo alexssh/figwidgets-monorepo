@@ -90,10 +90,12 @@ declare global {
   /* --- */
 
   export type TableCell = {
-    title?: string
+    title: string
+    width: 'fill-parent' | number
+    disabled: boolean
+    tooltip: string
     content?: string
-    width?: 'fill-parent' | number
-    visibility?: boolean
+    icon?: string
     style?: {
       [p: string]: any
     }

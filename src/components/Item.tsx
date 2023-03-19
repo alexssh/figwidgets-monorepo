@@ -32,7 +32,7 @@ function Item(props: IItemProps) {
       >
         {props.children}
       </AutoLayout>
-      <Frame height={32} width={1} />
+      {!props.hideHeightFix && <Frame height={32} width={1} />}
       {isActionsVisible && (
         <AutoLayout
           name="Item__actions"

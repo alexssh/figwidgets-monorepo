@@ -5,6 +5,7 @@ const { AutoLayout, Text, Fragment } = widget
 /* Components */
 import InputGhost from 'src/components/InputGhost'
 import Divider from 'src/components/Divider'
+import LinkBox from 'src/patterns/LinkBox'
 
 /* Utils */
 import tokens from 'src/utils/tokens'
@@ -37,7 +38,7 @@ function Header(props: IHeaderProps) {
               content={props.title}
               placeholder="Title"
               disabled={props.disabled}
-              onEditEnd={(e: TextEditEvent) => props.onTitleEditEnd(e)}
+              onEditEnd={(e: TextEditEvent) => props.onEditEnd({ property: 'title', value: e })}
             />
           )}
           {props.isDescriptionVisible && (
@@ -48,9 +49,21 @@ function Header(props: IHeaderProps) {
               content={props.description}
               placeholder="Add any description..."
               disabled={props.disabled}
-              onEditEnd={(e: TextEditEvent) => props.onDescriptionEditEnd(e)}
+              onEditEnd={(e: TextEditEvent) => props.onEditEnd({ property: 'description', value: e })}
             />
           )}
+          <>
+            {props.link && (
+              <LinkBox
+                theme={props.theme}
+                contentTitle={props.link.src}
+                placeholderTitle={'Paste any link...'}
+                valid={props.link.valid}
+                disabled={Boolean(props.disabled)}
+                onEditEnd={(e) => props.onEditEnd({ property: 'link', value: e })}
+              />
+            )}
+          </>
         </AutoLayout>
         {props.suffix && (
           <AutoLayout

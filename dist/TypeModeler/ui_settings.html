@@ -1,57 +1,16 @@
 <div class="ui">
 
-  <div class="ui-section">Table</div>
-
-  <div class="ui-item-checkbox">
-    <input type="checkbox" id="table_type" onclick="sendAction('table_type')" name="table_type">
-    <label for="table_type">Type</label>
-  </div>
-  <div class="ui-item-checkbox">
-    <input type="checkbox" id="table_default_value" onclick="sendAction('table_default_value')"
-      name="table_default_value">
-    <label for="table_default_value">Default value</label>
-  </div>
-  <div class="ui-item-checkbox">
-    <input type="checkbox" id="table_description" onclick="sendAction('table_description')" name="table_description">
-    <label for="table_description">Type description</label>
-  </div>
-
-  <div class="ui-divider"></div>
-  <div class="ui-section">View</div>
-
   <div class="ui-item-checkbox">
     <input type="checkbox" id="ribbon" onclick="sendAction('ribbon')" name="ribbon">
     <label for="ribbon">Ribbon</label>
-  </div>
-  <div class="ui-item-checkbox">
-    <input type="checkbox" id="title" name="title" onclick="sendAction('title')">
-    <label for="title">Title</label>
   </div>
   <div class="ui-item-checkbox">
     <input type="checkbox" id="description" onclick="sendAction('description')" name="description">
     <label for="description">Description</label>
   </div>
   <div class="ui-item-checkbox">
-    <input type="checkbox" id="footer" onclick="sendAction('footer')" name="footer">
-    <label for="footer">Footer</label>
-  </div>
-
-  <div class="ui-divider"></div>
-  <div class="ui-section">Container</div>
-
-  <!-- 
-  <div class="ui-item-select">
-    <select id="width" name="width" size="1" onchange="sendAction(`width_${this.value}`)">
-      <option value="400">Small</option>
-      <option value="600">Medium</option>
-      <option value="800">Large</option>
-    </select>
-  </div> 
-  -->
-
-  <div class="ui-item-checkbox">
-    <input type="checkbox" id="background" onclick="sendAction('background')" name="background">
-    <label for="background">Background</label>
+    <input type="checkbox" id="link" onclick="sendAction('link')" name="link">
+    <label for="link">Link</label>
   </div>
 
 </div>
@@ -64,17 +23,9 @@
 
   onmessage = (event) => {
     if (event.data.pluginMessage.data.isUIopen) {
-      document.getElementById('table_type').checked = event.data.pluginMessage.data.isTableTypeVisible;
-      document.getElementById('table_default_value').checked = event.data.pluginMessage.data.isTableDefaultValueVisible;
-      document.getElementById('table_description').checked = event.data.pluginMessage.data.isTableDescriptionVisible;
-
       document.getElementById('ribbon').checked = event.data.pluginMessage.data.isRibbonVisible;
-      document.getElementById('title').checked = event.data.pluginMessage.data.isTitleVisible;
       document.getElementById('description').checked = event.data.pluginMessage.data.isDescriptionVisible;
-      document.getElementById('footer').checked = event.data.pluginMessage.data.isFooterVisible;
-
-      //document.getElementById('width').value = event.data.pluginMessage.data.width;
-      document.getElementById('background').checked = event.data.pluginMessage.data.isBackgroundVisible;
+      document.getElementById('link').checked = event.data.pluginMessage.data.isLinkVisible;
     }
   }
 
@@ -156,6 +107,7 @@ body {
   border-radius: 2px;
   -webkit-appearance: none;
   appearance: none;
+  cursor: pointer;
 }
 
 .ui-item-checkbox input:checked::before {
@@ -183,6 +135,7 @@ body {
   line-height: 16px;
   font-weight: 400;
   color: var(--figma-color-text);
+  cursor: pointer;
 }
 
 .ui-item-action {
@@ -197,6 +150,7 @@ body {
   line-height: 16px;
   font-weight: 500;
   color: var(--figma-color-text);
+  cursor: pointer;
 }
 
 .ui-item-action:hover {
@@ -206,6 +160,7 @@ body {
 .ui-item-action--disabled {
   color: var(--figma-color-text-disabled);
   background-color: transparent !important;
+  cursor: default !important;
 }
 
 .ui-item-action--destructive {
@@ -224,6 +179,7 @@ body {
 .ui-item-priority-button {
   padding: 10px;
   border-radius: 2px;
+  cursor: pointer;
 }
 
 .ui-item-priority-button:hover {
@@ -279,6 +235,7 @@ body {
   outline: none;
   border: none;
   color: var(--figma-color-text);
+  cursor: pointer;
 }
 
 .ui-item-select:hover {
@@ -288,6 +245,7 @@ body {
 .ui-item-select--disabled select {
   color: var(--figma-color-text-disabled);
   background-color: transparent !important;
+  cursor: default !important;
 }
 
 .ui-item-select--preview select {
