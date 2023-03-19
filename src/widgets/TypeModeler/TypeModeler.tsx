@@ -421,7 +421,7 @@ function Widget() {
         colorRibbon: tokens.themes.status.dark.light.fill,
         isDescriptionVisible: false,
         isRibbonVisible: true,
-        isLinkVisible: true,
+        isLinkVisible: false,
         link: {
           src: '',
           valid: false
@@ -672,6 +672,8 @@ function Widget() {
       fill={tokens.themes.layer.default[data.colorTheme].fill}
       width={data.width}
       effect={tokens.themes.shadow.container[data.colorTheme]}
+      stroke={tokens.themes.border.container[data.colorTheme].fill}
+      strokeWidth={1}
     >
       {data.preset === Object.keys(EntryPresets)[0] ? renderHeader(data, tableConfig) : <></>}
       {data.preset === Object.keys(EntryPresets)[1] ? renderEntry(data, tableConfig) : <></>}

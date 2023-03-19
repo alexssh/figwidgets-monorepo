@@ -120,6 +120,10 @@ const tokens: Tokens = {
       divider: {
         light: { fill: COLOR_GREY_200 },
         dark: { fill: COLOR_GREY_800 }
+      },
+      container: {
+        light: { fill: COLOR_GREY_200 },
+        dark: { fill: COLOR_GREY_800 }
       }
     },
     shadow: {

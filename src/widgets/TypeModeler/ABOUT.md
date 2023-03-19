@@ -21,6 +21,9 @@ diagram, entity, modeler, type, class, database, erd, content, development, comp
 
 ## Changelog
 
+- Version 7
+    - Bug fixes & optimisation
+
 - Version 6
     - Reworked the widget architecture, now it is possible to use connectors for each table entry
     - Simplified settings, removed the edit-protect function
