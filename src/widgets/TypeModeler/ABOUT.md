@@ -3,6 +3,7 @@
 FigJam widget to design Entity-Relationship Diagrams (ERDs) and data bases.
 
 - Design diagrams with 6-cells tables (key, name, type, mandatory, default, description)
+- Use connectors for each table entry, link and build relationships
 - Customise the appearance: hide or show a description, change type colours
 - Dark mode support
 
