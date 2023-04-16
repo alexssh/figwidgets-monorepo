@@ -2,7 +2,7 @@
   "name": "ERD Modeler",
   "id": "1154859859907562654",
   "api": "1.0.0",
-  "main": "index.js",
+  "main": "widget.js",
   "editorType": ["figjam"],
   "containsWidget": true,
   "ui": {

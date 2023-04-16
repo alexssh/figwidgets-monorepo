@@ -78,8 +78,6 @@ declare global {
     cornerRadius: number
   }
 
-  type TokenPadding = WidgetJSX.Padding
-
   type TokenShadow = {
     type: 'drop-shadow'
     color: RGBA

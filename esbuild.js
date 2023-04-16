@@ -34,7 +34,7 @@ esbuild
     bundle: true,
     minify: true,
     watch: process.env.npm_lifecycle_event ? true : false,
-    outfile: `dist/${process.env.npm_config_widget}/index.js`,
+    outfile: `dist/${process.env.npm_config_widget}/widget.js`,
     plugins: [
       copyStaticFiles({
         src: `src/widgets/${process.env.npm_config_widget}/ui`,

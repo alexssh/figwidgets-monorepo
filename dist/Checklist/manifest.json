@@ -2,7 +2,7 @@
   "name": "Checklist",
   "id": "1151240412068749314",
   "api": "1.0.0",
-  "main": "index.js",
+  "main": "widget.js",
   "editorType": ["figma", "figjam"],
   "containsWidget": true,
   "permissions": ["currentuser"],
