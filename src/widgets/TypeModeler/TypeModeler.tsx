@@ -45,7 +45,6 @@ import uuid from 'src/utils/uuid'
 
 function Widget() {
   const [data, setData] = useSyncedState('data', {
-    isUIopen: false,
     colorTheme: 'light',
     preset: Object.keys(EntryPresets)[0],
 
@@ -287,15 +286,18 @@ function Widget() {
   )
 
   useEffect(() => {
-    if (data.isUIopen) {
-      updateUI()
-    }
+    figma.clientStorage.getAsync('isUIopen').then((isUIopen) => {
+      if (isUIopen === undefined) {
+        figma.clientStorage.setAsync('isUIopen', false)
+      } else {
+        if (isUIopen) {
+          updateUI()
+        }
+      }
+    })
 
     figma.on('close', () => {
-      setData({
-        ...data,
-        isUIopen: false
-      })
+      figma.clientStorage.setAsync('isUIopen', false)
     })
 
     figma.ui.onmessage = (message) => {
@@ -323,7 +325,8 @@ function Widget() {
     if (view === 'settings') {
       return new Promise((resolve) => {
         figma.showUI(__uiFiles__.settings, { themeColors: true, title: 'Settings', width: 240, height: 124 })
-        setData({ ...data, isUIopen: true })
+        setData({ ...data })
+        figma.clientStorage.setAsync('isUIopen', true)
       })
     }
   }

@@ -1,4 +1,4 @@
-<div class="ui">
+<div id="ui" class="ui">
 
   <div class="ui-item-checkbox">
     <input type="checkbox" id="ribbon" onclick="sendAction('ribbon')" name="ribbon">
@@ -22,7 +22,9 @@
   const view = "settings"
 
   onmessage = (event) => {
-    if (event.data.pluginMessage.data.isUIopen) {
+    if (event.data.pluginMessage.data) {
+      document.getElementById('ui').style.display = "flex";
+
       document.getElementById('ribbon').checked = event.data.pluginMessage.data.isRibbonVisible;
       document.getElementById('description').checked = event.data.pluginMessage.data.isDescriptionVisible;
       document.getElementById('link').checked = event.data.pluginMessage.data.isLinkVisible;

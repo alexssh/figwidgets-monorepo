@@ -22,6 +22,9 @@ diagram, entity, modeler, type, class, database, erd, content, development, comp
 
 ## Changelog
 
+- Version 8
+    - Bug fixes & optimisation
+
 - Version 7
     - Bug fixes & optimisation
 
