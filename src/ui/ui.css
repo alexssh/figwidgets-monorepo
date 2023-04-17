@@ -9,7 +9,7 @@ body {
 
 .ui {
   width: 100%;
-  display: flex;
+  display: none;
   flex-flow: column nowrap;
   justify-content: flex-start;
   align-items: flex-start;

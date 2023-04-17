@@ -1,4 +1,4 @@
-<div class="ui">
+<div id="ui" class="ui">
 
   <div id="priority" style="width: 100%">
     <div class="ui-section">Priority</div>
@@ -73,7 +73,7 @@
 
   onmessage = (event) => {
 
-    if (event.data.pluginMessage.data.isUIopen) {
+    if (event.data.pluginMessage.data) {
 
       uuid = event.data.pluginMessage.data.selectedEntry
 
@@ -85,6 +85,8 @@
           return false
         }
       })[0]
+
+      document.getElementById('ui').style.display = "flex";
 
       document.getElementById('priority').style.display = selected.type === "check" ? "block" : "none";
 
@@ -161,7 +163,7 @@ body {
 
 .ui {
   width: 100%;
-  display: flex;
+  display: none;
   flex-flow: column nowrap;
   justify-content: flex-start;
   align-items: flex-start;

@@ -1,4 +1,4 @@
-<div class="ui">
+<div id="ui" class="ui">
 
   <div class="ui-item-action" id="move_up" onclick="sendAction('move_up')">Move up</div>
   <div class="ui-item-action" id="move_down" onclick="sendAction('move_down')">Move down</div>
@@ -29,7 +29,7 @@
 
   onmessage = (event) => {
 
-    if (event.data.pluginMessage.data.isUIopen) {
+    if (event.data.pluginMessage.data) {
 
       uuid = event.data.pluginMessage.data.selectedEntry
 
@@ -41,6 +41,8 @@
           return false
         }
       })[0]
+
+      document.getElementById('ui').style.display = "flex";
 
       if (index === 0) {
         document.getElementById('move_up').classList.add('ui-item-action--disabled');
@@ -91,7 +93,7 @@ body {
 
 .ui {
   width: 100%;
-  display: flex;
+  display: none;
   flex-flow: column nowrap;
   justify-content: flex-start;
   align-items: flex-start;

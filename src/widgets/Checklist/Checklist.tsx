@@ -50,7 +50,6 @@ import uuid from 'src/utils/uuid'
 function Widget() {
   const [data, setData] = useSyncedState('data', {
     selectedEntry: undefined,
-    isUIopen: false,
     title: 'My checklist',
     description: '',
     colorRibbon: tokens.themes.status.dark.light.fill,
@@ -195,15 +194,18 @@ function Widget() {
   )
 
   useEffect(() => {
-    if (data.isUIopen) {
-      updateUI()
-    }
+    figma.clientStorage.getAsync('isUIopen').then((isUIopen) => {
+      if (isUIopen === undefined) {
+        figma.clientStorage.setAsync('isUIopen', false)
+      } else {
+        if (isUIopen) {
+          updateUI()
+        }
+      }
+    })
 
     figma.on('close', () => {
-      setData({
-        ...data,
-        isUIopen: false
-      })
+      figma.clientStorage.setAsync('isUIopen', false)
     })
 
     figma.ui.onmessage = (message) => {
@@ -328,8 +330,8 @@ function Widget() {
     if (view === 'settings') {
       return new Promise((resolve) => {
         figma.showUI(__uiFiles__.settings, { themeColors: true, title: 'Settings', width: 240, height: 454 })
-
-        setData({ ...data, isUIopen: true, selectedEntry: undefined })
+        setData({ ...data, selectedEntry: undefined })
+        figma.clientStorage.setAsync('isUIopen', true)
       })
     }
 
@@ -341,7 +343,8 @@ function Widget() {
           width: 240,
           height: 373
         })
-        setData({ ...data, isUIopen: true, selectedEntry: options.entry.uuid })
+        setData({ ...data, selectedEntry: options.entry.uuid })
+        figma.clientStorage.setAsync('isUIopen', true)
       })
     }
 
@@ -353,7 +356,8 @@ function Widget() {
           width: 240,
           height: 274
         })
-        setData({ ...data, isUIopen: true, selectedEntry: options.entry.uuid })
+        setData({ ...data, selectedEntry: options.entry.uuid })
+        figma.clientStorage.setAsync('isUIopen', true)
       })
     }
   }
