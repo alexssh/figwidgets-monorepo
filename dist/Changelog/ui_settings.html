@@ -1,4 +1,4 @@
-<div class="ui">
+<div id="ui" class="ui">
 
   <div class="ui-section">View</div>
 
@@ -40,7 +40,9 @@
   const view = "settings"
 
   onmessage = (event) => {
-    if (event.data.pluginMessage.data.isUIopen) {
+    if (event.data.pluginMessage.data) {
+      document.getElementById('ui').style.display = "flex";
+
       document.getElementById('ribbon').checked = event.data.pluginMessage.data.isRibbonVisible;
       document.getElementById('title').checked = event.data.pluginMessage.data.isTitleVisible;
       document.getElementById('description').checked = event.data.pluginMessage.data.isDescriptionVisible;
@@ -74,7 +76,7 @@ body {
 
 .ui {
   width: 100%;
-  display: flex;
+  display: none;
   flex-flow: column nowrap;
   justify-content: flex-start;
   align-items: flex-start;
