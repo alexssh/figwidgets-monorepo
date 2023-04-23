@@ -1,23 +1,25 @@
 # Advanced Changelog
 
-Figma + FigJam widget to track any changes in your stuff.
+Figma + FigJam Widget: Effortlessly Track Changes in Your Stuff.
 
 - 8 types of entries
 - Manual sorting
-- Links support
-- Customise the appearance: hide or show a description, a colour ribbon or even the background
+- Link support
+- Customizable appearance: show or hide descriptions, color ribbons, or backgrounds
 - Editing protection
 - Dark mode support
-
+- 
 ## What this widget is good for: 
 
-- Design and components system updates
-- Project and progress tracking
-- Development change logs
+- Design and Component System Updates: Stay informed about the latest changes in your design and component systems to maintain consistency and efficiency.
+- Project and Progress Tracking: Keep track of project progress and milestones, ensuring timely completion and effective communication within your team.
+- Development Change Logs: Monitor and document development changes, streamlining collaboration between designers and developers for a smoother workflow.
+
 
 ## Feedback
 
-Like it? Found bugs? Feature request? Please leave a comment below or check out the support link!
+Like it? Found bugs? Have a feature request? 
+Please leave a comment below!
 
 ## Tags
 
