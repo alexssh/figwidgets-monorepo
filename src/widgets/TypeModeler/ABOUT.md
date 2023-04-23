@@ -1,20 +1,21 @@
 # ERD Modeler
 
-FigJam widget to design Entity-Relationship Diagrams (ERDs) and data bases.
+FigJam Widget: Design Entity-Relationship Diagrams (ERDs) and Databases with Ease.
 
-- Design diagrams with 6-cells tables (key, name, type, mandatory, default, description)
-- Use connectors for each table entry, link and build relationships
-- Customise the appearance: hide or show a description, change type colours
+- Design diagrams using 6-cell tables (key, name, type, mandatory, default, description)
+- Connectors for each table entry to link and build relationships
+- Customizable appearance: show or hide descriptions, change type colors
 - Dark mode support
 
 ## What this widget is good for: 
 
-- Types and entity modelling like interfaces and databases 
-- Any kind of entity–relationship diagrams (ERD)
+- Types and Entity Modeling: Create clear and organized models for interfaces and databases, facilitating efficient design and development processes.
+- Entity-Relationship Diagrams (ERD): Craft any kind of ERD to visualize the structure and relationships between entities in a database or system.
 
 ## Feedback
 
-Like it? Found bugs? Feature request? Please leave a comment below!
+Like it? Found bugs? Have a feature request? 
+Please leave a comment below!
 
 ## Tags
 
