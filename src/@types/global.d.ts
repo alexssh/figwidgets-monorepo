@@ -46,14 +46,7 @@ declare global {
         [t: string]: { [scheme: string]: TokenBackground }
       }
       layout: {
-        container: {
-          vertical: number
-          horizontal: number
-        }
-        item: {
-          vertical: number
-          horizontal: number
-        }
+        [t: string]: TokenPadding
       }
     }
   }
@@ -72,6 +65,11 @@ declare global {
     stroke: HexCode | RGBA
     strokeWidth: number
     strokeAlign: WidgetJSX.StrokeAlign
+  }
+
+  type TokenPadding = {
+    vertical: number
+    horizontal: number
   }
 
   type TokenRadius = {
