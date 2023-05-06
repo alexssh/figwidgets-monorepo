@@ -6,7 +6,8 @@
   "editorType": ["figjam"],
   "containsWidget": true,
   "ui": {
-    "settings": "ui_settings.html"
+    "settings": "ui_settings.html",
+    "settings_entry": "ui_settings_entry.html"
   },
   "widgetApi": "1.0.0"
 }

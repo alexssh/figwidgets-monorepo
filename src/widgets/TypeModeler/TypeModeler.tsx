@@ -76,13 +76,30 @@ function Widget() {
     {
       title: 'Key',
       disabled: true,
-      width: 60,
+      width: {
+        960: 60,
+        1200: 60,
+        1480: 60
+      },
       style: { fill: tokens.themes.txt.secondary.default[data.colorTheme].color, textCase: 'upper' }
     },
-    { title: 'Name', disabled: false, width: 120, style: { fontWeight: 600, tooltip: 'Name' } },
+    {
+      title: 'Name',
+      disabled: false,
+      width: {
+        960: 120,
+        1200: 160,
+        1480: 200
+      },
+      style: { fontWeight: 600, tooltip: 'Name' }
+    },
     {
       title: 'Type',
-      width: 120,
+      width: {
+        960: 120,
+        1200: 160,
+        1480: 200
+      },
       disabled: false,
       style: {
         fontSize: (tokens.themes.typo.p5.fontSize as number) - 1,
@@ -94,14 +111,31 @@ function Widget() {
       title: 'Mandatory',
       disabled: true,
       tooltip: 'Mandatory',
-      width: 80,
+      width: {
+        960: 80,
+        1200: 80,
+        1480: 80
+      },
       icon: 'asterisk',
       style: { fill: tokens.themes.txt.secondary.default[data.colorTheme].color }
     },
-    { title: 'Default value', disabled: false, width: 160, style: { tooltip: 'Default value' } },
+    {
+      title: 'Default value',
+      disabled: false,
+      width: {
+        960: 160,
+        1200: 200,
+        1480: 260
+      },
+      style: { tooltip: 'Default value' }
+    },
     {
       title: 'Description',
-      width: 'fill-parent',
+      width: {
+        960: 'fill-parent',
+        1200: 'fill-parent',
+        1480: 'fill-parent'
+      },
       disabled: false,
       style: { fill: tokens.themes.txt.secondary.default[data.colorTheme].color, tooltip: 'Description' }
     }
@@ -109,16 +143,12 @@ function Widget() {
 
   usePropertyMenu(
     [
-      ...(data.preset === Object.keys(EntryPresets)[0]
-        ? ([
-            {
-              itemType: 'action',
-              tooltip: 'Settings',
-              propertyName: 'openSettings',
-              icon: glyphs.settings(tokens.themes.txt.minor.default.light.color as string)
-            }
-          ] as WidgetPropertyMenuItem[])
-        : []),
+      {
+        itemType: 'action',
+        tooltip: 'Settings',
+        propertyName: 'openSettings',
+        icon: glyphs.settings(tokens.themes.txt.minor.default.light.color as string)
+      },
       {
         itemType: 'toggle',
         tooltip: 'Switch color theme',
@@ -247,7 +277,7 @@ function Widget() {
     ({ propertyName, propertyValue }) => {
       if (propertyName === 'openSettings') {
         return new Promise((resolve) => {
-          openUI('settings', { data })
+          openUI(data.preset === Object.keys(EntryPresets)[0] ? 'settings' : 'settings_entry', { data })
         })
       }
 
@@ -312,6 +342,10 @@ function Widget() {
       if (message.action === 'link') {
         toggleLinkVisibility()
       }
+
+      if (message.action.indexOf('width') > -1) {
+        setWidth(message.action)
+      }
     }
   })
 
@@ -324,7 +358,14 @@ function Widget() {
   const openUI = (view: string, options: any) => {
     if (view === 'settings') {
       return new Promise((resolve) => {
-        figma.showUI(__uiFiles__.settings, { themeColors: true, title: 'Settings', width: 240, height: 124 })
+        figma.showUI(__uiFiles__.settings, { themeColors: true, title: 'Settings', width: 240, height: 217 })
+        setData({ ...data })
+        figma.clientStorage.setAsync('isUIopen', true)
+      })
+    }
+    if (view === 'settings_entry') {
+      return new Promise((resolve) => {
+        figma.showUI(__uiFiles__.settings_entry, { themeColors: true, title: 'Settings', width: 240, height: 88 })
         setData({ ...data })
         figma.clientStorage.setAsync('isUIopen', true)
       })
@@ -393,6 +434,13 @@ function Widget() {
     })
   }
 
+  const setWidth = (value: string) => {
+    setData({
+      ...data,
+      width: parseInt(value.split('_')[1])
+    })
+  }
+
   /* Entries */
 
   const duplicateEntry = () => {
@@ -416,7 +464,6 @@ function Widget() {
       data: {
         ...selectedNode.widgetSyncedState.data,
         isUIopen: false,
-        // colorTheme: 'light',
         preset: type,
 
         title: 'Entity name',
@@ -437,8 +484,6 @@ function Widget() {
         colorType: tokens.themes.status.success.light.fill,
         defaultValue: '',
         comment: ''
-
-        // width: 800
       },
       entryType: Object.keys(EntryPresets)[1]
     })
@@ -488,12 +533,6 @@ function Widget() {
     for (let i = 0; i < siblings.length - 1; i++) {
       if (siblings[i].y - (siblings[i + 1].y + siblings[i + 1].height) - spacing * 2 >= newNode.height) {
         maxBottomPosition = siblings[i + 1].y + siblings[i + 1].height + spacing
-        console.log('BREAK', {
-          curr: siblings[i].y,
-          next: siblings[i + 1].y,
-          node: newNode.height,
-          spacing: spacing * 2
-        })
         break
       } else {
         maxBottomPosition = siblings[0].y + siblings[0].height + spacing
@@ -591,7 +630,12 @@ function Widget() {
         onEditEnd={(e: IItemHeaderOnEditEndEvent) => editData(e.property, e.value.characters)}
       />
 
-      <ItemTableHeader key={'Widget__tableHeader'} theme={current.colorTheme} row={config as TableCell[]} />
+      <ItemTableHeader
+        key={'Widget__tableHeader'}
+        theme={current.colorTheme}
+        row={config as TableCell[]}
+        width={data.width}
+      />
     </>
   )
 
@@ -610,6 +654,7 @@ function Widget() {
       <ItemTableRow
         theme={current.colorTheme}
         disabled={false}
+        width={data.width}
         row={
           [
             {

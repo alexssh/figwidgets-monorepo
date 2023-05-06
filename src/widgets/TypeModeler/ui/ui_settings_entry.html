@@ -1,19 +1,5 @@
 <div id="ui" class="ui">
 
-  <div class="ui-item-checkbox">
-    <input type="checkbox" id="ribbon" onclick="sendAction('ribbon')" name="ribbon">
-    <label for="ribbon">Ribbon</label>
-  </div>
-  <div class="ui-item-checkbox">
-    <input type="checkbox" id="description" onclick="sendAction('description')" name="description">
-    <label for="description">Description</label>
-  </div>
-  <div class="ui-item-checkbox">
-    <input type="checkbox" id="link" onclick="sendAction('link')" name="link">
-    <label for="link">Link</label>
-  </div>
-
-  <div class="ui-divider"></div>
   <div class="ui-section">Container</div>
 
   <div class="ui-item-select">
@@ -35,10 +21,6 @@
   onmessage = (event) => {
     if (event.data.pluginMessage.data) {
       document.getElementById('ui').style.display = "flex";
-
-      document.getElementById('ribbon').checked = event.data.pluginMessage.data.isRibbonVisible;
-      document.getElementById('description').checked = event.data.pluginMessage.data.isDescriptionVisible;
-      document.getElementById('link').checked = event.data.pluginMessage.data.isLinkVisible;
       document.getElementById('width').value = event.data.pluginMessage.data.width;
     }
   }

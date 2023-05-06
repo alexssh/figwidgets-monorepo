@@ -31,7 +31,7 @@ function ItemTableHeader(props: IItemTableHeaderProps) {
           height={tokens.themes.controls.size[200]}
           verticalAlignItems="center"
           spacing={2}
-          width={cell.width}
+          width={cell.width[props.width]}
         >
           <Text
             {...tokens.themes.typo.p6}

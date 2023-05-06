@@ -4,6 +4,7 @@ declare global {
     theme: string
     disabled?: boolean
     row: TableCell[]
+    width: number
     onEditEnd?: (e: IItemTableRowEditEnd) => void
   }
 

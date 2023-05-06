@@ -23,6 +23,10 @@ diagram, entity, modeler, type, class, database, erd, content, development, comp
 
 ## Changelog
 
+- Version 9
+    - Bug fixes & optimisation
+    - Added: width setting
+
 - Version 8
     - Bug fixes & optimisation
 

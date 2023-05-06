@@ -20,7 +20,7 @@ export const KeyPresets: TableModelerKeyPresetsMapping = {
   sk: {
     label: 'Super key (SK)'
   },
-  fr: {
+  fk: {
     label: 'Foreign key (FK)'
   },
   ak: {
@@ -29,7 +29,7 @@ export const KeyPresets: TableModelerKeyPresetsMapping = {
   ck: {
     label: 'Candidate key (CK)'
   },
-  cp: {
+  cpk: {
     label: 'Composite key (CPK)'
   }
 }

@@ -87,7 +87,7 @@ declare global {
 
   export type TableCell = {
     title: string
-    width: 'fill-parent' | number
+    width: { [t: number]: WidgetJSX.AutolayoutSize }
     disabled: boolean
     tooltip: string
     content?: string

@@ -2,6 +2,7 @@ declare global {
   interface IItemTableHeaderProps {
     key?: string
     theme: string
+    width: number
     row: TableCell[]
   }
 

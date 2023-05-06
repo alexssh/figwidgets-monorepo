@@ -27,7 +27,7 @@ function ItemTableRow(props: IItemTableRowProps) {
           direction="horizontal"
           spacing={8}
           verticalAlignItems="start"
-          width={cell.width}
+          width={cell.width[props.width]}
           tooltip={cell.tooltip}
         >
           {cell.icon && (
