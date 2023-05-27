@@ -5,6 +5,10 @@
   "main": "widget.js",
   "editorType": ["figma", "figjam"],
   "containsWidget": true,
+  "networkAccess": {
+    "allowedDomains": ["none"],
+    "reasoning": ""
+  },
   "permissions": ["currentuser"],
   "ui": {
     "more_checkbox": "ui_more_checkbox.html",

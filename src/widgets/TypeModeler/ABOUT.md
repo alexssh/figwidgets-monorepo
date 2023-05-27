@@ -23,6 +23,9 @@ diagram, entity, modeler, type, class, database, erd, content, development, comp
 
 ## Changelog
 
+- Version 10
+    - manifest.json update
+
 - Version 9
     - Bug fixes & optimisation
     - Added: width setting

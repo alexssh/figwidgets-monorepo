@@ -26,6 +26,10 @@ checkbox, checklist, design, handoff, notes, plan, progress tracker, projects, t
 
 ## Changelog
 
+- Version 13
+    - manifest.json update
+    - Bug fixes & optimisation
+
 - Version 12
     - Bug fixes & optimisation
 

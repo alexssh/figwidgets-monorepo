@@ -27,6 +27,10 @@ changelog, components, cover, development, library, management, design system, n
 
 ## Changelog
 
+- Version 12
+    - manifest.json update
+    - Bug fixes & optimisation
+
 - Version 11
     - Bug fixes & optimisation
 

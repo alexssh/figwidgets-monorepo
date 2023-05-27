@@ -5,6 +5,10 @@
   "main": "widget.js",
   "editorType": ["figma", "figjam"],
   "containsWidget": true,
+  "networkAccess": {
+    "allowedDomains": ["none"],
+    "reasoning": ""
+  },
   "ui": {
     "more": "ui_more.html",
     "settings": "ui_settings.html"

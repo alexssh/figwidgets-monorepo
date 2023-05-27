@@ -661,7 +661,7 @@ function Widget() {
       width={data.width}
       effect={tokens.themes.shadow[data.isBackgroundVisible ? 'container' : 'transparent'][data.colorTheme]}
       stroke={tokens.themes.border.container[data.colorTheme].fill}
-      strokeWidth={1}
+      strokeWidth={data.isBackgroundVisible ? 1 : 0}
     >
       {data.isRibbonVisible && <Frame name="Widget__ribbon" fill={data.colorRibbon} width="fill-parent" height={8} />}
 
