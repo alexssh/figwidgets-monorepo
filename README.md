@@ -1,6 +1,6 @@
 Figma + FigJam widget development environment with UI components and utils.
 
-Widget examples:
+Contains:
 - [Advanced Changelog](https://www.figma.com/community/widget/1142539867133322876)
 - [Type Modeller](https://www.figma.com/community/widget/1154859859907562654)
 - [Checklist](https://www.figma.com/community/widget/1151240412068749314)
