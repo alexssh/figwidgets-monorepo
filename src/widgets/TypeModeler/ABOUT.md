@@ -24,7 +24,8 @@ diagram, entity, modeler, type, class, database, erd, content, development, comp
 ## Changelog
 
 - Version 11
-    - Fix: Minor UX improvements 
+    - Fix: Minor UX improvements
+    - Fix: Stacking bug
 
 - Version 10
     - manifest.json update
