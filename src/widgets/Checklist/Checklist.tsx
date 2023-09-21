@@ -342,7 +342,7 @@ function Widget() {
   const openUI = (view: string, options: any) => {
     if (view === 'settings') {
       return new Promise((resolve) => {
-        figma.showUI(__uiFiles__.settings, { themeColors: true, title: 'Settings', width: 240, height: 454 })
+        figma.showUI(__uiFiles__.settings, { themeColors: true, title: 'Settings', width: 240, height: 547 })
         setData({ ...data, selectedEntry: undefined })
         figma.clientStorage.setAsync('isUIopen', true)
       })

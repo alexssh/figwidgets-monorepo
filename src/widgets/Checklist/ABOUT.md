@@ -26,6 +26,9 @@ checkbox, checklist, design, handoff, notes, plan, progress tracker, projects, t
 
 ## Changelog
 
+- Version 15
+    - Fix: Minor UX improvements
+
 - Version 14
     - Fix: Minor UX improvements
     - Fix: Dropdown options visibility (Windows)
