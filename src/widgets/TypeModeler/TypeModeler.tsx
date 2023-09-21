@@ -70,6 +70,9 @@ function Widget() {
     width: 960
   })
 
+  const SPACING = 8
+  const GROUP_THRESHOLD = 240
+
   const [entryType, setEntryType] = useSyncedState('entryType', Object.keys(EntryPresets)[1])
 
   const [tableConfig, setTableConfig] = useSyncedState('tableConfig', [
@@ -160,11 +163,11 @@ function Widget() {
             : tokens.themes.txt.minor.default.light.color) as string
         )
       },
-      {
-        itemType: 'separator'
-      },
-      ...(data.preset === Object.keys(EntryPresets)[0]
+      ...(data.preset === Object.keys(EntryPresets)[0] && data.isRibbonVisible
         ? ([
+            {
+              itemType: 'separator'
+            },
             {
               itemType: 'color-selector',
               propertyName: 'colorRibbon',
@@ -187,6 +190,9 @@ function Widget() {
         : []),
       ...(data.preset === Object.keys(EntryPresets)[1]
         ? ([
+            {
+              itemType: 'separator'
+            },
             {
               itemType: 'color-selector',
               propertyName: 'colorType',
@@ -310,7 +316,7 @@ function Widget() {
       }
 
       if (propertyName === 'addEntry') {
-        addEntry(data, entryType)
+        addEntry(entryType)
       }
     }
   )
@@ -443,27 +449,32 @@ function Widget() {
 
   /* Entries */
 
-  const duplicateEntry = () => {
-    const selectedNode = figma.currentPage.selection[0] as WidgetNode
-    const parentNode = selectedNode.parent as PageNode | FrameNode | SectionNode | GroupNode
+  const getTypeModelerNodes = () => {
+    const allWidgetNodes: WidgetNode[] = figma.currentPage.findAll((node) => {
+      return node.type === 'WIDGET'
+    }) as WidgetNode[]
 
-    const newNode = selectedNode.clone()
-
-    let id = getCurrentStackID(selectedNode, newNode)
-
-    const newNodePosition = calculateNewNodePosition(selectedNode, newNode as any, parentNode, id, 8)
-    insertNewNode(newNode, newNodePosition, parentNode, parentNode.children.indexOf(selectedNode) + 1)
+    return allWidgetNodes.filter((node) => {
+      return node.widgetId === figma.widgetId
+    })
   }
 
-  const addEntry = (current: typeof data, type: string) => {
+  const duplicateEntry = () => {
     const selectedNode = figma.currentPage.selection[0] as WidgetNode
-    const parentNode = selectedNode.parent as PageNode | FrameNode | SectionNode | GroupNode
+    const newNode = selectedNode.clone()
+    let position = getNewNodePosition(selectedNode, newNode)
+
+    newNode.x = position.x
+    newNode.y = position.y
+  }
+
+  const addEntry = (type: string) => {
+    const selectedNode = figma.currentPage.selection[0] as WidgetNode
 
     const newNode = selectedNode.cloneWidget({
       ...selectedNode.widgetSyncedState,
       data: {
         ...selectedNode.widgetSyncedState.data,
-        isUIopen: false,
         preset: type,
 
         title: 'Entity name',
@@ -488,79 +499,44 @@ function Widget() {
       entryType: Object.keys(EntryPresets)[1]
     })
 
-    let id = getCurrentStackID(selectedNode, newNode)
+    let position = getNewNodePosition(selectedNode, newNode)
 
-    const newNodePosition = calculateNewNodePosition(selectedNode, newNode, parentNode, id, 8)
-    insertNewNode(newNode, newNodePosition, parentNode, parentNode.children.indexOf(selectedNode) + 1)
+    newNode.x = position.x
+    newNode.y = position.y
   }
 
-  const getCurrentStackID = (selectedNode: any, newNode: any) => {
-    let id
+  const getNewNodePosition = (selectedNode: WidgetNode, newNode: WidgetNode) => {
+    let x = 0
+    let y = 0
 
-    if (Boolean(selectedNode.getPluginData('position').length)) {
-      const position = JSON.parse(selectedNode.getPluginData('position'))
-
-      if (selectedNode.x !== position.x || selectedNode.y !== position.y) {
-        id = uuid()
-        updateNodePosition(selectedNode)
-      } else {
-        id = selectedNode.getPluginData('stackID')
-      }
-    } else {
-      id = uuid()
-      updateNodePosition(selectedNode)
-    }
-
-    selectedNode.setPluginData('stackID', id)
-    newNode.setPluginData('stackID', id)
-
-    return id
-  }
-
-  const calculateNewNodePosition = (
-    selectedNode: WidgetNode,
-    newNode: WidgetNode,
-    parentNode: any,
-    id: string,
-    spacing: number
-  ) => {
-    const siblings = parentNode.children
-      .filter((i: any) => i.name === 'ERD Modeler' && i.getPluginData('stackID') === id)
-      .sort((a: any, b: any) => b.y - a.y)
-
-    let maxBottomPosition
-
-    for (let i = 0; i < siblings.length - 1; i++) {
-      if (siblings[i].y - (siblings[i + 1].y + siblings[i + 1].height) - spacing * 2 >= newNode.height) {
-        maxBottomPosition = siblings[i + 1].y + siblings[i + 1].height + spacing
-        break
-      } else {
-        maxBottomPosition = siblings[0].y + siblings[0].height + spacing
-      }
-    }
-
-    return {
-      x: selectedNode.x,
-      y: maxBottomPosition
-    }
-  }
-
-  const insertNewNode = (newNode: any, newNodePosition: any, parentNode: any, index: number) => {
-    newNode.x = newNodePosition.x
-    newNode.y = newNodePosition.y
-
-    updateNodePosition(newNode)
-    parentNode.insertChild(index, newNode)
-  }
-
-  const updateNodePosition = (selectedNode: any) => {
-    selectedNode.setPluginData(
-      'position',
-      JSON.stringify({
-        x: selectedNode.x,
-        y: selectedNode.y
+    const currentStack = getTypeModelerNodes()
+      .filter((node) => {
+        return node.x === selectedNode.x && node.id !== newNode.id
       })
-    )
+      .sort((a: any, b: any) => Math.abs(b.y) - Math.abs(a.y))
+
+    for (let i = 0; i < currentStack.length; i++) {
+      if (currentStack.length > 1) {
+        if (i < currentStack.length - 1) {
+          if (
+            Math.abs(currentStack[i].y - currentStack[i + 1].y + currentStack[i].height + SPACING * 2) >=
+            EntryPresets[newNode.widgetSyncedState.data.preset].height
+          ) {
+            x = selectedNode.x
+            y = currentStack[i].y + currentStack[i].height + SPACING
+            break
+          }
+        } else {
+          x = selectedNode.x
+          y = currentStack[i].y + currentStack[i].height + SPACING
+        }
+      } else {
+        x = selectedNode.x
+        y = currentStack[i].y + currentStack[i].height + SPACING
+      }
+    }
+
+    return { x, y }
   }
 
   /* Data */

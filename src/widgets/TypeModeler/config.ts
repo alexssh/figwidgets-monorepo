@@ -1,9 +1,13 @@
+import Header from 'src/patterns/Header'
+
 export const EntryPresets: TableModelerEntryPresetsMapping = {
   header: {
-    label: 'Header'
+    label: 'Header',
+    height: 147
   },
   entry: {
-    label: 'Attribute'
+    label: 'Attribute',
+    height: 55
   }
 }
 
