@@ -54,6 +54,7 @@ function Widget() {
     description: '',
     colorRibbon: tokens.themes.status.dark.light.fill,
     colorTheme: 'light',
+    completion: 'number',
     width: 800,
     isRibbonVisible: true,
     isTitleVisible: true,
@@ -90,7 +91,11 @@ function Widget() {
                   ? tokens.themes.txt.primary.inverted.light.color
                   : tokens.themes.txt.minor.default.light.color) as string
               )
-            },
+            }
+          ] as WidgetPropertyMenuItem[])
+        : []),
+      ...(data.isEditingVisible && data.isRibbonVisible
+        ? ([
             {
               itemType: 'color-selector',
               propertyName: 'colorRibbon',
@@ -108,7 +113,11 @@ function Widget() {
                 { option: tokens.themes.status.disabled[data.colorTheme].fill, tooltip: 'Grey' },
                 { option: tokens.themes.status.white[data.colorTheme].fill, tooltip: 'White' }
               ]
-            },
+            }
+          ] as WidgetPropertyMenuItem[])
+        : []),
+      ...(data.isEditingVisible
+        ? ([
             {
               itemType: 'separator'
             }
@@ -231,6 +240,10 @@ function Widget() {
 
       if (message.action.indexOf('width') > -1) {
         setWidth(message.action)
+      }
+
+      if (message.action.indexOf('completion') > -1) {
+        setCompletion(message.action)
       }
 
       if (message.action === 'footer') {
@@ -450,6 +463,13 @@ function Widget() {
     })
   }
 
+  const setCompletion = (value: string) => {
+    setData({
+      ...data,
+      completion: value.split('_')[1]
+    })
+  }
+
   /* Entries */
 
   const addEntry = (
@@ -645,6 +665,14 @@ function Widget() {
     }
   }
 
+  const getCompletion = (completed: number, total: number) => {
+    if (data.completion === 'number') {
+      return `Completed ${completed} of ${total}`
+    } else {
+      return `Completed ${Math.round((completed / total) * 100)}%`
+    }
+  }
+
   const entriesForRender = entries
     .values()
     .filter((entry) => (data.isCompletedVisible ? true : entry.type === 'check' ? !entry.value : true))
@@ -825,9 +853,10 @@ function Widget() {
                   theme={data.colorTheme}
                   variant="secondary"
                   glyph={data.isCompletedVisible ? 'visible' : 'hidden'}
-                  content={`Completed ${
-                    entries.values().filter((entry) => entry.type === Object.keys(EntryTypes)[0] && entry.value).length
-                  } of ${entries.values().filter((entry) => entry.type === Object.keys(EntryTypes)[0]).length}`}
+                  content={getCompletion(
+                    entries.values().filter((entry) => entry.type === Object.keys(EntryTypes)[0] && entry.value).length,
+                    entries.values().filter((entry) => entry.type === Object.keys(EntryTypes)[0]).length
+                  )}
                   onClick={() => setCompletedVisibility()}
                 />
               )}

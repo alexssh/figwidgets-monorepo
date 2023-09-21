@@ -12,6 +12,16 @@
   </div>
 
   <div class="ui-divider"></div>
+  <div class="ui-section">Completion counter</div>
+
+  <div class="ui-item-select">
+    <select id="completion" name="completion" size="1" onchange="sendAction(`completion_${this.value}`)">
+      <option value="number">Number</option>
+      <option value="percentage">Percentage</option>
+    </select>
+  </div>
+
+  <div class="ui-divider"></div>
   <div class="ui-section">View</div>
 
   <div class="ui-item-checkbox">
@@ -61,6 +71,7 @@
 
       document.getElementById('metadata').checked = event.data.pluginMessage.data.isMetadataVisible;
       document.getElementById('completed_tasks').checked = event.data.pluginMessage.data.isCompletedVisible;
+      document.getElementById('completion').value = event.data.pluginMessage.data.completion;
 
       document.getElementById('ribbon').checked = event.data.pluginMessage.data.isRibbonVisible;
       document.getElementById('title').checked = event.data.pluginMessage.data.isTitleVisible;

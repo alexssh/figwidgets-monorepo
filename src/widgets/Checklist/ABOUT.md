@@ -26,6 +26,11 @@ checkbox, checklist, design, handoff, notes, plan, progress tracker, projects, t
 
 ## Changelog
 
+- Version 14
+    - Fix: Minor UX improvements
+    - Fix: Dropdown options visibility (Windows)
+    - Added: Percentage completion option
+
 - Version 13
     - manifest.json update
     - Bug fixes & optimisation
