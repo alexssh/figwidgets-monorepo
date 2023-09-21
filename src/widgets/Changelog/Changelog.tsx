@@ -88,7 +88,11 @@ function Widget() {
                   ? tokens.themes.txt.primary.inverted.light.color
                   : tokens.themes.txt.minor.default.light.color) as string
               )
-            },
+            }
+          ] as WidgetPropertyMenuItem[])
+        : []),
+      ...(data.isEditingVisible && data.isRibbonVisible
+        ? ([
             {
               itemType: 'color-selector',
               propertyName: 'colorRibbon',
@@ -106,7 +110,11 @@ function Widget() {
                 { option: tokens.themes.status.disabled[data.colorTheme].fill, tooltip: 'Grey' },
                 { option: tokens.themes.status.white[data.colorTheme].fill, tooltip: 'White' }
               ]
-            },
+            }
+          ] as WidgetPropertyMenuItem[])
+        : []),
+      ...(data.isEditingVisible
+        ? ([
             {
               itemType: 'separator'
             }

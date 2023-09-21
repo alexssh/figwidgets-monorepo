@@ -27,6 +27,10 @@ changelog, components, cover, development, library, management, design system, n
 
 ## Changelog
 
+- Version 13
+    - Fix: Minor UX improvements
+    - Fix: Dropdown options visibility (Windows)
+
 - Version 12
     - manifest.json update
     - Bug fixes & optimisation
