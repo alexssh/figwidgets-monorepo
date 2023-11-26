@@ -4,6 +4,7 @@ const { AutoLayout } = widget
 /* Components */
 import InputGhost from 'src/components/InputGhost'
 import LinkBox from 'src/patterns/LinkBox'
+import NavigationButton from 'src/patterns/NavigationButton'
 
 /* --- */
 
@@ -15,11 +16,11 @@ function ItemTitle(props: IItemTitleProps) {
       direction="vertical"
       height="hug-contents"
       width="fill-parent"
-      spacing={5}
+      spacing={4}
       padding={{
         top: 0,
         left: 0,
-        bottom: props.isDescriptionVisible ? 8 : 0,
+        bottom: props.isDescriptionVisible || props.link ? 8 : 0,
         right: 0
       }}
     >
@@ -53,8 +54,7 @@ function ItemTitle(props: IItemTitleProps) {
             height="hug-contents"
             width="fill-parent"
             padding={{
-              top: props.isDescriptionVisible ? 3 : 2,
-              bottom: 8
+              top: 2
             }}
           >
             <LinkBox
@@ -64,6 +64,24 @@ function ItemTitle(props: IItemTitleProps) {
               valid={props.link.valid}
               disabled={Boolean(props.disabled)}
               onEditEnd={(e) => props.onEditEnd({ property: 'link', value: e } as IItemTitleOnEditEndEvent)}
+            />
+          </AutoLayout>
+        )}
+        {props.navigationLink && (
+          <AutoLayout
+            name="ItemCheckbox__navigation"
+            direction="vertical"
+            height="hug-contents"
+            width="fill-parent"
+            padding={{
+              top: 2
+            }}
+          >
+            <NavigationButton
+              theme={props.theme}
+              contentTitle={props.navigationLink.layerName}
+              valid={props.navigationLink.valid}
+              onClick={() => props.onNavigationClick?.()}
             />
           </AutoLayout>
         )}

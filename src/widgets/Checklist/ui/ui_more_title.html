@@ -5,10 +5,37 @@
 
   <div class="ui-divider"></div>
 
+  <div class="ui-section">Canvas navigation</div>
+
+  <div class="ui-item-info" id="navigation_hint">Select a frame to add a link within the file</div>
+
+  <div class="ui-item-action" id="navigation_action_add" onclick="sendAction('navigation_add')">Add navigation to ...
+  </div>
+
+  <div class="ui-item-actionset" id="navigation_action">
+    <div class="ui-item-actionset-label" id="navigation_action_label">...</div>
+    <div class="ui-button ui-item-actionset-button ui-item-actionset-button--accent" id="navigation_action_update"
+      onclick="sendAction('navigation_update')">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd" clip-rule="evenodd"
+          d="M8.73885 3.00043L8.56784 3.47028L7.25844 7.06782L6.31875 6.7258L7.2757 4.09658C5.04631 5.12711 3.5 7.3835 3.5 10C3.5 12.9438 5.45732 15.4317 8.14262 16.2309L7.85738 17.1894C4.75971 16.2674 2.5 13.3983 2.5 10C2.5 7.06884 4.1812 4.53131 6.63123 3.2975L4.32944 2.45971L4.67146 1.52002L8.269 2.82942L8.73885 3.00043ZM11.8574 3.76911C14.5427 4.5683 16.5 7.05623 16.5 10C16.5 12.6565 14.9061 14.9417 12.6217 15.9498L13.5956 13.274L12.6559 12.932L11.3465 16.5295L11.1755 16.9994L11.6454 17.1704L15.2429 18.4798L15.5849 17.5401L13.3329 16.7204C15.8024 15.4934 17.5 12.9454 17.5 10C17.5 6.60174 15.2403 3.73257 12.1426 2.81066L11.8574 3.76911Z" />
+      </svg>
+    </div>
+    <div class="ui-button ui-item-actionset-button" id="navigation_action_delete"
+      onclick="sendAction('navigation_delete')">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="4" y="10" width="12" height="1" />
+      </svg>
+
+    </div>
+  </div>
+
+  <div class="ui-divider"></div>
+
   <div class="ui-item-action" id="show_description" onclick="sendAction('show_description')">Show description</div>
   <div class="ui-item-action" id="hide_description" onclick="sendAction('hide_description')">Hide description</div>
-  <div class="ui-item-action" id="show_link" onclick="sendAction('show_link')">Show link</div>
-  <div class="ui-item-action" id="hide_link" onclick="sendAction('hide_link')">Hide link</div>
+  <div class="ui-item-action" id="show_link" onclick="sendAction('show_link')">Show external link</div>
+  <div class="ui-item-action" id="hide_link" onclick="sendAction('hide_link')">Hide external link</div>
   <div class="ui-item-action" id="duplicate" onclick="sendAction('duplicate')">Duplicate</div>
 
   <div class="ui-divider"></div>
@@ -32,6 +59,8 @@
     if (event.data.pluginMessage.data) {
 
       uuid = event.data.pluginMessage.data.selectedEntry
+
+      let canvas = event.data.pluginMessage.canvas
 
       let selected = event.data.pluginMessage.entries.sort((a, b) => a.position - b.position).filter((entry, i) => {
         if (entry.uuid === uuid) {
@@ -65,6 +94,47 @@
 
       document.getElementById('show_link').style.display = !selected.isLinkVisible ? "block" : "none";
       document.getElementById('hide_link').style.display = selected.isLinkVisible ? "block" : "none";
+
+      document.getElementById('navigation_hint').style.display = !selected.navigationLink.id.length && !canvas.id.length ? "flex" : "none"
+
+      if (!selected.navigationLink.id.length && canvas.id.length) {
+        document.getElementById('navigation_action_add').style.display = "block"
+        document.getElementById('navigation_action_add').innerHTML = `Add navigation to ${canvas.layerName}`
+      } else {
+        document.getElementById('navigation_action_add').style.display = "none"
+      }
+
+      document.getElementById('navigation_action').style.display = selected.navigationLink.id.length ? "flex" : "none";
+
+      if (selected.navigationLink.id.length && canvas.id.length) {
+        removeWarning(selected.navigationLink.layerName)
+        if (selected.navigationLink.id !== canvas.id) {
+          document.getElementById('navigation_action_update').classList.remove('ui-item-actionset-button--hidden');
+          document.getElementById('navigation_action_label').innerHTML = `${selected.navigationLink.layerName} → ${canvas.layerName}`;
+        } else {
+          document.getElementById('navigation_action_update').classList.add('ui-item-actionset-button--hidden');
+          document.getElementById('navigation_action_label').innerHTML = `${selected.navigationLink.layerName}`;
+        }
+      }
+
+      if (selected.navigationLink.id.length && !canvas.id.length) {
+        document.getElementById('navigation_action_update').classList.add('ui-item-actionset-button--hidden');
+        if (selected.navigationLink.valid) {
+          document.getElementById('navigation_action_label').innerHTML = `${selected.navigationLink.layerName}`;
+        } else {
+          addWarning()
+        }
+      }
+
+      function removeWarning(layerName) {
+        document.getElementById('navigation_action_label').innerHTML = `${layerName}`
+        document.getElementById('navigation_action_label').classList.remove('ui-item-actionset-label--warning');
+      }
+
+      function addWarning() {
+        document.getElementById('navigation_action_label').innerHTML = "Target node doesn't exist"
+        document.getElementById('navigation_action_label').classList.add('ui-item-actionset-label--warning');
+      }
 
     }
   }

@@ -13,6 +13,8 @@ declare global {
     disabledCheckbox?: boolean
     priority: number
     link?: Link
+    navigationLink?: NavigationLink
+    onNavigationClick?: () => void
     onCheckboxChange: () => void
     onEditEnd: (e: IItemCheckboxOnEditEndEvent) => void
   }

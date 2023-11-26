@@ -16,6 +16,8 @@ declare global {
     action: keyof ChecklistActionsMapping
     isLinkVisible: boolean
     link: Link
+    isNavigationLinkVisible: boolean
+    navigationLink: NavigationLink
   }
 
   export type ChecklistTitleEntry = ChecklistEntry & {
@@ -29,6 +31,8 @@ declare global {
     action?: keyof ChecklistActionsMapping // type fix
     isLinkVisible: boolean
     link: Link
+    isNavigationLinkVisible: boolean
+    navigationLink: NavigationLink
   }
 
   export type ChecklistEntryMapping = {

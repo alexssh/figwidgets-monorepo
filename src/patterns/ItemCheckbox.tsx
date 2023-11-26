@@ -8,6 +8,7 @@ import tokens from 'src/utils/tokens'
 import Checkbox from 'src/components/Checkbox'
 import InputGhost from 'src/components/InputGhost'
 import LinkBox from 'src/patterns/LinkBox'
+import NavigationButton from 'src/patterns/NavigationButton'
 
 /* --- */
 
@@ -53,7 +54,7 @@ function ItemCheckbox(props: IItemCheckboxProps) {
           direction="vertical"
           height="hug-contents"
           width="fill-parent"
-          spacing={5}
+          spacing={4}
         >
           <InputGhost
             theme={props.theme}
@@ -93,8 +94,7 @@ function ItemCheckbox(props: IItemCheckboxProps) {
                 height="hug-contents"
                 width="fill-parent"
                 padding={{
-                  top: 1,
-                  bottom: 4
+                  top: 2
                 }}
               >
                 <LinkBox
@@ -107,18 +107,46 @@ function ItemCheckbox(props: IItemCheckboxProps) {
                 />
               </AutoLayout>
             )}
+            {props.navigationLink && (
+              <AutoLayout
+                name="ItemCheckbox__navigation"
+                direction="vertical"
+                height="hug-contents"
+                width="fill-parent"
+                padding={{
+                  top: 2
+                }}
+              >
+                <NavigationButton
+                  theme={props.theme}
+                  contentTitle={props.navigationLink.layerName}
+                  valid={props.navigationLink.valid}
+                  onClick={() => props.onNavigationClick?.()}
+                />
+              </AutoLayout>
+            )}
           </>
         </AutoLayout>
         {props.contentMeta && (
-          <Text
-            key={'ItemCheckbox__body'}
-            {...tokens.themes.typo.p6}
-            fill={tokens.themes.txt.secondary.default[props.theme].color}
+          <AutoLayout
+            name="ItemCheckbox__meta"
+            direction="vertical"
+            height="hug-contents"
             width="fill-parent"
-            horizontalAlignText="left"
+            padding={{
+              top: 6
+            }}
           >
-            {props.contentMeta}
-          </Text>
+            <Text
+              key={'ItemCheckbox__metaText'}
+              {...tokens.themes.typo.p6}
+              fill={tokens.themes.txt.secondary.default[props.theme].color}
+              width="fill-parent"
+              horizontalAlignText="left"
+            >
+              {props.contentMeta}
+            </Text>
+          </AutoLayout>
         )}
       </AutoLayout>
     </AutoLayout>
