@@ -8,6 +8,7 @@ import tokens from 'src/utils/tokens'
 import Checkbox from 'src/components/Checkbox'
 import InputGhost from 'src/components/InputGhost'
 import LinkBox from 'src/patterns/LinkBox'
+import NavigationButton from 'src/patterns/NavigationButton'
 
 /* --- */
 
@@ -103,6 +104,24 @@ function ItemCheckbox(props: IItemCheckboxProps) {
                   valid={props.link.valid}
                   disabled={Boolean(props.disabled)}
                   onEditEnd={(e) => props.onEditEnd({ property: 'link', value: e } as IItemCheckboxOnEditEndEvent)}
+                />
+              </AutoLayout>
+            )}
+            {props.navigationLink && (
+              <AutoLayout
+                name="ItemCheckbox__navigation"
+                direction="vertical"
+                height="hug-contents"
+                width="fill-parent"
+                padding={{
+                  top: 2
+                }}
+              >
+                <NavigationButton
+                  theme={props.theme}
+                  contentTitle={props.navigationLink.layerName}
+                  valid={props.navigationLink.valid}
+                  onClick={() => props.onNavigationClick?.()}
                 />
               </AutoLayout>
             )}

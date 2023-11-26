@@ -64,12 +64,13 @@ function Widget() {
     isCompletedVisible: true,
     isMetadataVisible: false,
     isFooterVisible: true,
-    isBackgroundVisible: true,
-    canvasSelection: {
-      id: '',
-      layerName: '',
-      valid: false
-    }
+    isBackgroundVisible: true
+  })
+
+  const [canvas, setCanvas] = useSyncedState('canvas', {
+    id: '',
+    layerName: '',
+    valid: false
   })
 
   const [entryType, setEntryType] = useSyncedState('entryType', Object.keys(EntryTypes)[0])
@@ -219,7 +220,7 @@ function Widget() {
     })
 
     figma.on('close', () => {
-      figma.off('selectionchange', () => watchCanvasSelection)
+      figma.off('selectionchange', watchCanvasSelection)
       setCanvasSelection('', '', false)
 
       figma.clientStorage.setAsync('isUIopen', false)
@@ -311,19 +312,11 @@ function Widget() {
       }
 
       if (message.action === 'navigation_add') {
-        setNavigation(
-          entries.get(message.uuid) as ChecklistCheckboxEntry | ChecklistTitleEntry,
-          data.canvasSelection,
-          false
-        )
+        setNavigation(entries.get(message.uuid) as ChecklistCheckboxEntry | ChecklistTitleEntry, canvas, false)
       }
 
       if (message.action === 'navigation_update') {
-        setNavigation(
-          entries.get(message.uuid) as ChecklistCheckboxEntry | ChecklistTitleEntry,
-          data.canvasSelection,
-          false
-        )
+        setNavigation(entries.get(message.uuid) as ChecklistCheckboxEntry | ChecklistTitleEntry, canvas, false)
       }
 
       if (message.action === 'navigation_delete') {
@@ -367,12 +360,13 @@ function Widget() {
   const updateUI = () => {
     figma.ui.postMessage({
       data,
-      entries: entries.values().filter((entry) => (data.isCompletedVisible ? true : !entry.value))
+      entries: entries.values().filter((entry) => (data.isCompletedVisible ? true : !entry.value)),
+      canvas
     })
   }
 
   const openUI = (view: string, options: any) => {
-    figma.on('selectionchange', () => watchCanvasSelection())
+    figma.on('selectionchange', watchCanvasSelection)
 
     if (view === 'settings') {
       return new Promise((resolve) => {
@@ -393,17 +387,9 @@ function Widget() {
         checkNavigationLink(options.entry)
         setData({
           ...data,
-          selectedEntry: options.entry.uuid,
-          ...(figma.currentPage.selection.length === 1
-            ? {
-                canvasSelection: {
-                  id: figma.currentPage.selection[0].id,
-                  layerName: figma.currentPage.selection[0].name,
-                  valid: true
-                }
-              }
-            : {})
+          selectedEntry: options.entry.uuid
         })
+        watchCanvasSelection()
         figma.clientStorage.setAsync('isUIopen', true)
       })
     }
@@ -419,17 +405,9 @@ function Widget() {
         checkNavigationLink(options.entry)
         setData({
           ...data,
-          selectedEntry: options.entry.uuid,
-          ...(figma.currentPage.selection.length === 1
-            ? {
-                canvasSelection: {
-                  id: figma.currentPage.selection[0].id,
-                  layerName: figma.currentPage.selection[0].name,
-                  valid: true
-                }
-              }
-            : {})
+          selectedEntry: options.entry.uuid
         })
+        watchCanvasSelection()
         figma.clientStorage.setAsync('isUIopen', true)
       })
     }
@@ -438,35 +416,47 @@ function Widget() {
   /* Canvas */
 
   const watchCanvasSelection = () => {
-    if (figma.currentPage.selection.length === 1) {
+    if (figma.currentPage.selection.length === 1 && !figma.currentPage.selection[0].removed) {
       setCanvasSelection(figma.currentPage.selection[0].id, figma.currentPage.selection[0].name, true)
     } else {
       setCanvasSelection('', '', false)
     }
   }
 
-  const checkNavigationLink = (entry: ChecklistCheckboxEntry | ChecklistTitleEntry) => {
+  const checkNavigationLink = (entry: ChecklistCheckboxEntry | ChecklistTitleEntry, cb?: Function) => {
+    const node = figma.root.findOne((n) => n.id == entry.navigationLink.id)
     if (entry.navigationLink.valid) {
-      if (!figma.root.findOne((n) => n.id == entry.navigationLink.id)) {
+      if (!node) {
         setNavigation(
           entry,
           { id: entry.navigationLink.id, layerName: entry.navigationLink.layerName, valid: false },
           true
         )
+        cb?.(false, {})
+      } else {
+        setNavigation(
+          entry,
+          {
+            id: entry.navigationLink.id,
+            layerName: node?.name as string,
+            valid: true
+          },
+          true
+        )
+        cb?.(true, node)
       }
+    } else {
+      cb?.(false, {})
     }
   }
 
   /* General */
 
   const setCanvasSelection = (id: string, layerName: string, valid: boolean) => {
-    setData({
-      ...data,
-      canvasSelection: {
-        id,
-        layerName,
-        valid
-      }
+    setCanvas({
+      id,
+      layerName,
+      valid
     })
   }
 
@@ -598,6 +588,7 @@ function Widget() {
           src: '',
           valid: false
         },
+        isNavigationLinkVisible: false,
         navigationLink: {
           id: '',
           layerName: '',
@@ -750,6 +741,7 @@ function Widget() {
   ) => {
     entries.set(entry.uuid, {
       ...entry,
+      isNavigationLinkVisible: Boolean(navigationLink.id.length),
       navigationLink,
       ...(!systemCheck
         ? {
@@ -770,7 +762,35 @@ function Widget() {
     })
   }
 
+  const findPage = (node: SceneNode | PageNode | DocumentNode): PageNode | undefined => {
+    if (node.type === 'PAGE') {
+      return node as PageNode
+    } else {
+      if (node.parent) {
+        return findPage(node.parent as SceneNode)
+      } else {
+        return undefined
+      }
+    }
+  }
+
   /* Render */
+
+  const onNavigationClick = (entry: ChecklistCheckboxEntry | ChecklistTitleEntry) => {
+    checkNavigationLink(entry, (valid: boolean, node: SceneNode) => {
+      if (valid) {
+        let page = findPage(node)
+        if (page) {
+          figma.currentPage = page
+          figma.viewport.scrollAndZoomIntoView([node])
+        } else {
+          figma.notify("Can't find target node")
+        }
+      } else {
+        figma.notify("Target node doesn't exist")
+      }
+    })
+  }
 
   const getEntryCheckMeta = (entry: ChecklistCheckboxEntry | ChecklistTitleEntry) => {
     if (Boolean(entry.action) && Boolean(entry.actor) && Boolean(entry.timestamp)) {
@@ -865,7 +885,8 @@ function Widget() {
                       disabledCheckbox={!data.isChecksAllowed}
                       priority={entry.priority}
                       link={entry.isLinkVisible ? entry.link : undefined}
-                      navigationLink={entry.navigationLink}
+                      navigationLink={entry.isNavigationLinkVisible ? entry.navigationLink : undefined}
+                      onNavigationClick={() => onNavigationClick(entry)}
                       onEditEnd={(e: IItemCheckboxOnEditEndEvent) => editEntry(entry, e)}
                       onCheckboxChange={() =>
                         data.isChecksAllowed ? toggleCheckbox(entry as ChecklistCheckboxEntry) : null
@@ -902,7 +923,8 @@ function Widget() {
                       placeholderDescription={'Description...'}
                       disabled={!data.isEditingVisible}
                       link={entry.isLinkVisible ? entry.link : undefined}
-                      navigationLink={entry.navigationLink}
+                      navigationLink={entry.isNavigationLinkVisible ? entry.navigationLink : undefined}
+                      onNavigationClick={() => onNavigationClick(entry)}
                       onEditEnd={(e: IItemCheckboxOnEditEndEvent) => editEntry(entry, e)}
                     />
                   </Item>

@@ -9,7 +9,8 @@ declare global {
     placeholderDescription: string
     disabled?: boolean
     link?: Link
-    navigationLink: NavigationLink
+    navigationLink?: NavigationLink
+    onNavigationClick?: () => void
     onEditEnd: (e: IItemTitleOnEditEndEvent) => void
   }
 

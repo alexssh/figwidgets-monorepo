@@ -4,7 +4,7 @@ declare global {
     theme: string
     contentTitle: string
     valid: boolean
-    onClick: (e: WidgetClickEvent) => void
+    onClick: () => void
   }
 }
 export {}

@@ -26,6 +26,10 @@ checkbox, checklist, design, handoff, notes, plan, progress tracker, projects, t
 
 ## Changelog
 
+- Version 16
+    - Added: Canvas navigation links inside a file
+    - Fix: Minor UX improvements
+
 - Version 15
     - Fix: Minor UX improvements
 

@@ -104,7 +104,8 @@
 
       uuid = event.data.pluginMessage.data.selectedEntry
 
-      let data = event.data.pluginMessage.data
+      let canvas = event.data.pluginMessage.canvas
+
       let selected = event.data.pluginMessage.entries.sort((a, b) => a.position - b.position).filter((entry, i) => {
         if (entry.uuid === uuid) {
           index = i
@@ -164,29 +165,29 @@
       document.getElementById('show_link').style.display = !selected.isLinkVisible ? "block" : "none";
       document.getElementById('hide_link').style.display = selected.isLinkVisible ? "block" : "none";
 
-      document.getElementById('navigation_hint').style.display = !selected.navigationLink.id.length && !data.canvasSelection.id.length ? "flex" : "none"
+      document.getElementById('navigation_hint').style.display = !selected.navigationLink.id.length && !canvas.id.length ? "flex" : "none"
 
-      if (!selected.navigationLink.id.length && data.canvasSelection.id.length) {
+      if (!selected.navigationLink.id.length && canvas.id.length) {
         document.getElementById('navigation_action_add').style.display = "block"
-        document.getElementById('navigation_action_add').innerHTML = `Add navigation to ${data.canvasSelection.layerName}`
+        document.getElementById('navigation_action_add').innerHTML = `Add navigation to ${canvas.layerName}`
       } else {
         document.getElementById('navigation_action_add').style.display = "none"
       }
 
       document.getElementById('navigation_action').style.display = selected.navigationLink.id.length ? "flex" : "none";
 
-      if (selected.navigationLink.id.length && data.canvasSelection.id.length) {
+      if (selected.navigationLink.id.length && canvas.id.length) {
         removeWarning(selected.navigationLink.layerName)
-        if (selected.navigationLink.id !== data.canvasSelection.id) {
+        if (selected.navigationLink.id !== canvas.id) {
           document.getElementById('navigation_action_update').classList.remove('ui-item-actionset-button--hidden');
-          document.getElementById('navigation_action_label').innerHTML = `${selected.navigationLink.layerName} → ${data.canvasSelection.layerName}`;
+          document.getElementById('navigation_action_label').innerHTML = `${selected.navigationLink.layerName} → ${canvas.layerName}`;
         } else {
           document.getElementById('navigation_action_update').classList.add('ui-item-actionset-button--hidden');
           document.getElementById('navigation_action_label').innerHTML = `${selected.navigationLink.layerName}`;
         }
       }
 
-      if (selected.navigationLink.id.length && !data.canvasSelection.id.length) {
+      if (selected.navigationLink.id.length && !canvas.id.length) {
         document.getElementById('navigation_action_update').classList.add('ui-item-actionset-button--hidden');
         if (selected.navigationLink.valid) {
           document.getElementById('navigation_action_label').innerHTML = `${selected.navigationLink.layerName}`;
