@@ -4,7 +4,7 @@ Figma + FigJam Widget: Craft Checklists for Any Occasion Effortlessly.
 
 - Manual sorting of tasks and sections
 - Prioritize tasks using colored checkboxes
-- Link support
+- External and canvas navigation links support
 - Customizable appearance: show or hide descriptions, meta information, completed tasks, or backgrounds
 - Separate edit locking for task lists and checkboxes
 - Dark mode support
