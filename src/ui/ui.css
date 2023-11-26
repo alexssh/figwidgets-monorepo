@@ -38,6 +38,28 @@ body {
   background-color: var(--figma-color-border);
 }
 
+/* Item info */
+
+.ui-item-info {
+  width: 100%;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 10px 12px;
+  font-family: Inter, sans-serif;
+  font-size: 11px;
+  line-height: 16px;
+  font-weight: 500;
+  color: var(--figma-color-text-secondary);
+  background-color: transparent;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Item checkbox */
+
 .ui-item-checkbox {
   position: relative;
   width: 100%;
@@ -95,9 +117,11 @@ body {
   cursor: pointer;
 }
 
+/* Item action */
+
 .ui-item-action {
   width: 100%;
-  display: flex;
+  display: block;
   flex-flow: row nowrap;
   justify-content: flex-start;
   align-items: center;
@@ -108,6 +132,9 @@ body {
   font-weight: 500;
   color: var(--figma-color-text);
   cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .ui-item-action:hover {
@@ -123,6 +150,74 @@ body {
 .ui-item-action--destructive {
   color: var(--figma-color-text-danger);
 }
+
+/* Item action */
+
+.ui-item-actionset {
+  width: 100%;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 2px 12px;
+}
+
+.ui-item-actionset-label {
+  flex: 1 1 100%;
+  font-family: Inter, sans-serif;
+  font-size: 11px;
+  line-height: 16px;
+  font-weight: 500;
+  color: var(--figma-color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: 8px;
+}
+
+.ui-item-actionset-label--warning {
+  color: var(--figma-color-text-warning);
+}
+
+.ui-item-actionset-button--hidden {
+  display: none !important;
+}
+
+.ui-item-actionset-button svg {
+  fill: var(--figma-color-icon);
+}
+
+.ui-item-actionset-button--accent svg {
+  fill: var(--figma-color-icon-brand);
+}
+
+/* Button */
+
+.ui-button {
+  flex: 0 0 32px;
+  width: 32px;
+  height: 32px;
+  display: block;
+  border-radius: 2px;
+  outline: 0;
+  border: 0;
+  background-color: var(--figma-color-bg);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ui-button:hover {
+  background-color: var(--figma-color-bg-hover);
+}
+
+.ui-button--disabled {
+  opacity: 0;
+  cursor: auto;
+}
+
+/* Item priority */
 
 .ui-item-priority {
   display: flex;
@@ -146,6 +241,8 @@ body {
 .ui-item-priority-button--selected {
   border: 1px solid var(--figma-color-border-selected);
 }
+
+/* Item select */
 
 .ui-item-select {
   display: flex;
