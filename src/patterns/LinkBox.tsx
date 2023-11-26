@@ -1,5 +1,5 @@
 const { widget } = figma
-const { AutoLayout } = widget
+const { AutoLayout, Text } = widget
 
 /* Components */
 import Icon from 'src/components/Icon'
@@ -41,7 +41,8 @@ function LinkBox(props: ILinkBoxProps) {
         onEditEnd={(e) => props.onEditEnd(e)}
         style={{
           href: props.valid ? props.contentTitle : '',
-          textDecoration: props.valid ? 'underline' : 'none'
+          textDecoration: props.valid ? 'underline' : 'none',
+          inputFrameProps: { padding: { right: 48 } }
         }}
       />
     </AutoLayout>

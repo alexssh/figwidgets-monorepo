@@ -15,11 +15,11 @@ function ItemTitle(props: IItemTitleProps) {
       direction="vertical"
       height="hug-contents"
       width="fill-parent"
-      spacing={5}
+      spacing={4}
       padding={{
         top: 0,
         left: 0,
-        bottom: props.isDescriptionVisible ? 8 : 0,
+        bottom: props.isDescriptionVisible || props.link ? 8 : 0,
         right: 0
       }}
     >
@@ -53,8 +53,7 @@ function ItemTitle(props: IItemTitleProps) {
             height="hug-contents"
             width="fill-parent"
             padding={{
-              top: props.isDescriptionVisible ? 3 : 2,
-              bottom: 8
+              top: 2
             }}
           >
             <LinkBox
