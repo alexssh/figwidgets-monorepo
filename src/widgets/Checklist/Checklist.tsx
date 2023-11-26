@@ -64,7 +64,12 @@ function Widget() {
     isCompletedVisible: true,
     isMetadataVisible: false,
     isFooterVisible: true,
-    isBackgroundVisible: true
+    isBackgroundVisible: true,
+    canvasSelection: {
+      id: '',
+      layerName: '',
+      valid: false
+    }
   })
 
   const [entryType, setEntryType] = useSyncedState('entryType', Object.keys(EntryTypes)[0])
@@ -214,6 +219,9 @@ function Widget() {
     })
 
     figma.on('close', () => {
+      figma.off('selectionchange', () => watchCanvasSelection)
+      setCanvasSelection('', '', false)
+
       figma.clientStorage.setAsync('isUIopen', false)
     })
 
@@ -284,26 +292,50 @@ function Widget() {
 
       if (message.action === 'show_description') {
         toggleDescriptionVisibility(entries.get(message.uuid) as ChecklistCheckboxEntry | ChecklistTitleEntry)
-
         figma.closePlugin()
       }
 
       if (message.action === 'hide_description') {
         toggleDescriptionVisibility(entries.get(message.uuid) as ChecklistCheckboxEntry | ChecklistTitleEntry)
-
         figma.closePlugin()
       }
 
       if (message.action === 'show_link') {
         toggleLinkVisibility(entries.get(message.uuid) as ChecklistCheckboxEntry | ChecklistTitleEntry)
-
         figma.closePlugin()
       }
 
       if (message.action === 'hide_link') {
         toggleLinkVisibility(entries.get(message.uuid) as ChecklistCheckboxEntry | ChecklistTitleEntry)
-
         figma.closePlugin()
+      }
+
+      if (message.action === 'navigation_add') {
+        setNavigation(
+          entries.get(message.uuid) as ChecklistCheckboxEntry | ChecklistTitleEntry,
+          data.canvasSelection,
+          false
+        )
+      }
+
+      if (message.action === 'navigation_update') {
+        setNavigation(
+          entries.get(message.uuid) as ChecklistCheckboxEntry | ChecklistTitleEntry,
+          data.canvasSelection,
+          false
+        )
+      }
+
+      if (message.action === 'navigation_delete') {
+        setNavigation(
+          entries.get(message.uuid) as ChecklistCheckboxEntry | ChecklistTitleEntry,
+          {
+            id: '',
+            layerName: '',
+            valid: false
+          },
+          false
+        )
       }
 
       if (message.action === 'duplicate') {
@@ -340,9 +372,11 @@ function Widget() {
   }
 
   const openUI = (view: string, options: any) => {
+    figma.on('selectionchange', () => watchCanvasSelection())
+
     if (view === 'settings') {
       return new Promise((resolve) => {
-        figma.showUI(__uiFiles__.settings, { themeColors: true, title: 'Settings', width: 240, height: 547 })
+        figma.showUI(__uiFiles__.settings, { themeColors: true, title: 'Settings', width: 248, height: 547 })
         setData({ ...data, selectedEntry: undefined })
         figma.clientStorage.setAsync('isUIopen', true)
       })
@@ -353,10 +387,23 @@ function Widget() {
         figma.showUI(__uiFiles__.more_checkbox, {
           themeColors: true,
           title: `Task: ${options.entry.title.length ? options.entry.title : '...'}`,
-          width: 240,
-          height: 373
+          width: 248,
+          height: 466
         })
-        setData({ ...data, selectedEntry: options.entry.uuid })
+        checkNavigationLink(options.entry)
+        setData({
+          ...data,
+          selectedEntry: options.entry.uuid,
+          ...(figma.currentPage.selection.length === 1
+            ? {
+                canvasSelection: {
+                  id: figma.currentPage.selection[0].id,
+                  layerName: figma.currentPage.selection[0].name,
+                  valid: true
+                }
+              }
+            : {})
+        })
         figma.clientStorage.setAsync('isUIopen', true)
       })
     }
@@ -366,16 +413,62 @@ function Widget() {
         figma.showUI(__uiFiles__.more_title, {
           themeColors: true,
           title: `Section: ${options.entry.title.length ? options.entry.title : '...'}`,
-          width: 240,
+          width: 248,
           height: 274
         })
-        setData({ ...data, selectedEntry: options.entry.uuid })
+        checkNavigationLink(options.entry)
+        setData({
+          ...data,
+          selectedEntry: options.entry.uuid,
+          ...(figma.currentPage.selection.length === 1
+            ? {
+                canvasSelection: {
+                  id: figma.currentPage.selection[0].id,
+                  layerName: figma.currentPage.selection[0].name,
+                  valid: true
+                }
+              }
+            : {})
+        })
         figma.clientStorage.setAsync('isUIopen', true)
       })
     }
   }
 
+  /* Canvas */
+
+  const watchCanvasSelection = () => {
+    if (figma.currentPage.selection.length === 1) {
+      setCanvasSelection(figma.currentPage.selection[0].id, figma.currentPage.selection[0].name, true)
+    } else {
+      setCanvasSelection('', '', false)
+    }
+  }
+
+  const checkNavigationLink = (entry: ChecklistCheckboxEntry | ChecklistTitleEntry) => {
+    if (entry.navigationLink.valid) {
+      if (!figma.root.findOne((n) => n.id == entry.navigationLink.id)) {
+        setNavigation(
+          entry,
+          { id: entry.navigationLink.id, layerName: entry.navigationLink.layerName, valid: false },
+          true
+        )
+      }
+    }
+  }
+
   /* General */
+
+  const setCanvasSelection = (id: string, layerName: string, valid: boolean) => {
+    setData({
+      ...data,
+      canvasSelection: {
+        id,
+        layerName,
+        valid
+      }
+    })
+  }
 
   const setEditingVisibility = () => {
     setData({
@@ -503,6 +596,11 @@ function Widget() {
         isLinkVisible: false,
         link: {
           src: '',
+          valid: false
+        },
+        navigationLink: {
+          id: '',
+          layerName: '',
           valid: false
         },
         ...options
@@ -645,6 +743,24 @@ function Widget() {
     })
   }
 
+  const setNavigation = (
+    entry: ChecklistCheckboxEntry | ChecklistTitleEntry,
+    navigationLink: NavigationLink,
+    systemCheck: boolean
+  ) => {
+    entries.set(entry.uuid, {
+      ...entry,
+      navigationLink,
+      ...(!systemCheck
+        ? {
+            actor: figma.currentUser?.name ?? 'Anonymous',
+            timestamp: datetime().full,
+            action: 'modified'
+          }
+        : {})
+    })
+  }
+
   /* Data */
 
   const editData = (key: string, content: string) => {
@@ -729,7 +845,7 @@ function Widget() {
                     positionDown={data.isEditingVisible ? i !== entriesForRender.length - 1 : undefined}
                     more={data.isEditingVisible ? !data.isEditingVisible : undefined}
                     padding={{
-                      vertical: 8,
+                      vertical: 10,
                       horizontal: tokens.themes.layout.item.horizontal
                     }}
                     onPositionChange={(e: IItemPositionChangeEvent) => moveEntry(entry, e.direction)}
@@ -749,6 +865,7 @@ function Widget() {
                       disabledCheckbox={!data.isChecksAllowed}
                       priority={entry.priority}
                       link={entry.isLinkVisible ? entry.link : undefined}
+                      navigationLink={entry.navigationLink}
                       onEditEnd={(e: IItemCheckboxOnEditEndEvent) => editEntry(entry, e)}
                       onCheckboxChange={() =>
                         data.isChecksAllowed ? toggleCheckbox(entry as ChecklistCheckboxEntry) : null
@@ -768,8 +885,8 @@ function Widget() {
                     positionDown={data.isEditingVisible ? i !== entriesForRender.length - 1 : undefined}
                     more={data.isEditingVisible ? !data.isEditingVisible : undefined}
                     padding={{
-                      top: i === 0 ? 8 : 24,
-                      bottom: 8,
+                      top: i === 0 ? 10 : 24,
+                      bottom: 10,
                       horizontal: tokens.themes.layout.item.horizontal
                     }}
                     onPositionChange={(e: IItemPositionChangeEvent) => moveEntry(entry, e.direction)}
@@ -785,6 +902,7 @@ function Widget() {
                       placeholderDescription={'Description...'}
                       disabled={!data.isEditingVisible}
                       link={entry.isLinkVisible ? entry.link : undefined}
+                      navigationLink={entry.navigationLink}
                       onEditEnd={(e: IItemCheckboxOnEditEndEvent) => editEntry(entry, e)}
                     />
                   </Item>
