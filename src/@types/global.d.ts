@@ -101,6 +101,12 @@ declare global {
     src: string
     valid: boolean
   }
+
+  export type NavigationLink = {
+    id: string
+    layerName: string
+    valid: boolean
+  }
 }
 
 export {}
