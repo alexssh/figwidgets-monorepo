@@ -26,6 +26,12 @@ checkbox, checklist, design, handoff, notes, plan, progress tracker, projects, t
 
 ## Changelog
 
+- Version 18
+    - Fix: Canvas navigation links, performance fix
+
+- Version 17
+    - Changes are being rolled back to version 15 to investigate issues affecting widget performance.
+
 - Version 16
     - Added: Canvas navigation links inside a file
     - Fix: Minor UX improvements

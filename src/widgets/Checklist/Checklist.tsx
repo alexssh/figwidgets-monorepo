@@ -30,14 +30,16 @@ const {
 import { EntryTypes, EntryActions } from './config'
 
 /* Components */
+import ButtonGhost from 'src/components/ButtonGhost'
+import Item from 'src/components/Item'
+import Divider from 'src/components/Divider'
+import { glyphs } from 'src/components/Icon'
+
+/* Patterns */
+import Footer from 'src/patterns/Footer'
 import Header from 'src/patterns/Header'
 import ItemCheckbox from 'src/patterns/ItemCheckbox'
 import ItemTitle from 'src/patterns/ItemTitle'
-import ButtonGhost from 'src/components/ButtonGhost'
-import Item from 'src/components/Item'
-import { glyphs } from 'src/components/Icon'
-import Divider from 'src/components/Divider'
-import Footer from 'src/patterns/Footer'
 
 /* Utils */
 import link from 'src/utils/link'
@@ -378,36 +380,44 @@ function Widget() {
 
     if (view === 'more-checkbox') {
       return new Promise((resolve) => {
+        if (options.entry.navigationLink.id.length) {
+          checkNavigationLink(options.entry)
+        }
+
         figma.showUI(__uiFiles__.more_checkbox, {
           themeColors: true,
           title: `Task: ${options.entry.title.length ? options.entry.title : '...'}`,
           width: 248,
           height: 466
         })
-        checkNavigationLink(options.entry)
+
         setData({
           ...data,
           selectedEntry: options.entry.uuid
         })
-        watchCanvasSelection()
+
         figma.clientStorage.setAsync('isUIopen', true)
       })
     }
 
     if (view === 'more-title') {
       return new Promise((resolve) => {
+        if (options.entry.navigationLink.id.length) {
+          checkNavigationLink(options.entry)
+        }
+
         figma.showUI(__uiFiles__.more_title, {
           themeColors: true,
           title: `Section: ${options.entry.title.length ? options.entry.title : '...'}`,
           width: 248,
           height: 274
         })
-        checkNavigationLink(options.entry)
+
         setData({
           ...data,
           selectedEntry: options.entry.uuid
         })
-        watchCanvasSelection()
+
         figma.clientStorage.setAsync('isUIopen', true)
       })
     }
@@ -424,7 +434,7 @@ function Widget() {
   }
 
   const checkNavigationLink = (entry: ChecklistCheckboxEntry | ChecklistTitleEntry, cb?: Function) => {
-    const node = figma.root.findOne((n) => n.id == entry.navigationLink.id)
+    const node = figma.getNodeById(entry.navigationLink.id)
     if (entry.navigationLink.valid) {
       if (!node) {
         setNavigation(
