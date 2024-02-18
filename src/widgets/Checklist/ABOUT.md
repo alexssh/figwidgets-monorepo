@@ -1,17 +1,17 @@
 # Checklist
 
-Figma + FigJam Widget: Craft Checklists for Any Occasion Effortlessly.
+Figma + FigJam Widget to-do widget: Bring order to your design work.
 
 - Manual sorting of tasks and sections
-- Prioritize tasks using colored checkboxes
-- External and canvas navigation links support
-- Customizable appearance: show or hide descriptions, meta information, completed tasks, or backgrounds
-- Separate edit locking for task lists and checkboxes
+- Prioritise tasks using coloured checkboxes
+- External and canvas links support
+- Customisable appearance: show or hide descriptions, meta information, completed tasks, or backgrounds
+- Editing protection
 - Dark mode support
 
 ## What this widget is good for: 
 
-- Todo Lists: Efficiently manage your tasks and stay organized with versatile and easy-to-use todo lists.
+- Todo Lists: Efficiently manage your tasks and stay organised with versatile and easy-to-use todo lists.
 - Checklists and Plans: Create comprehensive checklists and plans to ensure thorough preparation and execution of projects or events.
 - Progress and Project Trackers: Monitor the progress of tasks or projects, keeping your team aligned and informed throughout the process. 
 
