@@ -26,7 +26,7 @@ diagram, entity, modeler, type, class, database, erd, content, development, comp
 - Version 12
     - Fix: Minor UX improvements
     - Fix: Adding new entries inside a section
-    - Added: Column visiblity settings
+    - Added: Column visibility settings
 
 - Version 11
     - Fix: Minor UX improvements
