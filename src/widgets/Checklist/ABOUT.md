@@ -2,6 +2,8 @@
 
 Figma + FigJam Widget to-do widget: Bring order to your design work.
 
+## Features
+
 - Manual sorting of tasks and sections
 - Prioritise tasks using coloured checkboxes
 - External and canvas links support

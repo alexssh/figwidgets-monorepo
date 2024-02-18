@@ -1,6 +1,8 @@
 # ERD Modeler
 
-FigJam Widget: Design entity-relationship diagrams and databases with ease.
+FigJam Widget: Design databases and entity-relationship diagrams (ERD/UML) with ease.
+
+## Features
 
 - Design diagrams using 6-cell tables (key, name, type, mandatory, default, description)
 - Connectors for each table entry to link and build relationships
@@ -19,7 +21,7 @@ Please leave a comment below!
 
 ## Tags
 
-diagram, entity, modeler, type, class, database, erd, content, development, components, documentation, tools
+content, database, development, diagram, documentation, erd, modeller, scheme, sql, table, tool, uml
 
 ## Changelog
 
