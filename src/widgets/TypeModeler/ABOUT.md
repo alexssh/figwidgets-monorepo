@@ -9,8 +9,8 @@ FigJam Widget: Design Entity-Relationship Diagrams (ERDs) and Databases with Eas
 
 ## What this widget is good for: 
 
-- Types and Entity Modeling: Create clear and organized models for interfaces and databases, facilitating efficient design and development processes.
-- Entity-Relationship Diagrams (ERD): Craft any kind of ERD to visualize the structure and relationships between entities in a database or system.
+- Types and Entity Modeling: Create clear and organised models for interfaces and databases, facilitating efficient design and development processes.
+- Entity-Relationship Diagrams (ERD): Craft any kind of ERD to visualise the structure and relationships between entities in a database or system.
 
 ## Feedback
 
@@ -22,6 +22,11 @@ Please leave a comment below!
 diagram, entity, modeler, type, class, database, erd, content, development, components, documentation, tools
 
 ## Changelog
+
+- Version 12
+    - Fix: Minor UX improvements
+    - Fix: Adding new entries inside a section
+    - Added: Column visiblity settings
 
 - Version 11
     - Fix: Minor UX improvements

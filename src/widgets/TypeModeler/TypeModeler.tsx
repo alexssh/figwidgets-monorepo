@@ -30,11 +30,13 @@ const {
 import { EntryPresets, KeyPresets } from './config'
 
 /* Components */
+import Item from 'src/components/Item'
+import { glyphs } from 'src/components/Icon'
+
+/* Patterns */
 import Header from 'src/patterns/Header'
 import ItemTableHeader from 'src/patterns/ItemTableHeader'
 import ItemTableRow from 'src/patterns/ItemTableRow'
-import Item from 'src/components/Item'
-import { glyphs } from 'src/components/Icon'
 
 /* Utils */
 import link from 'src/utils/link'
@@ -67,7 +69,7 @@ function Widget() {
     defaultValue: '',
     comment: '',
 
-    width: 960
+    width: 1200
   })
 
   const SPACING = 8
@@ -75,8 +77,8 @@ function Widget() {
 
   const [entryType, setEntryType] = useSyncedState('entryType', Object.keys(EntryPresets)[1])
 
-  const [tableConfig, setTableConfig] = useSyncedState('tableConfig', [
-    {
+  const [tableConfig, setTableConfig] = useSyncedState('tableConfig', {
+    key: {
       title: 'Key',
       disabled: true,
       width: {
@@ -84,19 +86,21 @@ function Widget() {
         1200: 60,
         1480: 60
       },
-      style: { fill: tokens.themes.txt.secondary.default[data.colorTheme].color, textCase: 'upper' }
+      style: { fill: tokens.themes.txt.secondary.default[data.colorTheme].color, textCase: 'upper' },
+      visible: true
     },
-    {
+    name: {
       title: 'Name',
       disabled: false,
       width: {
-        960: 120,
-        1200: 160,
-        1480: 200
+        960: 220,
+        1200: 260,
+        1480: 320
       },
-      style: { fontWeight: 600, tooltip: 'Name' }
+      style: { fontWeight: 600, tooltip: 'Name' },
+      visible: true
     },
-    {
+    type: {
       title: 'Type',
       width: {
         960: 120,
@@ -108,9 +112,10 @@ function Widget() {
         fontSize: (tokens.themes.typo.p5.fontSize as number) - 1,
         fontFamily: 'Spline Sans Mono',
         tooltip: 'Type'
-      }
+      },
+      visible: true
     },
-    {
+    mandatory: {
       title: 'Mandatory',
       disabled: true,
       tooltip: 'Mandatory',
@@ -120,19 +125,21 @@ function Widget() {
         1480: 80
       },
       icon: 'asterisk',
-      style: { fill: tokens.themes.txt.secondary.default[data.colorTheme].color }
+      style: { fill: tokens.themes.txt.secondary.default[data.colorTheme].color },
+      visible: true
     },
-    {
+    defaultValue: {
       title: 'Default value',
       disabled: false,
       width: {
         960: 160,
         1200: 200,
-        1480: 260
+        1480: 240
       },
-      style: { tooltip: 'Default value' }
+      style: { tooltip: 'Default value' },
+      visible: true
     },
-    {
+    description: {
       title: 'Description',
       width: {
         960: 'fill-parent',
@@ -140,9 +147,10 @@ function Widget() {
         1480: 'fill-parent'
       },
       disabled: false,
-      style: { fill: tokens.themes.txt.secondary.default[data.colorTheme].color, tooltip: 'Description' }
+      style: { fill: tokens.themes.txt.secondary.default[data.colorTheme].color, tooltip: 'Description' },
+      visible: true
     }
-  ])
+  })
 
   usePropertyMenu(
     [
@@ -166,9 +174,6 @@ function Widget() {
       ...(data.preset === Object.keys(EntryPresets)[0] && data.isRibbonVisible
         ? ([
             {
-              itemType: 'separator'
-            },
-            {
               itemType: 'color-selector',
               propertyName: 'colorRibbon',
               tooltip: 'Ribbon color',
@@ -188,11 +193,36 @@ function Widget() {
             }
           ] as WidgetPropertyMenuItem[])
         : []),
-      ...(data.preset === Object.keys(EntryPresets)[1]
+      ...(data.preset === Object.keys(EntryPresets)[1] &&
+      (tableConfig.type.visible || tableConfig.mandatory.visible || tableConfig.key.visible)
         ? ([
             {
               itemType: 'separator'
-            },
+            }
+          ] as WidgetPropertyMenuItem[])
+        : []),
+      ...(data.preset === Object.keys(EntryPresets)[1] && tableConfig.key.visible
+        ? ([
+            {
+              itemType: 'dropdown',
+              tooltip: 'Key attribute type',
+              propertyName: 'key',
+              selectedOption: data.key,
+              options: [
+                { option: Object.keys(KeyPresets)[0], label: KeyPresets[Object.keys(KeyPresets)[0]].label },
+                { option: Object.keys(KeyPresets)[1], label: KeyPresets[Object.keys(KeyPresets)[1]].label },
+                { option: Object.keys(KeyPresets)[2], label: KeyPresets[Object.keys(KeyPresets)[2]].label },
+                { option: Object.keys(KeyPresets)[3], label: KeyPresets[Object.keys(KeyPresets)[3]].label },
+                { option: Object.keys(KeyPresets)[4], label: KeyPresets[Object.keys(KeyPresets)[4]].label },
+                { option: Object.keys(KeyPresets)[5], label: KeyPresets[Object.keys(KeyPresets)[5]].label },
+                { option: Object.keys(KeyPresets)[6], label: KeyPresets[Object.keys(KeyPresets)[6]].label },
+                { option: Object.keys(KeyPresets)[7], label: KeyPresets[Object.keys(KeyPresets)[7]].label }
+              ]
+            }
+          ] as WidgetPropertyMenuDropdownItem[])
+        : []),
+      ...(data.preset === Object.keys(EntryPresets)[1] && tableConfig.type.visible
+        ? ([
             {
               itemType: 'color-selector',
               propertyName: 'colorType',
@@ -213,27 +243,7 @@ function Widget() {
             }
           ] as WidgetPropertyMenuItem[])
         : []),
-      ...(data.preset === Object.keys(EntryPresets)[1]
-        ? ([
-            {
-              itemType: 'dropdown',
-              tooltip: 'Key attribute type',
-              propertyName: 'key',
-              selectedOption: data.key,
-              options: [
-                { option: Object.keys(KeyPresets)[0], label: KeyPresets[Object.keys(KeyPresets)[0]].label },
-                { option: Object.keys(KeyPresets)[1], label: KeyPresets[Object.keys(KeyPresets)[1]].label },
-                { option: Object.keys(KeyPresets)[2], label: KeyPresets[Object.keys(KeyPresets)[2]].label },
-                { option: Object.keys(KeyPresets)[3], label: KeyPresets[Object.keys(KeyPresets)[3]].label },
-                { option: Object.keys(KeyPresets)[4], label: KeyPresets[Object.keys(KeyPresets)[4]].label },
-                { option: Object.keys(KeyPresets)[5], label: KeyPresets[Object.keys(KeyPresets)[5]].label },
-                { option: Object.keys(KeyPresets)[6], label: KeyPresets[Object.keys(KeyPresets)[6]].label },
-                { option: Object.keys(KeyPresets)[7], label: KeyPresets[Object.keys(KeyPresets)[7]].label }
-              ]
-            }
-          ] as WidgetPropertyMenuDropdownItem[])
-        : []),
-      ...(data.preset === Object.keys(EntryPresets)[1]
+      ...(data.preset === Object.keys(EntryPresets)[1] && tableConfig.mandatory.visible
         ? ([
             {
               itemType: 'toggle',
@@ -262,7 +272,7 @@ function Widget() {
       },
       {
         itemType: 'dropdown',
-        tooltip: 'Type of new object to be added',
+        tooltip: 'New entry type',
         propertyName: 'entryType',
         options: Object.keys(EntryPresets).map(
           (s) =>
@@ -352,26 +362,32 @@ function Widget() {
       if (message.action.indexOf('width') > -1) {
         setWidth(message.action)
       }
+
+      if (message.action.indexOf('column') > -1) {
+        if (message.action) {
+          toggleColumn(message.action.split('_')[1])
+        }
+      }
     }
   })
 
   /* UI */
 
   const updateUI = () => {
-    figma.ui.postMessage({ data })
+    figma.ui.postMessage({ data, tableConfig })
   }
 
   const openUI = (view: string, options: any) => {
     if (view === 'settings') {
       return new Promise((resolve) => {
-        figma.showUI(__uiFiles__.settings, { themeColors: true, title: 'Settings', width: 240, height: 217 })
+        figma.showUI(__uiFiles__.settings, { themeColors: true, title: 'Settings', width: 240, height: 490 })
         setData({ ...data })
         figma.clientStorage.setAsync('isUIopen', true)
       })
     }
     if (view === 'settings_entry') {
       return new Promise((resolve) => {
-        figma.showUI(__uiFiles__.settings_entry, { themeColors: true, title: 'Settings', width: 240, height: 88 })
+        figma.showUI(__uiFiles__.settings_entry, { themeColors: true, title: 'Settings', width: 240, height: 304 })
         setData({ ...data })
         figma.clientStorage.setAsync('isUIopen', true)
       })
@@ -447,6 +463,19 @@ function Widget() {
     })
   }
 
+  const toggleColumn = (key: string) => {
+    setTableConfig({
+      ...tableConfig,
+      [key]: {
+        // @ts-ignore
+        ...tableConfig[key],
+        // @ts-ignore
+
+        visible: !tableConfig[key].visible
+      }
+    })
+  }
+
   /* Entries */
 
   const getTypeModelerNodes = () => {
@@ -463,6 +492,10 @@ function Widget() {
     const selectedNode = figma.currentPage.selection[0] as WidgetNode
     const newNode = selectedNode.clone()
     let position = getNewNodePosition(selectedNode, newNode)
+
+    if (selectedNode.parent) {
+      selectedNode.parent.appendChild(newNode)
+    }
 
     newNode.x = position.x
     newNode.y = position.y
@@ -500,6 +533,10 @@ function Widget() {
     })
 
     let position = getNewNodePosition(selectedNode, newNode)
+
+    if (selectedNode.parent) {
+      selectedNode.parent.appendChild(newNode)
+    }
 
     newNode.x = position.x
     newNode.y = position.y
@@ -609,7 +646,7 @@ function Widget() {
       <ItemTableHeader
         key={'Widget__tableHeader'}
         theme={current.colorTheme}
-        row={config as TableCell[]}
+        row={Object.values(config) as TableCell[]}
         width={data.width}
       />
     </>
@@ -634,48 +671,48 @@ function Widget() {
         row={
           [
             {
-              ...config[0],
+              ...config.key,
               content: current.key === 'none' ? '' : current.key,
               style: {
-                ...config[0].style,
+                ...config.key.style,
                 tooltip: KeyPresets[current.key].label
               }
             },
             {
-              ...config[1],
+              ...config.name,
               content: current.name,
               style: {
-                ...config[1].style
+                ...config.name.style
               }
             },
             {
-              ...config[2],
+              ...config.type,
               content: current.type,
               style: {
-                ...config[2].style,
+                ...config.type.style,
                 fill: current.colorType
               }
             },
             {
-              ...config[3],
+              ...config.mandatory,
               content: '',
-              icon: current.mandatory ? config[3].icon : undefined,
+              icon: current.mandatory ? config.mandatory.icon : undefined,
               style: {
-                ...config[3].style
+                ...config.mandatory.style
               }
             },
             {
-              ...config[4],
+              ...config.defaultValue,
               content: current.defaultValue,
               style: {
-                ...config[4].style
+                ...config.defaultValue.style
               }
             },
             {
-              ...config[5],
+              ...config.description,
               content: current.comment,
               style: {
-                ...config[5].style
+                ...config.description.style
               }
             }
           ] as TableCell[]

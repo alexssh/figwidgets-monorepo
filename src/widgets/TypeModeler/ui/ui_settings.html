@@ -1,5 +1,7 @@
 <div id="ui" class="ui">
 
+  <div class="ui-section">General</div>
+
   <div class="ui-item-checkbox">
     <input type="checkbox" id="ribbon" onclick="sendAction('ribbon')" name="ribbon">
     <label for="ribbon">Ribbon</label>
@@ -11,6 +13,35 @@
   <div class="ui-item-checkbox">
     <input type="checkbox" id="link" onclick="sendAction('link')" name="link">
     <label for="link">Link</label>
+  </div>
+
+  <div class="ui-divider"></div>
+  <div class="ui-section">Columns</div>
+
+  <div class="ui-item-checkbox">
+    <input type="checkbox" id="column_key" onclick="sendAction('column_key')" name="column_key">
+    <label for="column_key">Key</label>
+  </div>
+
+  <div class="ui-item-checkbox">
+    <input type="checkbox" id="column_type" onclick="sendAction('column_type')" name="column_type">
+    <label for="column_type">Type</label>
+  </div>
+
+  <div class="ui-item-checkbox">
+    <input type="checkbox" id="column_mandatory" onclick="sendAction('column_mandatory')" name="column_mandatory">
+    <label for="column_mandatory">Mandatory</label>
+  </div>
+
+  <div class="ui-item-checkbox">
+    <input type="checkbox" id="column_defaultValue" onclick="sendAction('column_defaultValue')"
+      name="column_defaultValue">
+    <label for="column_defaultValue">Default value</label>
+  </div>
+
+  <div class="ui-item-checkbox">
+    <input type="checkbox" id="column_description" onclick="sendAction('column_description')" name="column_description">
+    <label for="column_description">Description</label>
   </div>
 
   <div class="ui-divider"></div>
@@ -39,6 +70,13 @@
       document.getElementById('ribbon').checked = event.data.pluginMessage.data.isRibbonVisible;
       document.getElementById('description').checked = event.data.pluginMessage.data.isDescriptionVisible;
       document.getElementById('link').checked = event.data.pluginMessage.data.isLinkVisible;
+
+      document.getElementById('column_key').checked = event.data.pluginMessage.tableConfig.key.visible;
+      document.getElementById('column_type').checked = event.data.pluginMessage.tableConfig.type.visible;
+      document.getElementById('column_mandatory').checked = event.data.pluginMessage.tableConfig.mandatory.visible;
+      document.getElementById('column_defaultValue').checked = event.data.pluginMessage.tableConfig.defaultValue.visible;
+      document.getElementById('column_description').checked = event.data.pluginMessage.tableConfig.description.visible;
+
       document.getElementById('width').value = event.data.pluginMessage.data.width;
     }
   }

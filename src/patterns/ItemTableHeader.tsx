@@ -32,6 +32,7 @@ function ItemTableHeader(props: IItemTableHeaderProps) {
           verticalAlignItems="center"
           spacing={2}
           width={cell.width[props.width]}
+          hidden={!cell.visible}
         >
           <Text
             {...tokens.themes.typo.p6}

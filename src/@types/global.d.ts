@@ -92,6 +92,7 @@ declare global {
     tooltip: string
     content?: string
     icon?: string
+    visible?: boolean
     style?: {
       [p: string]: any
     }

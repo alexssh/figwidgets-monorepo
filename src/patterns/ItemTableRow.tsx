@@ -29,6 +29,7 @@ function ItemTableRow(props: IItemTableRowProps) {
           verticalAlignItems="start"
           width={cell.width[props.width]}
           tooltip={cell.tooltip}
+          hidden={!cell.visible}
         >
           {cell.icon && (
             <AutoLayout
