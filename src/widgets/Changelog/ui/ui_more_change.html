@@ -3,14 +3,6 @@
   <div class="ui-item-select ui-item-select--preview">
     <div id="color_preview" class="ui-item-select-preview"></div>
     <select id="type" name="type" size="1" onchange="sendAction(`type_${this.value}`)">
-      <option value="added">Added</option>
-      <option value="fixed">Fixed</option>
-      <option value="changed">Changed</option>
-      <option value="deprecated">Deprecated</option>
-      <option value="removed">Removed</option>
-      <option value="breaking">Breaking</option>
-      <option value="other">Other</option>
-      <option value="inProgress">In progress</option>
     </select>
   </div>
 
@@ -30,6 +22,14 @@
   <div class="ui-item-action ui-item-action--destructive" id="delete" onclick="sendAction('delete')">Delete entry
   </div>
 
+  <!-- TEMPLATE -->
+
+  <div style="display: none">
+    <option id="option" value="added">Added</option>
+  </div>
+
+  <!-- TEMPLATE -->
+
 </div>
 
 <script>
@@ -38,18 +38,17 @@
   const url = 'https://www.figma.com'
   const view = "more"
 
-  let uuid = ""
+  let uuid = undefined
   let index = 0
 
   onmessage = (event) => {
 
-    if (event.data.pluginMessage.data) {
-
-      uuid = event.data.pluginMessage.data.selectedEntry
+    if (event.data.pluginMessage) {
 
       let selected = event.data.pluginMessage.entries.sort((a, b) => a.position - b.position).filter((entry, i) => {
-        if (entry.uuid === uuid) {
+        if (entry.uuid === event.data.pluginMessage.currentEntry.uuid) {
           index = i
+          uuid = event.data.pluginMessage.currentEntry.uuid
           return true
         } else {
           return false
@@ -58,8 +57,21 @@
 
       document.getElementById('ui').style.display = "flex";
 
-      document.getElementById('type').value = selected.type;
-      document.getElementById('color_preview').style.backgroundColor = selected.type === "inProgress" ? "#FFFFFF" : event.data.pluginMessage.tokens.themes.status[event.data.pluginMessage.entryTypes[selected.type].status][event.data.pluginMessage.data.colorTheme].fill;
+      if (document.getElementById('type').children.length == 0) {
+        event.data.pluginMessage.labels.forEach(label => {
+          const option = document.getElementById('option').cloneNode(true)
+          option.setAttribute("id", label.uuid)
+          option.setAttribute("value", label.uuid)
+          option.innerHTML = `${label.label}`
+          document.getElementById('type').appendChild(option)
+        })
+      }
+
+      let currentEntryLabel = event.data.pluginMessage.labels.find(label => label.uuid == event.data.pluginMessage.currentEntry.label)
+
+      document.getElementById('type').value = currentEntryLabel.uuid;
+      document.getElementById('color_preview').style.backgroundColor = event.data.pluginMessage.tokens.themes.labels[currentEntryLabel.variant].fill
+
 
       if (index === 0) {
         document.getElementById('move_up').classList.add('ui-item-action--disabled');

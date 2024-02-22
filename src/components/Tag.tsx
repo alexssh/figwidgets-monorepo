@@ -20,14 +20,13 @@ function Tag(props: ITagProps) {
       width="fill-parent"
       horizontalAlignItems="center"
       verticalAlignItems="center"
-      {...tokens.themes.status[props.variant][props.theme]}
-      {...tokens.themes.status[props.variant]?.[props.theme].border}
+      fill={tokens.themes.labels[props.color].fill}
     >
       <Text
         name="Tag__input"
         width="fill-parent"
         horizontalAlignText="center"
-        fill={tokens.themes.status[props.variant][props.theme].color}
+        fill={tokens.themes.labels[props.color].color}
         {...tokens.themes.typo.caption}
       >
         {props.content}

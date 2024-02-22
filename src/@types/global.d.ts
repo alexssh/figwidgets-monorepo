@@ -23,6 +23,9 @@ declare global {
             }
         }
       }
+      labels: {
+        [t: string]: TokenBackground & TokenTxt & TokenPreview
+      }
       radius: {
         [t: string]: TokenRadius
       }
@@ -49,6 +52,10 @@ declare global {
         [t: string]: TokenPadding
       }
     }
+  }
+
+  type TokenPreview = {
+    preview: string
   }
 
   type TokenSize = number

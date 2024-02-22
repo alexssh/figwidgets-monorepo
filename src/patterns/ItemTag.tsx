@@ -27,7 +27,7 @@ function ItemTag(props: IItemTagProps) {
           right: 24
         }}
       >
-        <Tag theme={props.theme} variant={props.type} content={props.contentTag} />
+        <Tag theme={props.theme} color={props.tagColor} content={props.tagLabel} />
       </AutoLayout>
       <AutoLayout name="ItemTag__body" direction="vertical" height="hug-contents" width="fill-parent" spacing={5}>
         <InputGhost

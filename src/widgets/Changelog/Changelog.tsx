@@ -28,16 +28,20 @@ const {
 } = widget
 
 import { EntryTypes } from './config'
+import { LabelPresets } from './config'
 
 /* Components */
-import Header from 'src/patterns/Header'
-import Footer from 'src/patterns/Footer'
-import ItemTag from 'src/patterns/ItemTag'
 import Item from 'src/components/Item'
 import { glyphs } from 'src/components/Icon'
 import ButtonGhost from 'src/components/ButtonGhost'
 import InputGhost from 'src/components/InputGhost'
 import Divider from 'src/components/Divider'
+
+/* Patterns */
+import Header from 'src/patterns/Header'
+import Footer from 'src/patterns/Footer'
+import ItemTag from 'src/patterns/ItemTag'
+import ItemTitle from 'src/patterns/ItemTitle'
 
 /* Utils */
 import link from 'src/utils/link'
@@ -61,12 +65,14 @@ function Widget() {
     isDateVisible: true,
     isFooterVisible: true,
     isBackgroundVisible: true,
-    isEditingVisible: true
+    isEditingVisible: true,
+    isFirstRun: true
   })
 
-  const [entryType, setEntryType] = useSyncedState('entryType', Object.keys(EntryTypes)[0])
+  const entries = useSyncedMap<ChangelogChangeEntry | ChangelogTitleEntry>('entries')
 
-  const entries = useSyncedMap<ChangelogEntry>('entries')
+  const [currentLabel, setCurrentLabel] = useSyncedState('currentLabel', LabelPresets[0].uuid)
+  const labels = useSyncedMap<ChangelogLabelEntry>('labels')
 
   usePropertyMenu(
     [
@@ -131,7 +137,7 @@ function Widget() {
             : tokens.themes.txt.primary.inverted.light.color) as string
         )
       },
-      ...(data.isEditingVisible
+      ...(data.isEditingVisible && labels.entries().length
         ? ([
             {
               itemType: 'separator'
@@ -140,12 +146,25 @@ function Widget() {
               itemType: 'dropdown',
               tooltip: 'New entry type',
               propertyName: 'entryType',
-              options: Object.keys(EntryTypes).map((s) => ({
-                option: s,
-                label: EntryTypes[s as keyof ChangelogEntryMapping].label
-              })),
-              selectedOption: entryType
-            },
+              options: labels
+                .values()
+                .sort((a, b) => a.position - b.position)
+                .map((s) => ({
+                  option: s.uuid,
+                  label: `${tokens.themes.labels[s.variant].preview}  ${s.label}`
+                }))
+                .concat([
+                  {
+                    option: Object.keys(EntryTypes)[1],
+                    label: `📎  ${EntryTypes.title.label}`
+                  }
+                ]),
+              selectedOption: currentLabel
+            }
+          ] as WidgetPropertyMenuItem[])
+        : []),
+      ...(data.isEditingVisible
+        ? ([
             {
               itemType: 'action',
               tooltip: 'Add entry',
@@ -175,16 +194,30 @@ function Widget() {
       }
 
       if (propertyName === 'entryType') {
-        setEntryType(propertyValue as string)
+        setCurrentLabel(propertyValue as string)
       }
 
       if (propertyName === 'addEntry') {
-        addEntry(entryType)
+        addEntry(currentLabel == Object.keys(EntryTypes)[1] ? Object.keys(EntryTypes)[1] : 'change', {
+          label: currentLabel
+        })
       }
     }
   )
-
   useEffect(() => {
+    // Initial preset
+    if (data.isFirstRun) {
+      LabelPresets.forEach(
+        (value, i, array) => labels.set(value.uuid, { ...value }) // color: tokens.themes.labels[value.variant].fill as string
+      )
+
+      setCurrentLabel(LabelPresets[0].uuid)
+      setData({
+        ...data,
+        isFirstRun: false
+      })
+    }
+
     figma.clientStorage.getAsync('isUIopen').then((isUIopen) => {
       if (isUIopen === undefined) {
         figma.clientStorage.setAsync('isUIopen', false)
@@ -225,7 +258,7 @@ function Widget() {
       }
 
       if (message.action.indexOf('type') > -1) {
-        editEntryType(entries.get(message.uuid) as ChangelogEntry, message.action)
+        editEntryType(entries.get(message.uuid) as ChangelogChangeEntry, message.action)
       }
 
       if (message.action === 'move_up') {
@@ -249,15 +282,26 @@ function Widget() {
       }
 
       if (message.action === 'duplicate') {
-        const entry = entries.get(message.uuid) as ChangelogEntry
+        const entry = entries.get(message.uuid) as ChangelogTitleEntry | ChangelogChangeEntry
 
-        addEntry(entry.type, {
-          position: entry.position + 0.5,
-          content: entry.content,
-          type: entry.type,
-          isLinkVisible: entry.isLinkVisible,
-          link: entry.link
-        })
+        if (currentLabel == Object.keys(EntryTypes)[1]) {
+          addEntry(Object.keys(EntryTypes)[1], {
+            position: entry.position + 0.5,
+            title: (entry as ChangelogTitleEntry).title,
+            description: (entry as ChangelogTitleEntry).description,
+            isDescriptionVisible: (entry as ChangelogTitleEntry).isDescriptionVisible,
+            isLinkVisible: (entry as ChangelogEntry).isLinkVisible,
+            link: (entry as ChangelogEntry).link
+          })
+        } else {
+          addEntry('change', {
+            position: entry.position + 0.5,
+            content: (entry as ChangelogChangeEntry).content,
+            label: (entry as ChangelogChangeEntry).label,
+            isLinkVisible: (entry as ChangelogEntry).isLinkVisible,
+            link: (entry as ChangelogEntry).link
+          })
+        }
 
         figma.closePlugin()
       }
@@ -275,9 +319,10 @@ function Widget() {
   const updateUI = () => {
     figma.ui.postMessage({
       data,
+      labels: labels.values(),
       entries: entries.values(),
-      entryTypes: EntryTypes,
-      tokens
+      tokens,
+      currentEntry: entries.get(data.selectedEntry as unknown as string)
     })
   }
 
@@ -290,13 +335,26 @@ function Widget() {
       })
     }
 
-    if (view === 'more') {
+    if (view === 'more-change') {
       return new Promise((resolve) => {
-        figma.showUI(__uiFiles__.more, {
+        figma.showUI(__uiFiles__.more_change, {
           themeColors: true,
           title: `Entry: ${options.entry.content.length ? options.entry.content : '...'}`,
           width: 240,
           height: 295
+        })
+        setData({ ...data, selectedEntry: options.entry.uuid })
+        figma.clientStorage.setAsync('isUIopen', true)
+      })
+    }
+
+    if (view === 'more-title') {
+      return new Promise((resolve) => {
+        figma.showUI(__uiFiles__.more_title, {
+          themeColors: true,
+          title: `Section: ${options.entry.title.length ? options.entry.title : '...'}`,
+          width: 240,
+          height: 238
         })
         setData({ ...data, selectedEntry: options.entry.uuid })
         figma.clientStorage.setAsync('isUIopen', true)
@@ -376,28 +434,67 @@ function Widget() {
   const addEntry = (
     type: string,
     options?: {
+      uuid?: string
       position?: number
-      content?: string
-      type?: string
+      isLinkVisible?: boolean
       link?: Link
-      isLinkVisible: boolean
+      isNavigationLinkVisible?: boolean
+      navigationLink?: NavigationLink
+
+      content?: string
+      label?: string
+
+      title?: string
+      description?: string
+      isDescriptionVisible?: boolean
     }
   ) => {
     const id = uuid()
 
     if (!entries.get(id)) {
-      entries.set(id, {
-        uuid: id,
-        position: entries.values().length === 0 ? 0 : entries.values().length,
-        type,
-        content: '',
-        isLinkVisible: true,
-        link: {
-          src: '',
-          valid: false
-        },
-        ...options
-      })
+      if (type === Object.keys(EntryTypes)[1]) {
+        entries.set(id, {
+          uuid: id,
+          position: entries.values().length === 0 ? 0 : entries.values().length,
+          type,
+          isLinkVisible: false,
+          link: {
+            src: '',
+            valid: false
+          },
+          isNavigationLinkVisible: false,
+          navigationLink: {
+            id: '',
+            layerName: '',
+            valid: false
+          },
+          title: '',
+          description: '',
+          isDescriptionVisible: false,
+          ...options
+        } as ChangelogTitleEntry)
+      } else {
+        entries.set(id, {
+          uuid: id,
+          position: entries.values().length === 0 ? 0 : entries.values().length,
+          type,
+          isLinkVisible: false,
+          link: {
+            src: '',
+            valid: false
+          },
+          isNavigationLinkVisible: false,
+          navigationLink: {
+            id: '',
+            layerName: '',
+            valid: false
+          },
+          content: '',
+          label: options?.label,
+          ...options
+        } as ChangelogChangeEntry)
+      }
+
       sortPositions()
     } else {
       addEntry(type)
@@ -406,7 +503,7 @@ function Widget() {
 
   const toggleLinkVisibility = (entry: ChangelogEntry) => {
     entries.set(entry.uuid, {
-      ...entry,
+      ...(entry as ChangelogChangeEntry | ChangelogTitleEntry),
       isLinkVisible: !entry.isLinkVisible
     })
   }
@@ -424,7 +521,7 @@ function Widget() {
     let targetEntry = entries.get(entry.uuid) as ChangelogEntry
 
     entries.set(entry.uuid, {
-      ...entry,
+      ...(entry as ChangelogChangeEntry | ChangelogTitleEntry),
       position: direction === 'up' ? targetEntry.position - 1.5 : targetEntry.position + 1.5
     })
 
@@ -448,7 +545,16 @@ function Widget() {
     sortPositions()
   }
 
-  const editEntry = (entry: ChangelogEntry, event: IItemTagOnEditEndEvent) => {
+  /* Entries */
+
+  const editEntry = (entry: ChangelogChangeEntry | ChangelogTitleEntry, event: IItemTagOnEditEndEvent) => {
+    if (event.property === 'title') {
+      entries.set(entry.uuid, {
+        ...entry,
+        title: event.value.characters
+      })
+    }
+
     if (event.property === 'body') {
       entries.set(entry.uuid, {
         ...entry,
@@ -467,10 +573,10 @@ function Widget() {
     }
   }
 
-  const editEntryType = (entry: ChangelogEntry, type: string) => {
+  const editEntryType = (entry: ChangelogChangeEntry, type: string) => {
     entries.set(entry.uuid, {
       ...entry,
-      type: type.split('_')[1]
+      label: type.split('_')[1]
     })
   }
 
@@ -529,29 +635,78 @@ function Widget() {
         {entries
           .values()
           .sort((a, b) => a.position - b.position)
-          .map((entry) => (
-            <Item
-              key={entry.uuid}
-              theme={data.colorTheme}
-              positionUp={data.isEditingVisible ? entry.position !== 0 : undefined}
-              positionDown={data.isEditingVisible ? entry.position !== entries.values().length - 1 : undefined}
-              more={data.isEditingVisible ? !data.isEditingVisible : undefined}
-              onPositionChange={(e: IItemPositionChangeEvent) => moveEntry(entry, e.direction)}
-              onMore={() => openUI('more', { data, entry })}
-            >
-              <ItemTag
-                key={entry.uuid}
-                theme={data.colorTheme}
-                type={EntryTypes[entry.type].status}
-                contentBody={entry.content}
-                placeholderBody={'Type something...'}
-                disabled={!data.isEditingVisible}
-                contentTag={EntryTypes[entry.type].label}
-                link={entry.isLinkVisible ? entry.link : undefined}
-                onEditEnd={(e: IItemTagOnEditEndEvent) => editEntry(entry, e)}
-              />
-            </Item>
-          ))}
+          .map((entry, i) => {
+            // Change
+            if (entry.type === Object.keys(EntryTypes)[0]) {
+              return (
+                <Item
+                  key={entry.uuid}
+                  theme={data.colorTheme}
+                  positionUp={data.isEditingVisible ? entry.position !== 0 : undefined}
+                  positionDown={data.isEditingVisible ? entry.position !== entries.values().length - 1 : undefined}
+                  more={data.isEditingVisible ? !data.isEditingVisible : undefined}
+                  onPositionChange={(e: IItemPositionChangeEvent) => {
+                    moveEntry(entry as ChangelogEntry, e.direction)
+                  }}
+                  onMore={() => openUI('more-change', { data, entry })}
+                >
+                  <ItemTag
+                    key={entry.uuid}
+                    theme={data.colorTheme}
+                    tagLabel={labels.get((entry as ChangelogChangeEntry).label)?.label as string}
+                    tagColor={labels.get((entry as ChangelogChangeEntry).label)?.variant as string}
+                    contentBody={(entry as ChangelogChangeEntry).content}
+                    placeholderBody={'Type something...'}
+                    disabled={!data.isEditingVisible}
+                    link={(entry as ChangelogEntry).isLinkVisible ? (entry as ChangelogEntry).link : undefined}
+                    onEditEnd={(e: IItemTagOnEditEndEvent) => editEntry(entry as ChangelogChangeEntry, e)}
+                  />
+                </Item>
+              )
+            }
+
+            // Title
+            if (entry.type === Object.keys(EntryTypes)[1]) {
+              return (
+                <Item
+                  key={entry.uuid}
+                  theme={data.colorTheme}
+                  positionUp={data.isEditingVisible}
+                  positionDown={data.isEditingVisible}
+                  more={data.isEditingVisible ? !data.isEditingVisible : undefined}
+                  padding={{
+                    top: i === 0 ? 10 : 24,
+                    bottom: 10,
+                    horizontal: tokens.themes.layout.item.horizontal
+                  }}
+                  onPositionChange={(e: IItemPositionChangeEvent) => moveEntry(entry as ChangelogEntry, e.direction)}
+                  onMore={() => openUI('more-title', { data, entry })}
+                >
+                  <ItemTitle
+                    key={entry.uuid}
+                    theme={data.colorTheme}
+                    contentTitle={(entry as ChangelogTitleEntry).title}
+                    placeholderTitle={'Type something...'}
+                    isDescriptionVisible={(entry as ChangelogTitleEntry).isDescriptionVisible}
+                    contentDescription={(entry as ChangelogTitleEntry).description}
+                    placeholderDescription={'Description...'}
+                    disabled={!data.isEditingVisible}
+                    link={(entry as ChangelogEntry).isLinkVisible ? (entry as ChangelogEntry).link : undefined}
+                    navigationLink={
+                      (entry as ChangelogEntry).isNavigationLinkVisible
+                        ? (entry as ChangelogEntry).navigationLink
+                        : undefined
+                    }
+                    onNavigationClick={
+                      () => {}
+                      //onNavigationClick(entry)
+                    }
+                    onEditEnd={(e: IItemCheckboxOnEditEndEvent) => editEntry(entry as ChangelogTitleEntry, e)}
+                  />
+                </Item>
+              )
+            }
+          })}
         {entries.values().length === 0 && (
           <Text
             {...tokens.themes.typo.p5}
@@ -605,7 +760,11 @@ function Widget() {
                   variant="primary"
                   glyph="plus"
                   content="Add entry"
-                  onClick={() => addEntry('added')}
+                  onClick={() =>
+                    addEntry(currentLabel == Object.keys(EntryTypes)[1] ? Object.keys(EntryTypes)[1] : 'change', {
+                      label: currentLabel
+                    })
+                  }
                 />
               )}
             </Fragment>

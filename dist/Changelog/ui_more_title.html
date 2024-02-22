@@ -1,35 +1,17 @@
 <div id="ui" class="ui">
 
-  <div class="ui-section">View</div>
-
-  <div class="ui-item-checkbox">
-    <input type="checkbox" id="ribbon" onclick="sendAction('ribbon')" name="ribbon">
-    <label for="ribbon">Ribbon</label>
-  </div>
-  <div class="ui-item-checkbox">
-    <input type="checkbox" id="title" name="title" onclick="sendAction('title')">
-    <label for="title">Title</label>
-  </div>
-  <div class="ui-item-checkbox">
-    <input type="checkbox" id="description" onclick="sendAction('description')" name="description">
-    <label for="description">Description</label>
-  </div>
-  <div class="ui-item-checkbox">
-    <input type="checkbox" id="date" onclick="sendAction('date')" name="date">
-    <label for="date">Date</label>
-  </div>
-  <div class="ui-item-checkbox">
-    <input type="checkbox" id="footer" onclick="sendAction('footer')" name="footer">
-    <label for="footer">Footer</label>
-  </div>
+  <div class="ui-item-action" id="move_up" onclick="sendAction('move_up')">Move up</div>
+  <div class="ui-item-action" id="move_down" onclick="sendAction('move_down')">Move down</div>
 
   <div class="ui-divider"></div>
-  <div class="ui-section">Container</div>
 
-  <div class="ui-item-checkbox">
-    <input type="checkbox" id="background" onclick="sendAction('background')" name="background">
-    <label for="background">Background</label>
-  </div>
+  <div class="ui-item-action" id="show_link" onclick="sendAction('show_link')">Show link</div>
+  <div class="ui-item-action" id="hide_link" onclick="sendAction('hide_link')">Hide link</div>
+  <div class="ui-item-action" id="duplicate" onclick="sendAction('duplicate')">Duplicate</div>
+
+  <div class="ui-divider"></div>
+
+  <div class="ui-item-action ui-item-action--destructive" id="delete" onclick="sendAction('delete')">Delete entry</div>
 
 </div>
 
@@ -37,19 +19,46 @@
 
   const id = { pluginId: '1142539867133322876' }
   const url = 'https://www.figma.com'
-  const view = "settings"
+  const view = "more"
+
+  let uuid = undefined
+  let index = 0
 
   onmessage = (event) => {
+
     if (event.data.pluginMessage.data) {
+
+      let selected = event.data.pluginMessage.entries.sort((a, b) => a.position - b.position).filter((entry, i) => {
+        if (entry.uuid === event.data.pluginMessage.currentEntry.uuid) {
+          index = i
+          uuid = event.data.pluginMessage.currentEntry.uuid
+          return true
+        } else {
+          return false
+        }
+      })[0]
+
       document.getElementById('ui').style.display = "flex";
 
-      document.getElementById('ribbon').checked = event.data.pluginMessage.data.isRibbonVisible;
-      document.getElementById('title').checked = event.data.pluginMessage.data.isTitleVisible;
-      document.getElementById('description').checked = event.data.pluginMessage.data.isDescriptionVisible;
-      document.getElementById('date').checked = event.data.pluginMessage.data.isDateVisible;
-      document.getElementById('footer').checked = event.data.pluginMessage.data.isFooterVisible;
+      if (index === 0) {
+        document.getElementById('move_up').classList.add('ui-item-action--disabled');
+        document.getElementById('move_up').onclick = null;
+      } else {
+        document.getElementById('move_up').classList.remove('ui-item-action--disabled');
+        document.getElementById('move_up').onclick = () => sendAction('move_up')
+      }
 
-      document.getElementById('background').checked = event.data.pluginMessage.data.isBackgroundVisible;
+      if (index === event.data.pluginMessage.entries.length - 1) {
+        document.getElementById('move_down').classList.add('ui-item-action--disabled');
+        document.getElementById('move_down').onclick = null;
+      } else {
+        document.getElementById('move_down').classList.remove('ui-item-action--disabled');
+        document.getElementById('move_down').onclick = () => sendAction('move_down')
+      }
+
+      document.getElementById('show_link').style.display = !selected.isLinkVisible ? "block" : "none";
+      document.getElementById('hide_link').style.display = selected.isLinkVisible ? "block" : "none";
+
     }
   }
 
@@ -57,7 +66,8 @@
     parent.postMessage({
       pluginMessage: {
         view,
-        action: action
+        action: action,
+        uuid: uuid
       }, ...id
     }, url)
   }

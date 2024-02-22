@@ -2,10 +2,10 @@ declare global {
   interface IItemTagProps {
     key?: string
     theme: string
-    type: string
+    tagLabel: string
+    tagColor: string
     contentBody: string
     placeholderBody: string
-    contentTag: string
     disabled?: boolean
     link?: Link
     onEditEnd: (e: IItemTagOnEditEndEvent) => void

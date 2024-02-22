@@ -10,7 +10,8 @@
     "reasoning": ""
   },
   "ui": {
-    "more": "ui_more.html",
+    "more_change": "ui_more_change.html",
+    "more_title": "ui_more_title.html",
     "settings": "ui_settings.html"
   },
   "widgetApi": "1.0.0"

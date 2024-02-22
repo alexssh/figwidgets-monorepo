@@ -3,14 +3,6 @@
   <div class="ui-item-select ui-item-select--preview">
     <div id="color_preview" class="ui-item-select-preview"></div>
     <select id="type" name="type" size="1" onchange="sendAction(`type_${this.value}`)">
-      <option value="added">Added</option>
-      <option value="fixed">Fixed</option>
-      <option value="changed">Changed</option>
-      <option value="deprecated">Deprecated</option>
-      <option value="removed">Removed</option>
-      <option value="breaking">Breaking</option>
-      <option value="other">Other</option>
-      <option value="inProgress">In progress</option>
     </select>
   </div>
 
@@ -30,6 +22,14 @@
   <div class="ui-item-action ui-item-action--destructive" id="delete" onclick="sendAction('delete')">Delete entry
   </div>
 
+  <!-- TEMPLATE -->
+
+  <div style="display: none">
+    <option id="option" value="added">Added</option>
+  </div>
+
+  <!-- TEMPLATE -->
+
 </div>
 
 <script>
@@ -38,18 +38,17 @@
   const url = 'https://www.figma.com'
   const view = "more"
 
-  let uuid = ""
+  let uuid = undefined
   let index = 0
 
   onmessage = (event) => {
 
-    if (event.data.pluginMessage.data) {
-
-      uuid = event.data.pluginMessage.data.selectedEntry
+    if (event.data.pluginMessage) {
 
       let selected = event.data.pluginMessage.entries.sort((a, b) => a.position - b.position).filter((entry, i) => {
-        if (entry.uuid === uuid) {
+        if (entry.uuid === event.data.pluginMessage.currentEntry.uuid) {
           index = i
+          uuid = event.data.pluginMessage.currentEntry.uuid
           return true
         } else {
           return false
@@ -58,8 +57,21 @@
 
       document.getElementById('ui').style.display = "flex";
 
-      document.getElementById('type').value = selected.type;
-      document.getElementById('color_preview').style.backgroundColor = selected.type === "inProgress" ? "#FFFFFF" : event.data.pluginMessage.tokens.themes.status[event.data.pluginMessage.entryTypes[selected.type].status][event.data.pluginMessage.data.colorTheme].fill;
+      if (document.getElementById('type').children.length == 0) {
+        event.data.pluginMessage.labels.forEach(label => {
+          const option = document.getElementById('option').cloneNode(true)
+          option.setAttribute("id", label.uuid)
+          option.setAttribute("value", label.uuid)
+          option.innerHTML = `${label.label}`
+          document.getElementById('type').appendChild(option)
+        })
+      }
+
+      let currentEntryLabel = event.data.pluginMessage.labels.find(label => label.uuid == event.data.pluginMessage.currentEntry.label)
+
+      document.getElementById('type').value = currentEntryLabel.uuid;
+      document.getElementById('color_preview').style.backgroundColor = event.data.pluginMessage.tokens.themes.labels[currentEntryLabel.variant].fill
+
 
       if (index === 0) {
         document.getElementById('move_up').classList.add('ui-item-action--disabled');
@@ -136,6 +148,28 @@ body {
   background-color: var(--figma-color-border);
 }
 
+/* Item info */
+
+.ui-item-info {
+  width: 100%;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 10px 12px;
+  font-family: Inter, sans-serif;
+  font-size: 11px;
+  line-height: 16px;
+  font-weight: 500;
+  color: var(--figma-color-text-secondary);
+  background-color: transparent;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Item checkbox */
+
 .ui-item-checkbox {
   position: relative;
   width: 100%;
@@ -193,9 +227,11 @@ body {
   cursor: pointer;
 }
 
+/* Item action */
+
 .ui-item-action {
   width: 100%;
-  display: flex;
+  display: block;
   flex-flow: row nowrap;
   justify-content: flex-start;
   align-items: center;
@@ -206,6 +242,9 @@ body {
   font-weight: 500;
   color: var(--figma-color-text);
   cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .ui-item-action:hover {
@@ -221,6 +260,74 @@ body {
 .ui-item-action--destructive {
   color: var(--figma-color-text-danger);
 }
+
+/* Item action */
+
+.ui-item-actionset {
+  width: 100%;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 2px 12px;
+}
+
+.ui-item-actionset-label {
+  flex: 1 1 100%;
+  font-family: Inter, sans-serif;
+  font-size: 11px;
+  line-height: 16px;
+  font-weight: 500;
+  color: var(--figma-color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: 8px;
+}
+
+.ui-item-actionset-label--warning {
+  color: var(--figma-color-text-warning);
+}
+
+.ui-item-actionset-button--hidden {
+  display: none !important;
+}
+
+.ui-item-actionset-button svg {
+  fill: var(--figma-color-icon);
+}
+
+.ui-item-actionset-button--accent svg {
+  fill: var(--figma-color-icon-brand);
+}
+
+/* Button */
+
+.ui-button {
+  flex: 0 0 32px;
+  width: 32px;
+  height: 32px;
+  display: block;
+  border-radius: 2px;
+  outline: 0;
+  border: 0;
+  background-color: var(--figma-color-bg);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ui-button:hover {
+  background-color: var(--figma-color-bg-hover);
+}
+
+.ui-button--disabled {
+  opacity: 0;
+  cursor: auto;
+}
+
+/* Item priority */
 
 .ui-item-priority {
   display: flex;
@@ -244,6 +351,8 @@ body {
 .ui-item-priority-button--selected {
   border: 1px solid var(--figma-color-border-selected);
 }
+
+/* Item select */
 
 .ui-item-select {
   display: flex;

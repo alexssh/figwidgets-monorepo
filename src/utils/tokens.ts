@@ -30,6 +30,8 @@ const COLOR_ORANGE_600 = '#FF730E'
 const COLOR_RED_600 = '#D20000'
 const COLOR_RED_600_ALPHA = { r: 0.823, g: 0, b: 0, a: 0.12 }
 
+const COLOR_BROWN_600 = '#6B3C16'
+
 /* Color themes */
 
 const tokens: Tokens = {
@@ -209,6 +211,17 @@ const tokens: Tokens = {
         light: { fill: COLOR_GREY_400, color: COLOR_WHITE },
         dark: { fill: COLOR_GREY_400, color: COLOR_WHITE }
       }
+    },
+    labels: {
+      green: { fill: COLOR_GREEN_600, color: COLOR_WHITE, preview: '🟢' },
+      orange: { fill: COLOR_ORANGE_600, color: COLOR_WHITE, preview: '🟠' },
+      red: { fill: COLOR_RED_600, color: COLOR_WHITE, preview: '🔴' },
+      yellow: { fill: COLOR_YELLOW_600, color: COLOR_WHITE, preview: '🟡' },
+      blue: { fill: COLOR_BLUE_600, color: COLOR_WHITE, preview: '🔵' },
+      purple: { fill: COLOR_PURPLE_600, color: COLOR_WHITE, preview: '🟣' },
+      brown: { fill: COLOR_BROWN_600, color: COLOR_WHITE, preview: '🟤' },
+      black: { fill: COLOR_BLACK, color: COLOR_WHITE, preview: '⚫️' },
+      grey: { fill: COLOR_GREY_400, color: COLOR_WHITE, preview: '⚪️' }
     },
     radius: {
       container: { cornerRadius: 8 },
