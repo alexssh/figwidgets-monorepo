@@ -410,7 +410,7 @@ function Widget() {
           themeColors: true,
           title: `Section: ${options.entry.title.length ? options.entry.title : '...'}`,
           width: 248,
-          height: 274
+          height: 367
         })
 
         setData({

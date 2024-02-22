@@ -28,6 +28,9 @@ checkbox, checklist, design, handoff, notes, plan, progress tracker, projects, t
 
 ## Changelog
 
+- Version 19
+    - Fix: Minor UX improvements
+
 - Version 18
     - Fix: Canvas navigation links, performance fix
 
