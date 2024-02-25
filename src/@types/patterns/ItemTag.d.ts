@@ -8,6 +8,8 @@ declare global {
     placeholderBody: string
     disabled?: boolean
     link?: Link
+    navigationLink?: NavigationLink
+    onNavigationClick?: () => void
     onEditEnd: (e: IItemTagOnEditEndEvent) => void
   }
 

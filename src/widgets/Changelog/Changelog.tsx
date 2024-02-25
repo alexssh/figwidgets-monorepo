@@ -74,6 +74,12 @@ function Widget() {
   const [currentLabel, setCurrentLabel] = useSyncedState('currentLabel', LabelPresets[0].uuid)
   const labels = useSyncedMap<ChangelogLabelEntry>('labels')
 
+  const [canvas, setCanvas] = useSyncedState('canvas', {
+    id: '',
+    layerName: '',
+    valid: false
+  })
+
   usePropertyMenu(
     [
       ...(data.isEditingVisible
@@ -199,7 +205,7 @@ function Widget() {
 
       if (propertyName === 'addEntry') {
         addEntry(currentLabel == Object.keys(EntryTypes)[1] ? Object.keys(EntryTypes)[1] : 'change', {
-          label: currentLabel
+          labelID: currentLabel
         })
       }
     }
@@ -207,9 +213,7 @@ function Widget() {
   useEffect(() => {
     // Initial preset
     if (data.isFirstRun) {
-      LabelPresets.forEach(
-        (value, i, array) => labels.set(value.uuid, { ...value }) // color: tokens.themes.labels[value.variant].fill as string
-      )
+      LabelPresets.forEach((value, i, array) => labels.set(value.uuid, { ...value }))
 
       setCurrentLabel(LabelPresets[0].uuid)
       setData({
@@ -229,6 +233,9 @@ function Widget() {
     })
 
     figma.on('close', () => {
+      figma.off('selectionchange', watchCanvasSelection)
+      setCanvasSelection('', '', false)
+
       figma.clientStorage.setAsync('isUIopen', false)
     })
 
@@ -269,6 +276,16 @@ function Widget() {
         moveEntry(entries.get(message.uuid) as ChangelogEntry, 'down')
       }
 
+      if (message.action === 'show_description') {
+        toggleDescriptionVisibility(entries.get(message.uuid) as ChangelogTitleEntry)
+        figma.closePlugin()
+      }
+
+      if (message.action === 'hide_description') {
+        toggleDescriptionVisibility(entries.get(message.uuid) as ChangelogTitleEntry)
+        figma.closePlugin()
+      }
+
       if (message.action === 'show_link') {
         toggleLinkVisibility(entries.get(message.uuid) as ChangelogEntry)
 
@@ -281,6 +298,22 @@ function Widget() {
         figma.closePlugin()
       }
 
+      if (message.action === 'navigation_add') {
+        setNavigation(entries.get(message.uuid) as ChangelogTitleEntry | ChangelogChangeEntry, canvas)
+      }
+
+      if (message.action === 'navigation_update') {
+        setNavigation(entries.get(message.uuid) as ChangelogTitleEntry | ChangelogChangeEntry, canvas)
+      }
+
+      if (message.action === 'navigation_delete') {
+        setNavigation(entries.get(message.uuid) as ChangelogTitleEntry | ChangelogChangeEntry, {
+          id: '',
+          layerName: '',
+          valid: false
+        })
+      }
+
       if (message.action === 'duplicate') {
         const entry = entries.get(message.uuid) as ChangelogTitleEntry | ChangelogChangeEntry
 
@@ -291,15 +324,21 @@ function Widget() {
             description: (entry as ChangelogTitleEntry).description,
             isDescriptionVisible: (entry as ChangelogTitleEntry).isDescriptionVisible,
             isLinkVisible: (entry as ChangelogEntry).isLinkVisible,
-            link: (entry as ChangelogEntry).link
+            link: (entry as ChangelogEntry).link,
+            isNavigationLinkVisible: (entry as ChangelogEntry).isNavigationLinkVisible,
+            navigationLink: (entry as ChangelogEntry).navigationLink
           })
         } else {
           addEntry('change', {
             position: entry.position + 0.5,
             content: (entry as ChangelogChangeEntry).content,
+            labelID: (entry as ChangelogChangeEntry).labelID,
             label: (entry as ChangelogChangeEntry).label,
+            variant: (entry as ChangelogChangeEntry).variant,
             isLinkVisible: (entry as ChangelogEntry).isLinkVisible,
-            link: (entry as ChangelogEntry).link
+            link: (entry as ChangelogEntry).link,
+            isNavigationLinkVisible: (entry as ChangelogEntry).isNavigationLinkVisible,
+            navigationLink: (entry as ChangelogEntry).navigationLink
           })
         }
 
@@ -311,6 +350,26 @@ function Widget() {
 
         figma.closePlugin()
       }
+
+      if (message.action === 'label_color') {
+        setLabelColor(message.uuid, message.value)
+      }
+
+      if (message.action === 'label_delete') {
+        deleteLabel(message.uuid)
+      }
+
+      if (message.action === 'label_label') {
+        setLabel(message.uuid, message.value)
+      }
+
+      if (message.action === 'label_position') {
+        setLabelPosition(message.uuid, message.value)
+      }
+
+      if (message.action === 'label_add') {
+        addLabel()
+      }
     }
   })
 
@@ -319,17 +378,21 @@ function Widget() {
   const updateUI = () => {
     figma.ui.postMessage({
       data,
-      labels: labels.values(),
+      labels: labels.values().sort((a, b) => a.position - b.position),
       entries: entries.values(),
       tokens,
-      currentEntry: entries.get(data.selectedEntry as unknown as string)
+      currentEntry: data.selectedEntry ? entries.get(data.selectedEntry as unknown as string) : undefined,
+      currentLabel,
+      canvas
     })
   }
 
   const openUI = (view: string, options: any) => {
+    figma.on('selectionchange', watchCanvasSelection)
+
     if (view === 'settings') {
       return new Promise((resolve) => {
-        figma.showUI(__uiFiles__.settings, { themeColors: true, title: 'Settings', width: 240, height: 325 })
+        figma.showUI(__uiFiles__.settings, { themeColors: true, title: 'Settings', width: 280, height: 750 })
         setData({ ...data, selectedEntry: undefined })
         figma.clientStorage.setAsync('isUIopen', true)
       })
@@ -341,7 +404,7 @@ function Widget() {
           themeColors: true,
           title: `Entry: ${options.entry.content.length ? options.entry.content : '...'}`,
           width: 240,
-          height: 295
+          height: 388
         })
         setData({ ...data, selectedEntry: options.entry.uuid })
         figma.clientStorage.setAsync('isUIopen', true)
@@ -354,7 +417,7 @@ function Widget() {
           themeColors: true,
           title: `Section: ${options.entry.title.length ? options.entry.title : '...'}`,
           width: 240,
-          height: 238
+          height: 367
         })
         setData({ ...data, selectedEntry: options.entry.uuid })
         figma.clientStorage.setAsync('isUIopen', true)
@@ -362,7 +425,118 @@ function Widget() {
     }
   }
 
+  /* Canvas */
+
+  const watchCanvasSelection = () => {
+    if (figma.currentPage.selection.length === 1 && !figma.currentPage.selection[0].removed) {
+      setCanvasSelection(figma.currentPage.selection[0].id, figma.currentPage.selection[0].name, true)
+    } else {
+      setCanvasSelection('', '', false)
+    }
+  }
+
+  const checkNavigationLink = (entry: ChangelogTitleEntry | ChangelogChangeEntry, cb?: Function) => {
+    const node = figma.getNodeById((entry as ChangelogEntry).navigationLink.id)
+    if ((entry as ChangelogEntry).navigationLink.valid) {
+      if (!node) {
+        setNavigation(entry, {
+          id: (entry as ChangelogEntry).navigationLink.id,
+          layerName: (entry as ChangelogEntry).navigationLink.layerName,
+          valid: false
+        })
+        cb?.(false, {})
+      } else {
+        setNavigation(entry, {
+          id: (entry as ChangelogEntry).navigationLink.id,
+          layerName: node?.name as string,
+          valid: true
+        })
+        cb?.(true, node)
+      }
+    } else {
+      cb?.(false, {})
+    }
+  }
+
+  /* Labels */
+
+  const setLabelColor = (uuid: string, color: string) => {
+    labels.set(uuid, {
+      ...(labels.get(uuid) as ChangelogLabelEntry),
+      variant: color
+      // color: tokens.themes.labels[color].fill as string
+    })
+
+    entries.values().forEach((_entry, i) => {
+      if (_entry.type === 'change') {
+        entries.set(_entry.uuid, {
+          ..._entry,
+          variant: color
+        })
+      }
+    })
+  }
+
+  const deleteLabel = (uuid: string) => {
+    labels.delete(uuid)
+  }
+
+  const addLabel = () => {
+    const id = uuid()
+    labels.set(id, {
+      uuid: id,
+      position: labels.values().length,
+      label: 'Option',
+      variant: 'grey',
+      color: ''
+    })
+  }
+
+  const setLabel = (uuid: string, label: string) => {
+    labels.set(uuid, {
+      ...(labels.get(uuid) as ChangelogLabelEntry),
+      label
+    })
+
+    entries.values().forEach((_entry, i) => {
+      if (_entry.type === 'change') {
+        entries.set(_entry.uuid, {
+          ..._entry,
+          label
+        })
+      }
+    })
+  }
+
+  const setLabelPosition = (uuid: string, position: number) => {
+    labels.set(uuid, {
+      ...(labels.get(uuid) as ChangelogLabelEntry),
+      position: position
+    })
+    sortLabelPositions()
+  }
+
+  const sortLabelPositions = () => {
+    labels
+      .values()
+      .sort((a, b) => a.position - b.position)
+      .forEach((_label, i) => {
+        labels.set(_label.uuid, {
+          ..._label,
+          position: i
+        })
+      })
+  }
+
   /* General */
+
+  const setCanvasSelection = (id: string, layerName: string, valid: boolean) => {
+    setCanvas({
+      id,
+      layerName,
+      valid
+    })
+  }
 
   const setRibbon = (color: HexCode | undefined) => {
     if (color) {
@@ -442,7 +616,10 @@ function Widget() {
       navigationLink?: NavigationLink
 
       content?: string
+
+      labelID?: string
       label?: string
+      variant?: string
 
       title?: string
       description?: string
@@ -471,9 +648,13 @@ function Widget() {
           title: '',
           description: '',
           isDescriptionVisible: false,
+          label: '',
+          variant: '',
           ...options
         } as ChangelogTitleEntry)
       } else {
+        let extractedLabel = options?.labelID ? labels.get(options?.labelID) : undefined
+
         entries.set(id, {
           uuid: id,
           position: entries.values().length === 0 ? 0 : entries.values().length,
@@ -490,7 +671,9 @@ function Widget() {
             valid: false
           },
           content: '',
-          label: options?.label,
+          labelID: options?.labelID,
+          label: extractedLabel ? extractedLabel.label : '',
+          variant: extractedLabel ? extractedLabel.variant : '',
           ...options
         } as ChangelogChangeEntry)
       }
@@ -505,6 +688,13 @@ function Widget() {
     entries.set(entry.uuid, {
       ...(entry as ChangelogChangeEntry | ChangelogTitleEntry),
       isLinkVisible: !entry.isLinkVisible
+    })
+  }
+
+  const toggleDescriptionVisibility = (entry: ChangelogTitleEntry) => {
+    entries.set(entry.uuid, {
+      ...entry,
+      isDescriptionVisible: !entry.isDescriptionVisible
     })
   }
 
@@ -555,6 +745,13 @@ function Widget() {
       })
     }
 
+    if (event.property === 'description') {
+      entries.set(entry.uuid, {
+        ...entry,
+        description: event.value.characters
+      })
+    }
+
     if (event.property === 'body') {
       entries.set(entry.uuid, {
         ...entry,
@@ -574,9 +771,50 @@ function Widget() {
   }
 
   const editEntryType = (entry: ChangelogChangeEntry, type: string) => {
+    const id = type.split('_')[1]
+    let extractedLabel = labels.get(id)
+
     entries.set(entry.uuid, {
       ...entry,
-      label: type.split('_')[1]
+      labelID: id,
+      label: extractedLabel ? extractedLabel.label : '',
+      variant: extractedLabel ? extractedLabel.variant : ''
+    })
+  }
+
+  const setNavigation = (entry: ChangelogTitleEntry | ChangelogChangeEntry, navigationLink: NavigationLink) => {
+    entries.set(entry.uuid, {
+      ...entry,
+      isNavigationLinkVisible: Boolean(navigationLink.id.length),
+      navigationLink
+    })
+  }
+
+  const findPage = (node: SceneNode | PageNode | DocumentNode): PageNode | undefined => {
+    if (node.type === 'PAGE') {
+      return node as PageNode
+    } else {
+      if (node.parent) {
+        return findPage(node.parent as SceneNode)
+      } else {
+        return undefined
+      }
+    }
+  }
+
+  const onNavigationClick = (entry: ChangelogTitleEntry | ChangelogChangeEntry) => {
+    checkNavigationLink(entry, (valid: boolean, node: SceneNode) => {
+      if (valid) {
+        let page = findPage(node)
+        if (page) {
+          figma.currentPage = page
+          figma.viewport.scrollAndZoomIntoView([node])
+        } else {
+          figma.notify("Can't find target node")
+        }
+      } else {
+        figma.notify("Target node doesn't exist")
+      }
     })
   }
 
@@ -653,12 +891,18 @@ function Widget() {
                   <ItemTag
                     key={entry.uuid}
                     theme={data.colorTheme}
-                    tagLabel={labels.get((entry as ChangelogChangeEntry).label)?.label as string}
-                    tagColor={labels.get((entry as ChangelogChangeEntry).label)?.variant as string}
+                    tagLabel={(entry as ChangelogChangeEntry).label as string}
+                    tagColor={(entry as ChangelogChangeEntry).variant as string}
                     contentBody={(entry as ChangelogChangeEntry).content}
                     placeholderBody={'Type something...'}
                     disabled={!data.isEditingVisible}
                     link={(entry as ChangelogEntry).isLinkVisible ? (entry as ChangelogEntry).link : undefined}
+                    navigationLink={
+                      (entry as ChangelogEntry).isNavigationLinkVisible
+                        ? (entry as ChangelogEntry).navigationLink
+                        : undefined
+                    }
+                    onNavigationClick={() => onNavigationClick(entry as ChangelogTitleEntry)}
                     onEditEnd={(e: IItemTagOnEditEndEvent) => editEntry(entry as ChangelogChangeEntry, e)}
                   />
                 </Item>
@@ -697,10 +941,7 @@ function Widget() {
                         ? (entry as ChangelogEntry).navigationLink
                         : undefined
                     }
-                    onNavigationClick={
-                      () => {}
-                      //onNavigationClick(entry)
-                    }
+                    onNavigationClick={() => onNavigationClick(entry as ChangelogTitleEntry)}
                     onEditEnd={(e: IItemCheckboxOnEditEndEvent) => editEntry(entry as ChangelogTitleEntry, e)}
                   />
                 </Item>
@@ -745,11 +986,11 @@ function Widget() {
                   height={32}
                   verticalAlignText="center"
                 >
-                  {entries.values().length === 0
+                  {entries.values().filter((entry) => entry.type === 'change').length === 0
                     ? 'No entries'
-                    : entries.values().length > 1
-                    ? `${entries.values().length} entries`
-                    : `${entries.values().length} entry`}
+                    : entries.values().filter((entry) => entry.type === 'change').length > 1
+                    ? `${entries.values().filter((entry) => entry.type === 'change').length} entries`
+                    : `${entries.values().filter((entry) => entry.type === 'change').length} entry`}
                 </Text>
               </AutoLayout>
 
@@ -762,7 +1003,7 @@ function Widget() {
                   content="Add entry"
                   onClick={() =>
                     addEntry(currentLabel == Object.keys(EntryTypes)[1] ? Object.keys(EntryTypes)[1] : 'change', {
-                      label: currentLabel
+                      labelID: currentLabel
                     })
                   }
                 />

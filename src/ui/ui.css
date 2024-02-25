@@ -318,3 +318,194 @@ body {
   background-color: var(--figma-color-icon-secondary);
   box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
 }
+
+.ui-stack {
+  width: 100%;
+  display: flex;
+  flex-flow: column nowrap;
+  padding: 4px 0;
+}
+
+/* Icon */
+
+.ui-icon {
+  flex: 0 0 20px;
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+
+.ui-icon-draggable {
+  mask: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik03LjUgNS41QzguMzI4NDMgNS41IDkgNC44Mjg0MyA5IDRDOSAzLjE3MTU3IDguMzI4NDMgMi41IDcuNSAyLjVDNi42NzE1NyAyLjUgNiAzLjE3MTU3IDYgNEM2IDQuODI4NDMgNi42NzE1NyA1LjUgNy41IDUuNVpNMTIuNSA1LjVDMTMuMzI4NCA1LjUgMTQgNC44Mjg0MyAxNCA0QzE0IDMuMTcxNTcgMTMuMzI4NCAyLjUgMTIuNSAyLjVDMTEuNjcxNiAyLjUgMTEgMy4xNzE1NyAxMSA0QzExIDQuODI4NDMgMTEuNjcxNiA1LjUgMTIuNSA1LjVaTTkgMTBDOSAxMC44Mjg0IDguMzI4NDMgMTEuNSA3LjUgMTEuNUM2LjY3MTU3IDExLjUgNiAxMC44Mjg0IDYgMTBDNiA5LjE3MTU3IDYuNjcxNTcgOC41IDcuNSA4LjVDOC4zMjg0MyA4LjUgOSA5LjE3MTU3IDkgMTBaTTEyLjUgMTEuNUMxMy4zMjg0IDExLjUgMTQgMTAuODI4NCAxNCAxMEMxNCA5LjE3MTU3IDEzLjMyODQgOC41IDEyLjUgOC41QzExLjY3MTYgOC41IDExIDkuMTcxNTcgMTEgMTBDMTEgMTAuODI4NCAxMS42NzE2IDExLjUgMTIuNSAxMS41Wk05IDE2QzkgMTYuODI4NCA4LjMyODQzIDE3LjUgNy41IDE3LjVDNi42NzE1NyAxNy41IDYgMTYuODI4NCA2IDE2QzYgMTUuMTcxNiA2LjY3MTU3IDE0LjUgNy41IDE0LjVDOC4zMjg0MyAxNC41IDkgMTUuMTcxNiA5IDE2Wk0xMi41IDE3LjVDMTMuMzI4NCAxNy41IDE0IDE2LjgyODQgMTQgMTZDMTQgMTUuMTcxNiAxMy4zMjg0IDE0LjUgMTIuNSAxNC41QzExLjY3MTYgMTQuNSAxMSAxNS4xNzE2IDExIDE2QzExIDE2LjgyODQgMTEuNjcxNiAxNy41IDEyLjUgMTcuNVoiIGZpbGw9IiNCNEI0QjQiLz4KPC9zdmc+Cg==)
+    no-repeat center;
+  mask-size: cover;
+  -webkit-mask: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik03LjUgNS41QzguMzI4NDMgNS41IDkgNC44Mjg0MyA5IDRDOSAzLjE3MTU3IDguMzI4NDMgMi41IDcuNSAyLjVDNi42NzE1NyAyLjUgNiAzLjE3MTU3IDYgNEM2IDQuODI4NDMgNi42NzE1NyA1LjUgNy41IDUuNVpNMTIuNSA1LjVDMTMuMzI4NCA1LjUgMTQgNC44Mjg0MyAxNCA0QzE0IDMuMTcxNTcgMTMuMzI4NCAyLjUgMTIuNSAyLjVDMTEuNjcxNiAyLjUgMTEgMy4xNzE1NyAxMSA0QzExIDQuODI4NDMgMTEuNjcxNiA1LjUgMTIuNSA1LjVaTTkgMTBDOSAxMC44Mjg0IDguMzI4NDMgMTEuNSA3LjUgMTEuNUM2LjY3MTU3IDExLjUgNiAxMC44Mjg0IDYgMTBDNiA5LjE3MTU3IDYuNjcxNTcgOC41IDcuNSA4LjVDOC4zMjg0MyA4LjUgOSA5LjE3MTU3IDkgMTBaTTEyLjUgMTEuNUMxMy4zMjg0IDExLjUgMTQgMTAuODI4NCAxNCAxMEMxNCA5LjE3MTU3IDEzLjMyODQgOC41IDEyLjUgOC41QzExLjY3MTYgOC41IDExIDkuMTcxNTcgMTEgMTBDMTEgMTAuODI4NCAxMS42NzE2IDExLjUgMTIuNSAxMS41Wk05IDE2QzkgMTYuODI4NCA4LjMyODQzIDE3LjUgNy41IDE3LjVDNi42NzE1NyAxNy41IDYgMTYuODI4NCA2IDE2QzYgMTUuMTcxNiA2LjY3MTU3IDE0LjUgNy41IDE0LjVDOC4zMjg0MyAxNC41IDkgMTUuMTcxNiA5IDE2Wk0xMi41IDE3LjVDMTMuMzI4NCAxNy41IDE0IDE2LjgyODQgMTQgMTZDMTQgMTUuMTcxNiAxMy4zMjg0IDE0LjUgMTIuNSAxNC41QzExLjY3MTYgMTQuNSAxMSAxNS4xNzE2IDExIDE2QzExIDE2LjgyODQgMTEuNjcxNiAxNy41IDEyLjUgMTcuNVoiIGZpbGw9IiNCNEI0QjQiLz4KPC9zdmc+Cg==)
+    no-repeat center;
+  -webkit-mask-size: cover;
+  background-color: var(--figma-color-icon-disabled);
+  cursor: move;
+}
+
+.ui-icon-minus {
+  mask: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3QgeD0iNCIgeT0iMTAiIHdpZHRoPSIxMiIgaGVpZ2h0PSIxIiBmaWxsPSJibGFjayIvPgo8L3N2Zz4K)
+    no-repeat center;
+  mask-size: cover;
+  -webkit-mask: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3QgeD0iNCIgeT0iMTAiIHdpZHRoPSIxMiIgaGVpZ2h0PSIxIiBmaWxsPSJibGFjayIvPgo8L3N2Zz4K)
+    no-repeat center;
+  -webkit-mask-size: cover;
+  background-color: var(--figma-color-icon);
+}
+
+.ui-icon-plus {
+  mask: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik05LjUgMTFWMTYuNUgxMC41VjExSDE2VjEwSDEwLjVWNC41SDkuNVYxMEg0VjExSDkuNVoiIGZpbGw9ImJsYWNrIi8+Cjwvc3ZnPgo=)
+    no-repeat center;
+  mask-size: cover;
+  -webkit-mask: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik05LjUgMTFWMTYuNUgxMC41VjExSDE2VjEwSDEwLjVWNC41SDkuNVYxMEg0VjExSDkuNVoiIGZpbGw9ImJsYWNrIi8+Cjwvc3ZnPgo=)
+    no-repeat center;
+  -webkit-mask-size: cover;
+  background-color: var(--figma-color-icon);
+}
+
+/* Options select */
+
+.ui-select-options {
+  flex: 0 0 58px;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+  align-items: center;
+  height: 32px;
+  gap: 8px;
+  padding: 0 0 0 12px;
+  position: relative;
+  border-radius: 2px;
+}
+
+.ui-select-options::after {
+  position: absolute;
+  display: block;
+  content: '';
+  right: 12px;
+  top: 14px;
+  width: 7px;
+  height: 5px;
+  mask: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOCIgaGVpZ2h0PSI1IiB2aWV3Qm94PSIwIDAgOCA1IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTQuMDAwMDEgMy4yOTI5M0wxLjM1MzU2IDAuNjQ2NDg0TDAuNjQ2NDU0IDEuMzUzNTlMNC4wMDAwMSA0LjcwNzE0TDcuMzUzNTYgMS4zNTM1OUw2LjY0NjQ1IDAuNjQ2NDg0TDQuMDAwMDEgMy4yOTI5M1oiIGZpbGw9IiNCNEI0QjQiLz4KPC9zdmc+Cg==)
+    no-repeat center;
+  mask-size: cover;
+  -webkit-mask: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOCIgaGVpZ2h0PSI1IiB2aWV3Qm94PSIwIDAgOCA1IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTQuMDAwMDEgMy4yOTI5M0wxLjM1MzU2IDAuNjQ2NDg0TDAuNjQ2NDU0IDEuMzUzNTlMNC4wMDAwMSA0LjcwNzE0TDcuMzUzNTYgMS4zNTM1OUw2LjY0NjQ1IDAuNjQ2NDg0TDQuMDAwMDEgMy4yOTI5M1oiIGZpbGw9IiNCNEI0QjQiLz4KPC9zdmc+Cg==)
+    no-repeat center;
+  -webkit-mask-size: cover;
+  background-color: var(--figma-color-icon-secondary);
+}
+
+.ui-select-options select {
+  appearance: none;
+  position: absolute;
+  padding: 10px 12px;
+  padding-left: 56px;
+  font-family: Inter, sans-serif;
+  font-size: 11px;
+  line-height: 16px;
+  font-weight: 500;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  background: none;
+  outline: none;
+  border: none;
+  color: var(--figma-color-text);
+  cursor: pointer;
+  z-index: 10;
+}
+
+.ui-select-options:hover {
+  background-color: var(--figma-color-bg-hover);
+}
+
+.ui-select-options--disabled select {
+  color: var(--figma-color-text-disabled);
+  background-color: transparent !important;
+  cursor: default !important;
+}
+
+.ui-select-options--preview select {
+  padding-left: 50px;
+  line-height: 17px;
+}
+
+.ui-select-options-color {
+  width: 16;
+  height: 16;
+  border-radius: 100%;
+  background-color: var(--figma-color-icon-secondary);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+}
+
+.ui-select-options-list option {
+  color: #000000 !important;
+}
+
+/* Input */
+
+.ui-input {
+  flex: 1 1 100%;
+  height: 32px;
+  border-radius: 2px;
+  overflow: hidden;
+  outline: 0;
+  border: 1px solid var(--figma-color-border);
+  background: transparent;
+  font-family: Inter, sans-serif;
+  font-size: 11px;
+  line-height: 16px;
+  font-weight: 500;
+  padding: 0 12px;
+  background-color: var(--figma-color-bg);
+  color: var(--figma-color-text);
+}
+
+.ui-input:focus {
+  border: 2px solid var(--figma-color-border-selected);
+}
+
+/* Button */
+
+.ui-button {
+  flex: 0 0 32px;
+  width: 32px;
+  height: 32px;
+  display: block;
+  border-radius: 2px;
+  outline: 0;
+  border: 0;
+  background-color: var(--figma-color-bg);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ui-button:hover {
+  background-color: var(--figma-color-bg-hover);
+}
+
+.ui-button--disabled {
+  opacity: 0;
+  cursor: auto;
+}
+
+/* Draggable */
+
+.ui-item-draggable {
+  width: 100%;
+  display: flex;
+  flex-flow: row nowrap;
+  gap: 8px;
+  padding: 4px 12px;
+  align-items: center;
+}
+
+.ui-item-draggable--target {
+  box-shadow: inset 0 2px 0 0 var(--figma-color-border-strong);
+}

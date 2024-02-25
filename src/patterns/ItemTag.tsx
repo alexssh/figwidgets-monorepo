@@ -5,6 +5,7 @@ const { AutoLayout } = widget
 import Tag from 'src/components/Tag'
 import InputGhost from 'src/components/InputGhost'
 import LinkBox from 'src/patterns/LinkBox'
+import NavigationButton from 'src/patterns/NavigationButton'
 
 /* --- */
 
@@ -48,6 +49,24 @@ function ItemTag(props: IItemTagProps) {
             disabled={Boolean(props.disabled)}
             onEditEnd={(e) => props.onEditEnd({ property: 'link', value: e } as IItemTagOnEditEndEvent)}
           />
+        )}
+        {props.navigationLink && (
+          <AutoLayout
+            name="ItemTag__navigation"
+            direction="vertical"
+            height="hug-contents"
+            width="fill-parent"
+            padding={{
+              top: 2
+            }}
+          >
+            <NavigationButton
+              theme={props.theme}
+              contentTitle={props.navigationLink.layerName}
+              valid={props.navigationLink.valid}
+              onClick={() => props.onNavigationClick?.()}
+            />
+          </AutoLayout>
         )}
       </AutoLayout>
     </AutoLayout>

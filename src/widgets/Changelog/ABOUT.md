@@ -1,14 +1,14 @@
 # Advanced Changelog
 
-Figma + FigJam Widget: Effortlessly Track Changes in Your Stuff.
+Figma + FigJam Widget: Stay updated, Never miss a beat.
 
-- 8 types of entries
-- Manual sorting
-- Link support
-- Customizable appearance: show or hide descriptions, color ribbons, or backgrounds
+- 9 colours and editable labels
+- Manual sorting of tasks and sections
+- External and canvas links support
+- Customisable appearance: show or hide descriptions, change labels, or background
 - Editing protection
 - Dark mode support
-- 
+
 ## What this widget is good for: 
 
 - Design and Component System Updates: Stay informed about the latest changes in your design and component systems to maintain consistency and efficiency.
@@ -26,6 +26,12 @@ Please leave a comment below!
 changelog, components, cover, development, library, management, design system, notes, tools, updates
 
 ## Changelog
+
+- Version 14
+    - Fix: Minor UX improvements
+    - Added: Section entry type
+    - Added: Canvas navigation links inside a file
+    - Added: Status customisation
 
 - Version 13
     - Fix: Minor UX improvements

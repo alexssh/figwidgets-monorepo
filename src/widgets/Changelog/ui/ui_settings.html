@@ -31,6 +31,44 @@
     <label for="background">Background</label>
   </div>
 
+  <div class="ui-divider"></div>
+  <div class="ui-section">Statuses</div>
+
+  <div id="options" class="ui-stack">
+
+  </div>
+
+  <div class="ui-item-action" id="add" onclick="sendAction({ action: `label_add`, value: undefined, uuid: undefined })">
+    <div class="ui-icon ui-icon-plus"></div>
+    Add option
+  </div>
+
+  <!-- TEMPLATE -->
+
+  <div id="option" style="display: none">
+    <div class="ui-icon ui-icon-draggable"></div>
+    <div class="ui-select-options ui-select--preview">
+      <div class="ui-select-options-color"></div>
+      <select class="ui-select-options-list" name="color" size="1">
+        <option value="green">Green</option>
+        <option value="orange">Orange</option>
+        <option value="red">Red</option>
+        <option value="yellow">Yellow</option>
+        <option value="blue">Blue</option>
+        <option value="purple">Purple</option>
+        <option value="brown">Brown</option>
+        <option value="black">Black</option>
+        <option value="grey">Grey</option>
+      </select>
+    </div>
+    <input class="ui-input" placeholder="Label" />
+    <button class="ui-button ui-button-remove">
+      <div class="ui-icon ui-icon-minus"></div>
+    </button>
+  </div>
+
+  <!-- TEMPLATE -->
+
 </div>
 
 <script>
@@ -40,6 +78,7 @@
   const view = "settings"
 
   onmessage = (event) => {
+
     if (event.data.pluginMessage.data) {
       document.getElementById('ui').style.display = "flex";
 
@@ -50,16 +89,158 @@
       document.getElementById('footer').checked = event.data.pluginMessage.data.isFooterVisible;
 
       document.getElementById('background').checked = event.data.pluginMessage.data.isBackgroundVisible;
+
+      if (event.data.pluginMessage.labels.length >= 9) {
+        document.getElementById("add").style.display = "none"
+      } else {
+        document.getElementById("add").style.display = "flex"
+      }
+
+      event.data.pluginMessage.labels.forEach((label, i) => {
+        if (document.getElementById(label.uuid)) {
+
+          const option = document.getElementById(label.uuid)
+          option.getElementsByClassName("ui-select-options-color")[0].style.backgroundColor = event.data.pluginMessage.tokens.themes.labels[label.variant].fill
+          option.getElementsByClassName("ui-input")[0].value = label.label
+
+          deletionEventHandler(option, event.data.pluginMessage.currentLabel, label.uuid, i)
+
+        } else {
+
+          const option = document.getElementById('option').cloneNode(true)
+          option.classList.add('ui-item-draggable')
+          option.setAttribute("id", label.uuid);
+
+          // Color
+          option.getElementsByClassName("ui-select-options-color")[0].style.backgroundColor = event.data.pluginMessage.tokens.themes.labels[label.variant].fill
+          option.getElementsByClassName('ui-select-options-list')[0].value = label.variant
+          option.getElementsByClassName('ui-select-options-list')[0].onchange = (e) => sendAction({ action: 'label_color', value: e.target.value, uuid: label.uuid })
+
+          // Input
+          option.getElementsByClassName("ui-input")[0].value = label.label
+          option.getElementsByClassName('ui-input')[0].oninput = (e) => sendAction({ action: 'label_label', value: e.target.value, uuid: label.uuid })
+
+          // Delete
+          deletionEventHandler(option, event.data.pluginMessage.currentLabel, label.uuid, i)
+
+          option.style.display = "flex"
+          document.getElementById('options').appendChild(option);
+
+        }
+      })
+
+      let items = document.querySelectorAll('.ui-item-draggable')
+
+      items.forEach(item => {
+        item.setAttribute('draggable', true)
+        item.addEventListener('dragstart', dragStart)
+        item.addEventListener('drop', dropped)
+        item.addEventListener('dragenter', dragEnter)
+        item.addEventListener('dragleave', dragLeave)
+        item.addEventListener('dragover', cancelDefault)
+      })
+    }
+  }
+
+  function getIndex(e) {
+    return Array.from(e.parentNode.childNodes).indexOf(e);
+  }
+
+  function dragStart(e) {
+    const index = getIndex(e.target)
+    e.dataTransfer.setData('text/plain', index)
+    draggedElementIndex = index
+  }
+
+  function dropped(e) {
+    cancelDefault(e)
+
+    let oldIndex = e.dataTransfer.getData('text/plain')
+    let target = findTarget(e.target)
+
+    target.classList.remove("ui-item-draggable--target")
+
+    if (target) {
+      let newIndex = getIndex(target)
+      let dropped = this.parentNode.childNodes[oldIndex]
+
+      if (newIndex < oldIndex) {
+        target.parentNode.insertBefore(dropped, target)
+        sendAction({ action: 'label_position', value: newIndex - 1.5, uuid: dropped.id })
+      } else {
+        target.parentNode.insertBefore(dropped, target.nextSibling)
+        sendAction({ action: 'label_position', value: newIndex - 0.5, uuid: dropped.id })
+      }
+    }
+  }
+
+  function dragEnter(e) {
+    let target = findTarget(e.target)
+    target.classList.add("ui-item-draggable--target")
+    enteredElementIndex = getIndex(target)
+    return false
+  }
+
+  function dragLeave(e) {
+    let target = findTarget(e.target)
+    if (enteredElementIndex !== getIndex(target)) {
+      target.classList.remove("ui-item-draggable--target")
+    }
+    return false
+  }
+
+
+  function cancelDefault(e) {
+    e.preventDefault()
+    e.stopPropagation()
+    return false
+  }
+
+  function findTarget(e) {
+    if (e.classList.contains("ui-item-draggable")) {
+      return e
+    } else {
+      if (e.parentNode.classList.contains("ui-item-draggable")) {
+        return e.parentNode
+      } else {
+        if (e.parentNode) {
+          return findTarget(e.parentNode)
+        } else {
+          return false
+        }
+      }
+    }
+  }
+
+  function deletionEventHandler(option, currentLabel, uuid, index) {
+    if (currentLabel === uuid || (currentLabel === "title" && index === 0)) {
+      option.getElementsByClassName("ui-button")[0].classList.add("ui-button--disabled")
+      option.removeEventListener("click", () => { })
+    } else {
+      option.getElementsByClassName("ui-button")[0].addEventListener("click", () => {
+        sendAction({ action: 'label_delete', value: undefined, uuid: uuid })
+        option.remove()
+      })
     }
   }
 
   function sendAction(action) {
-    parent.postMessage({
-      pluginMessage: {
-        view,
-        action: action
-      }, ...id
-    }, url)
+    if (typeof action === 'object') {
+      parent.postMessage({
+        pluginMessage: {
+          view,
+          ...action
+        }, ...id
+      }, url)
+    } else {
+      parent.postMessage({
+        pluginMessage: {
+          view,
+          action: action
+        }, ...id
+      }, url)
+    }
+
   }
 
 </script>

@@ -27,6 +27,8 @@ function Tag(props: ITagProps) {
         width="fill-parent"
         horizontalAlignText="center"
         fill={tokens.themes.labels[props.color].color}
+        //@ts-ignore
+        truncate={1}
         {...tokens.themes.typo.caption}
       >
         {props.content}

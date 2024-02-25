@@ -5,6 +5,35 @@
 
   <div class="ui-divider"></div>
 
+  <div class="ui-section">Canvas link</div>
+
+  <div class="ui-item-info" id="navigation_hint">Select a none to create a link.</div>
+
+  <div class="ui-item-action" id="navigation_action_add" onclick="sendAction('navigation_add')">Add navigation to ...
+  </div>
+
+  <div class="ui-item-actionset" id="navigation_action">
+    <div class="ui-item-actionset-label" id="navigation_action_label">...</div>
+    <div class="ui-button ui-item-actionset-button ui-item-actionset-button--accent" id="navigation_action_update"
+      onclick="sendAction('navigation_update')">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd" clip-rule="evenodd"
+          d="M8.73885 3.00043L8.56784 3.47028L7.25844 7.06782L6.31875 6.7258L7.2757 4.09658C5.04631 5.12711 3.5 7.3835 3.5 10C3.5 12.9438 5.45732 15.4317 8.14262 16.2309L7.85738 17.1894C4.75971 16.2674 2.5 13.3983 2.5 10C2.5 7.06884 4.1812 4.53131 6.63123 3.2975L4.32944 2.45971L4.67146 1.52002L8.269 2.82942L8.73885 3.00043ZM11.8574 3.76911C14.5427 4.5683 16.5 7.05623 16.5 10C16.5 12.6565 14.9061 14.9417 12.6217 15.9498L13.5956 13.274L12.6559 12.932L11.3465 16.5295L11.1755 16.9994L11.6454 17.1704L15.2429 18.4798L15.5849 17.5401L13.3329 16.7204C15.8024 15.4934 17.5 12.9454 17.5 10C17.5 6.60174 15.2403 3.73257 12.1426 2.81066L11.8574 3.76911Z" />
+      </svg>
+    </div>
+    <div class="ui-button ui-item-actionset-button" id="navigation_action_delete"
+      onclick="sendAction('navigation_delete')">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="4" y="10" width="12" height="1" />
+      </svg>
+
+    </div>
+  </div>
+
+  <div class="ui-divider"></div>
+
+  <div class="ui-item-action" id="show_description" onclick="sendAction('show_description')">Show description</div>
+  <div class="ui-item-action" id="hide_description" onclick="sendAction('hide_description')">Hide description</div>
   <div class="ui-item-action" id="show_link" onclick="sendAction('show_link')">Show link</div>
   <div class="ui-item-action" id="hide_link" onclick="sendAction('hide_link')">Hide link</div>
   <div class="ui-item-action" id="duplicate" onclick="sendAction('duplicate')">Duplicate</div>
@@ -27,6 +56,8 @@
   onmessage = (event) => {
 
     if (event.data.pluginMessage.data) {
+
+      let canvas = event.data.pluginMessage.canvas
 
       let selected = event.data.pluginMessage.entries.sort((a, b) => a.position - b.position).filter((entry, i) => {
         if (entry.uuid === event.data.pluginMessage.currentEntry.uuid) {
@@ -56,9 +87,52 @@
         document.getElementById('move_down').onclick = () => sendAction('move_down')
       }
 
+      document.getElementById('show_description').style.display = !selected.isDescriptionVisible ? "block" : "none";
+      document.getElementById('hide_description').style.display = selected.isDescriptionVisible ? "block" : "none";
+
       document.getElementById('show_link').style.display = !selected.isLinkVisible ? "block" : "none";
       document.getElementById('hide_link').style.display = selected.isLinkVisible ? "block" : "none";
 
+      document.getElementById('navigation_hint').style.display = !selected.navigationLink.id.length && !canvas.id.length ? "flex" : "none"
+
+      if (!selected.navigationLink.id.length && canvas.id.length) {
+        document.getElementById('navigation_action_add').style.display = "block"
+        document.getElementById('navigation_action_add').innerHTML = `Add navigation to ${canvas.layerName}`
+      } else {
+        document.getElementById('navigation_action_add').style.display = "none"
+      }
+
+      document.getElementById('navigation_action').style.display = selected.navigationLink.id.length ? "flex" : "none";
+
+      if (selected.navigationLink.id.length && canvas.id.length) {
+        removeWarning(selected.navigationLink.layerName)
+        if (selected.navigationLink.id !== canvas.id) {
+          document.getElementById('navigation_action_update').classList.remove('ui-item-actionset-button--hidden');
+          document.getElementById('navigation_action_label').innerHTML = `${selected.navigationLink.layerName} → ${canvas.layerName}`;
+        } else {
+          document.getElementById('navigation_action_update').classList.add('ui-item-actionset-button--hidden');
+          document.getElementById('navigation_action_label').innerHTML = `${selected.navigationLink.layerName}`;
+        }
+      }
+
+      if (selected.navigationLink.id.length && !canvas.id.length) {
+        document.getElementById('navigation_action_update').classList.add('ui-item-actionset-button--hidden');
+        if (selected.navigationLink.valid) {
+          document.getElementById('navigation_action_label').innerHTML = `${selected.navigationLink.layerName}`;
+        } else {
+          addWarning()
+        }
+      }
+
+      function removeWarning(layerName) {
+        document.getElementById('navigation_action_label').innerHTML = `${layerName}`
+        document.getElementById('navigation_action_label').classList.remove('ui-item-actionset-label--warning');
+      }
+
+      function addWarning() {
+        document.getElementById('navigation_action_label').innerHTML = "Target node doesn't exist"
+        document.getElementById('navigation_action_label').classList.add('ui-item-actionset-label--warning');
+      }
     }
   }
 
@@ -394,6 +468,197 @@ body {
   border-radius: 100%;
   background-color: var(--figma-color-icon-secondary);
   box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+}
+
+.ui-stack {
+  width: 100%;
+  display: flex;
+  flex-flow: column nowrap;
+  padding: 4px 0;
+}
+
+/* Icon */
+
+.ui-icon {
+  flex: 0 0 20px;
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+
+.ui-icon-draggable {
+  mask: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik03LjUgNS41QzguMzI4NDMgNS41IDkgNC44Mjg0MyA5IDRDOSAzLjE3MTU3IDguMzI4NDMgMi41IDcuNSAyLjVDNi42NzE1NyAyLjUgNiAzLjE3MTU3IDYgNEM2IDQuODI4NDMgNi42NzE1NyA1LjUgNy41IDUuNVpNMTIuNSA1LjVDMTMuMzI4NCA1LjUgMTQgNC44Mjg0MyAxNCA0QzE0IDMuMTcxNTcgMTMuMzI4NCAyLjUgMTIuNSAyLjVDMTEuNjcxNiAyLjUgMTEgMy4xNzE1NyAxMSA0QzExIDQuODI4NDMgMTEuNjcxNiA1LjUgMTIuNSA1LjVaTTkgMTBDOSAxMC44Mjg0IDguMzI4NDMgMTEuNSA3LjUgMTEuNUM2LjY3MTU3IDExLjUgNiAxMC44Mjg0IDYgMTBDNiA5LjE3MTU3IDYuNjcxNTcgOC41IDcuNSA4LjVDOC4zMjg0MyA4LjUgOSA5LjE3MTU3IDkgMTBaTTEyLjUgMTEuNUMxMy4zMjg0IDExLjUgMTQgMTAuODI4NCAxNCAxMEMxNCA5LjE3MTU3IDEzLjMyODQgOC41IDEyLjUgOC41QzExLjY3MTYgOC41IDExIDkuMTcxNTcgMTEgMTBDMTEgMTAuODI4NCAxMS42NzE2IDExLjUgMTIuNSAxMS41Wk05IDE2QzkgMTYuODI4NCA4LjMyODQzIDE3LjUgNy41IDE3LjVDNi42NzE1NyAxNy41IDYgMTYuODI4NCA2IDE2QzYgMTUuMTcxNiA2LjY3MTU3IDE0LjUgNy41IDE0LjVDOC4zMjg0MyAxNC41IDkgMTUuMTcxNiA5IDE2Wk0xMi41IDE3LjVDMTMuMzI4NCAxNy41IDE0IDE2LjgyODQgMTQgMTZDMTQgMTUuMTcxNiAxMy4zMjg0IDE0LjUgMTIuNSAxNC41QzExLjY3MTYgMTQuNSAxMSAxNS4xNzE2IDExIDE2QzExIDE2LjgyODQgMTEuNjcxNiAxNy41IDEyLjUgMTcuNVoiIGZpbGw9IiNCNEI0QjQiLz4KPC9zdmc+Cg==)
+    no-repeat center;
+  mask-size: cover;
+  -webkit-mask: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik03LjUgNS41QzguMzI4NDMgNS41IDkgNC44Mjg0MyA5IDRDOSAzLjE3MTU3IDguMzI4NDMgMi41IDcuNSAyLjVDNi42NzE1NyAyLjUgNiAzLjE3MTU3IDYgNEM2IDQuODI4NDMgNi42NzE1NyA1LjUgNy41IDUuNVpNMTIuNSA1LjVDMTMuMzI4NCA1LjUgMTQgNC44Mjg0MyAxNCA0QzE0IDMuMTcxNTcgMTMuMzI4NCAyLjUgMTIuNSAyLjVDMTEuNjcxNiAyLjUgMTEgMy4xNzE1NyAxMSA0QzExIDQuODI4NDMgMTEuNjcxNiA1LjUgMTIuNSA1LjVaTTkgMTBDOSAxMC44Mjg0IDguMzI4NDMgMTEuNSA3LjUgMTEuNUM2LjY3MTU3IDExLjUgNiAxMC44Mjg0IDYgMTBDNiA5LjE3MTU3IDYuNjcxNTcgOC41IDcuNSA4LjVDOC4zMjg0MyA4LjUgOSA5LjE3MTU3IDkgMTBaTTEyLjUgMTEuNUMxMy4zMjg0IDExLjUgMTQgMTAuODI4NCAxNCAxMEMxNCA5LjE3MTU3IDEzLjMyODQgOC41IDEyLjUgOC41QzExLjY3MTYgOC41IDExIDkuMTcxNTcgMTEgMTBDMTEgMTAuODI4NCAxMS42NzE2IDExLjUgMTIuNSAxMS41Wk05IDE2QzkgMTYuODI4NCA4LjMyODQzIDE3LjUgNy41IDE3LjVDNi42NzE1NyAxNy41IDYgMTYuODI4NCA2IDE2QzYgMTUuMTcxNiA2LjY3MTU3IDE0LjUgNy41IDE0LjVDOC4zMjg0MyAxNC41IDkgMTUuMTcxNiA5IDE2Wk0xMi41IDE3LjVDMTMuMzI4NCAxNy41IDE0IDE2LjgyODQgMTQgMTZDMTQgMTUuMTcxNiAxMy4zMjg0IDE0LjUgMTIuNSAxNC41QzExLjY3MTYgMTQuNSAxMSAxNS4xNzE2IDExIDE2QzExIDE2LjgyODQgMTEuNjcxNiAxNy41IDEyLjUgMTcuNVoiIGZpbGw9IiNCNEI0QjQiLz4KPC9zdmc+Cg==)
+    no-repeat center;
+  -webkit-mask-size: cover;
+  background-color: var(--figma-color-icon-disabled);
+  cursor: move;
+}
+
+.ui-icon-minus {
+  mask: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3QgeD0iNCIgeT0iMTAiIHdpZHRoPSIxMiIgaGVpZ2h0PSIxIiBmaWxsPSJibGFjayIvPgo8L3N2Zz4K)
+    no-repeat center;
+  mask-size: cover;
+  -webkit-mask: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3QgeD0iNCIgeT0iMTAiIHdpZHRoPSIxMiIgaGVpZ2h0PSIxIiBmaWxsPSJibGFjayIvPgo8L3N2Zz4K)
+    no-repeat center;
+  -webkit-mask-size: cover;
+  background-color: var(--figma-color-icon);
+}
+
+.ui-icon-plus {
+  mask: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik05LjUgMTFWMTYuNUgxMC41VjExSDE2VjEwSDEwLjVWNC41SDkuNVYxMEg0VjExSDkuNVoiIGZpbGw9ImJsYWNrIi8+Cjwvc3ZnPgo=)
+    no-repeat center;
+  mask-size: cover;
+  -webkit-mask: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik05LjUgMTFWMTYuNUgxMC41VjExSDE2VjEwSDEwLjVWNC41SDkuNVYxMEg0VjExSDkuNVoiIGZpbGw9ImJsYWNrIi8+Cjwvc3ZnPgo=)
+    no-repeat center;
+  -webkit-mask-size: cover;
+  background-color: var(--figma-color-icon);
+}
+
+/* Options select */
+
+.ui-select-options {
+  flex: 0 0 58px;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+  align-items: center;
+  height: 32px;
+  gap: 8px;
+  padding: 0 0 0 12px;
+  position: relative;
+  border-radius: 2px;
+}
+
+.ui-select-options::after {
+  position: absolute;
+  display: block;
+  content: '';
+  right: 12px;
+  top: 14px;
+  width: 7px;
+  height: 5px;
+  mask: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOCIgaGVpZ2h0PSI1IiB2aWV3Qm94PSIwIDAgOCA1IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTQuMDAwMDEgMy4yOTI5M0wxLjM1MzU2IDAuNjQ2NDg0TDAuNjQ2NDU0IDEuMzUzNTlMNC4wMDAwMSA0LjcwNzE0TDcuMzUzNTYgMS4zNTM1OUw2LjY0NjQ1IDAuNjQ2NDg0TDQuMDAwMDEgMy4yOTI5M1oiIGZpbGw9IiNCNEI0QjQiLz4KPC9zdmc+Cg==)
+    no-repeat center;
+  mask-size: cover;
+  -webkit-mask: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOCIgaGVpZ2h0PSI1IiB2aWV3Qm94PSIwIDAgOCA1IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTQuMDAwMDEgMy4yOTI5M0wxLjM1MzU2IDAuNjQ2NDg0TDAuNjQ2NDU0IDEuMzUzNTlMNC4wMDAwMSA0LjcwNzE0TDcuMzUzNTYgMS4zNTM1OUw2LjY0NjQ1IDAuNjQ2NDg0TDQuMDAwMDEgMy4yOTI5M1oiIGZpbGw9IiNCNEI0QjQiLz4KPC9zdmc+Cg==)
+    no-repeat center;
+  -webkit-mask-size: cover;
+  background-color: var(--figma-color-icon-secondary);
+}
+
+.ui-select-options select {
+  appearance: none;
+  position: absolute;
+  padding: 10px 12px;
+  padding-left: 56px;
+  font-family: Inter, sans-serif;
+  font-size: 11px;
+  line-height: 16px;
+  font-weight: 500;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  background: none;
+  outline: none;
+  border: none;
+  color: var(--figma-color-text);
+  cursor: pointer;
+  z-index: 10;
+}
+
+.ui-select-options:hover {
+  background-color: var(--figma-color-bg-hover);
+}
+
+.ui-select-options--disabled select {
+  color: var(--figma-color-text-disabled);
+  background-color: transparent !important;
+  cursor: default !important;
+}
+
+.ui-select-options--preview select {
+  padding-left: 50px;
+  line-height: 17px;
+}
+
+.ui-select-options-color {
+  width: 16;
+  height: 16;
+  border-radius: 100%;
+  background-color: var(--figma-color-icon-secondary);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+}
+
+.ui-select-options-list option {
+  color: #000000 !important;
+}
+
+/* Input */
+
+.ui-input {
+  flex: 1 1 100%;
+  height: 32px;
+  border-radius: 2px;
+  overflow: hidden;
+  outline: 0;
+  border: 1px solid var(--figma-color-border);
+  background: transparent;
+  font-family: Inter, sans-serif;
+  font-size: 11px;
+  line-height: 16px;
+  font-weight: 500;
+  padding: 0 12px;
+  background-color: var(--figma-color-bg);
+  color: var(--figma-color-text);
+}
+
+.ui-input:focus {
+  border: 2px solid var(--figma-color-border-selected);
+}
+
+/* Button */
+
+.ui-button {
+  flex: 0 0 32px;
+  width: 32px;
+  height: 32px;
+  display: block;
+  border-radius: 2px;
+  outline: 0;
+  border: 0;
+  background-color: var(--figma-color-bg);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ui-button:hover {
+  background-color: var(--figma-color-bg-hover);
+}
+
+.ui-button--disabled {
+  opacity: 0;
+  cursor: auto;
+}
+
+/* Draggable */
+
+.ui-item-draggable {
+  width: 100%;
+  display: flex;
+  flex-flow: row nowrap;
+  gap: 8px;
+  padding: 4px 12px;
+  align-items: center;
+}
+
+.ui-item-draggable--target {
+  box-shadow: inset 0 2px 0 0 var(--figma-color-border-strong);
 }
 
 </style>

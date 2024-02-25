@@ -11,7 +11,9 @@ declare global {
 
   export type ChangelogChangeEntry = ChangelogEntry & {
     content: string
+    labelID: string
     label: string
+    variant: string
   }
 
   export type ChangelogTitleEntry = ChecklistEntry & {
