@@ -28,6 +28,9 @@ checkbox, checklist, design, handoff, notes, plan, progress tracker, projects, t
 
 ## Changelog
 
+- Version 20
+    - Fix: Duplicating entries with a canvas link now preserves the link"
+
 - Version 19
     - Fix: Minor UX improvements
 

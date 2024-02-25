@@ -344,8 +344,10 @@ function Widget() {
           description: entry.description,
           priority: entry.priority,
           isLinkVisible: entry.isLinkVisible,
-          link: entry.link
-        })
+          link: entry.link,
+          isNavigationLinkVisible: entry.isNavigationLinkVisible,
+          navigationLink: entry.navigationLink
+        } as ChecklistCheckboxEntry | ChecklistTitleEntry)
 
         figma.closePlugin()
       }
